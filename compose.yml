@@ -1,0 +1,36 @@
+services:
+
+  wordpress:
+    image: wordpress:6.9-php8.2-apache
+    ports:
+      - 8080:80
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: es4dbuser
+      WORDPRESS_DB_PASSWORD: es4dbpass
+      WORDPRESS_DB_NAME: es4db
+    volumes:
+      - wordpress:/var/www/html
+    networks:
+      - wp
+
+  db:
+    image: mariadb:12
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: es4db
+      MYSQL_USER: es4dbuser
+      MYSQL_PASSWORD: es4dbpass
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    command: '--default-authentication-plugin=mysql_native_password'
+    volumes:
+      - db:/var/lib/mysql
+    networks:
+      - wp
+
+volumes:
+  wordpress:
+  db:
+
+networks:
+  wp:
