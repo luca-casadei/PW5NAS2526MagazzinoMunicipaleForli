@@ -1,60 +1,57 @@
 services:
-  wordpress:
-    image: wordpress:6.9-php8.2-apache
+  frontend:
+    build: ./Frontend
+    #volumes:
+      #- ./Frontend/src:/var/www/html:ro
+    networks:
+      - frontend
     ports:
-      - 127.0.0.1:80:80
-    environment:
-      WORDPRESS_DB_HOST: db
-      WORDPRESS_DB_USER: es4dbuser
-      WORDPRESS_DB_PASSWORD: es4dbpass
-      WORDPRESS_DB_NAME: wordpressdb
-    volumes:
-      - wordpress:/var/www/html
-    networks:
-      - wp
-    restart: always
-    depends_on:
-      db:
-        condition: service_healthy
+      - 80:80
 
-  db:
-    image: mariadb:12
-    restart: always
-    environment:
-      MYSQL_DATABASE: wordpressdb
-      MYSQL_USER: es4dbuser
-      MYSQL_PASSWORD: es4dbpass
-      MYSQL_ROOT_PASSWORD: granello
-    command: '--default-authentication-plugin=mysql_native_password'
-    volumes:
-      - db:/var/lib/mysql
+  backend:
+    build: ./Backend
+    #per tests
+    #ports:
+      #- 5050:80
+    # Se il container crasha o si ferma, riavvialo sempre, 
+    #a meno che non lo fermi io manualmente (docker stop).
+    restart: unless-stopped
+    # Definisce l'ordine di avvio: il backend dipende dal database
+    depends_on:
+      database:
+      # Docker aspetterà che l'healthcheck del db dica "sono sano"
+        condition: service_healthy
     networks:
-      - db
-      - wp
+      - backend
+      - frontend
+  
+  database:
+    image: mariadb:12.1.2
+    env_file:
+      - ./Database/environmentDb/.env
+    restart: unless-stopped
+    # Docker controlla periodicamente se il database sta funzionando davvero,
+    # non solo se il processo è attivo
     healthcheck:
-      test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
+    # Script fornito da MariaDB ('healthcheck.sh') per tentare una connessione e vedere se InnoDB è pronto
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      # Aspetta 15 secondi dall'avvio del container prima di fare il primo controllo
       start_period: 15s
+      # Esegui il test ogni 10 secondi
       interval: 10s
+      # Se il comando di test ('healthcheck.sh') ci mette più di 5 secondi a rispondere, consideralo fallito
       timeout: 5s
+      # Se fallisce 3 volte di fila, Docker segnala che c'è un problema.
       retries: 3
-
-  dbadmin:
-    image: phpmyadmin:5.2.3
-    ports:
-      - 127.0.0.1:8080:80
-    environment:
-      - PMA_HOST=db
-    depends_on:
-      db:
-        condition: service_healthy
+    volumes:
+      - dbdata:/var/lib/mysql
+      - ./Database/sql/:/docker-entrypoint-initdb.d/:ro
     networks:
-      - db
-
+      - backend
+  
 volumes:
-  wordpress:
-  db:
-
+  dbdata:
 
 networks:
-  wp:
-  db:
+  backend:
+  frontend:
