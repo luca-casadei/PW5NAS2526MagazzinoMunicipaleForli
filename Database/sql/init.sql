@@ -1,103 +1,176 @@
-USE dbPHP;
-
--- 1. Tabella Utenti
-CREATE TABLE Utenti (
-    Utente_Id INT PRIMARY KEY AUTO_INCREMENT,
-    nome VARCHAR(30) NOT NULL,
-    cognome VARCHAR(30) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    pwd TEXT NOT NULL,
-    materia VARCHAR(20)
+USE Project_WorkDB;
+CREATE TABLE Attributi_Articoli (
+    Attributo_Id INT NOT NULL AUTO_INCREMENT,
+    Nome VARCHAR(100) NOT NULL,
+    PRIMARY KEY (Attributo_Id)
 );
 
--- 2. Tabella Argomenti
-CREATE TABLE Argomenti (
-    Categoria_Id INT PRIMARY KEY AUTO_INCREMENT,
-    tipo VARCHAR(30) NOT NULL
+CREATE TABLE Articoli_Regionali (
+    Codice_ArReg VARCHAR(50) NOT NULL,
+    Descrizione VARCHAR(255) NULL,
+    PRIMARY KEY (Codice_ArReg)
 );
 
--- 3. Tabella Classi
-CREATE TABLE Classi (
-    Classe_Id INT PRIMARY KEY AUTO_INCREMENT,
-    nome VARCHAR(30) NOT NULL,
-    link VARCHAR(32) UNIQUE NOT NULL,
-    materia VARCHAR(20) NOT NULL,
-    Id_Utente_Respo INT NOT NULL,
-    FOREIGN KEY (Id_Utente_Respo) REFERENCES Utenti(Utente_Id)
-        ON DELETE CASCADE 
-        ON UPDATE CASCADE
+CREATE TABLE Operatori_Economici (
+    Ragione_Sociale VARCHAR(150) NOT NULL,
+    PRIMARY KEY (Ragione_Sociale)
 );
 
--- 4. Tabella Videogiochi
-CREATE TABLE Videogiochi (
-    Videogioco_Id INT PRIMARY KEY AUTO_INCREMENT,
-    titolo VARCHAR(160) NOT NULL,
-    desc_breve VARCHAR(160) NOT NULL,
-    descrizione VARCHAR(500) NOT NULL,
-    num_monete INT DEFAULT 0 NOT NULL,
-    link VARCHAR(30) NOT NULL,
-    CHECK(num_monete >= 0) 
+CREATE TABLE Armadi (
+    Armadio_Id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (Armadio_Id)
 );
 
--- 5. Tabella Immagini
-CREATE TABLE Immagini (
-    Immagine_Id INT PRIMARY KEY AUTO_INCREMENT,
-    valore VARCHAR(100) NOT NULL
+CREATE TABLE Tipologie (
+    Tipologia_Id INT NOT NULL AUTO_INCREMENT,
+    Nome VARCHAR(100) NOT NULL,
+    Descrizione VARCHAR(255) NOT NULL,
+    PRIMARY KEY (Tipologia_Id)
 );
 
--- 6. Tabella di Giunzione: Imm_Videog (Videogiochi <-> Immagini)
-CREATE TABLE Imm_Videog (
-    Id_Videogioco INT NOT NULL,
-    Id_Immagine INT NOT NULL,
-    PRIMARY KEY (Id_Videogioco, Id_Immagine),
-    FOREIGN KEY (Id_Videogioco) REFERENCES Videogiochi(Videogioco_Id)
-        ON DELETE CASCADE,
-    FOREIGN KEY (Id_Immagine) REFERENCES Immagini(Immagine_Id)
-        ON DELETE CASCADE
+
+CREATE TABLE Articoli_Operatori_Economici (
+    Codice_ArOpEc VARCHAR(50) NOT NULL,
+    Descrizione VARCHAR(255) NULL,
+    Ragione_Sociale VARCHAR(150) NOT NULL,
+    PRIMARY KEY (Codice_ArOpEc),
+    FOREIGN KEY (Ragione_Sociale) REFERENCES Operatori_Economici(Ragione_Sociale) ON DELETE CASCADE
 );
 
--- 7. Tabella di Giunzione: Contiene (Videogiochi <-> Argomenti)
-CREATE TABLE Contiene (
-    Id_Videogioco INT NOT NULL,
-    Id_Argomento INT NOT NULL,
-    PRIMARY KEY (Id_Videogioco, Id_Argomento),
-    FOREIGN KEY (Id_Videogioco) REFERENCES Videogiochi(Videogioco_Id)
-        ON DELETE CASCADE,
-    FOREIGN KEY (Id_Argomento) REFERENCES Argomenti(Categoria_Id)
-        ON DELETE CASCADE
+CREATE TABLE Scaffali (
+    Numero INT NOT NULL AUTO_INCREMENT,
+    Armadio_Id INT NOT NULL,
+    PRIMARY KEY (Numero, Armadio_Id),
+    FOREIGN KEY (Armadio_Id) REFERENCES Armadi(Armadio_Id) ON DELETE CASCADE
 );
 
--- 8. Tabella di Giunzione: Appartiene (Videogiochi <-> Classi)
-CREATE TABLE Appartiene (
-    Id_Videogioco INT NOT NULL,
-    Id_Classe INT NOT NULL,
-    PRIMARY KEY (Id_Videogioco, Id_Classe),
-    FOREIGN KEY (Id_Videogioco) REFERENCES Videogiochi(Videogioco_Id)
-        ON DELETE CASCADE,
-    FOREIGN KEY (Id_Classe) REFERENCES Classi(Classe_Id)
-        ON DELETE CASCADE
+CREATE TABLE Articoli (
+    Articolo_Id INT NOT NULL AUTO_INCREMENT,
+    Codice_ArReg VARCHAR(50) NOT NULL,
+    Codice_ArOpEc VARCHAR(50) NOT NULL,
+    Tipologia_Id INT NOT NULL,
+    PRIMARY KEY (Articolo_Id),
+    FOREIGN KEY (Codice_ArReg) REFERENCES Articoli_Regionali(Codice_ArReg) ON DELETE CASCADE,
+    FOREIGN KEY (Codice_ArOpEc) REFERENCES Articoli_Operatori_Economici(Codice_ArOpEc) ON DELETE CASCADE,
+    FOREIGN KEY (Tipologia_Id) REFERENCES Tipologie(Tipologia_Id) ON DELETE CASCADE
 );
 
--- 9. Tabella di Giunzione: Frequenta (Utenti <-> Classi)
-CREATE TABLE Frequenta (
-    Id_Utente INT NOT NULL,
-    Id_Classe INT NOT NULL,
-    PRIMARY KEY (Id_Utente, Id_Classe),
-    FOREIGN KEY (Id_Utente) REFERENCES Utenti(Utente_Id)
-        ON DELETE CASCADE,
-    FOREIGN KEY (Id_Classe) REFERENCES Classi(Classe_Id)
-        ON DELETE CASCADE
+
+CREATE TABLE Attributi_Associati (
+    Articolo_Id INT NOT NULL,
+    Attributo_Id INT NOT NULL,
+    Valore VARCHAR(255) NOT NULL,
+    PRIMARY KEY (Articolo_Id, Attributo_Id),
+    FOREIGN KEY (Articolo_Id) REFERENCES Articoli(Articolo_Id) ON DELETE CASCADE,
+    FOREIGN KEY (Attributo_Id) REFERENCES Attributi_Articoli(Attributo_Id) ON DELETE CASCADE
 );
 
--- 10. Tabella di Giunzione: Gioca (Utenti <-> Videogiochi)
-CREATE TABLE Gioca (
-    Id_Utente INT NOT NULL,
-    Id_Videogioco INT NOT NULL,
-    moneteOttenute INT NOT NULL,
-    PRIMARY KEY (Id_Utente, Id_Videogioco),
-    FOREIGN KEY (Id_Utente) REFERENCES Utenti(Utente_Id)
-        ON DELETE CASCADE,
-    FOREIGN KEY (Id_Videogioco) REFERENCES Videogiochi(Videogioco_Id)
-        ON DELETE CASCADE,
-    CHECK(moneteOttenute >= 0)
+CREATE TABLE Articoli_Scaffali (
+    Articolo_Id INT NOT NULL,
+    Numero INT NOT NULL,
+    Armadio_Id INT NOT NULL,
+    Quantita INT NOT NULL,
+    PRIMARY KEY (Articolo_Id, Numero, Armadio_Id),
+    FOREIGN KEY (Articolo_Id) REFERENCES Articoli(Articolo_Id) ON DELETE CASCADE,
+    FOREIGN KEY (Numero, Armadio_Id) REFERENCES Scaffali(Numero, Armadio_Id) ON DELETE CASCADE,
+    CHECK (Quantita >= 0),
 );
+CREATE TABLE Log_Modifiche_Quantita (
+    Log_Id INT NOT NULL AUTO_INCREMENT,
+    Data_Ora_Modifica DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    Articolo_Id INT NOT NULL,
+    Numero_Scaffale INT NOT NULL,
+    Armadio_Id INT NOT NULL,
+    Qta_Nuovo_Precedente INT NOT NULL,
+    Qta_Nuovo_Aggiornata INT NOT NULL,
+    Qta_Usato_Precedente INT NOT NULL,
+    Qta_Usato_Aggiornata INT NOT NULL,
+    Attributi TEXT NOT NULL,
+    PRIMARY KEY (Log_Id)
+);
+
+CREATE TRIGGER trg_log_modifica_quantita
+AFTER UPDATE ON Articoli_Scaffali
+FOR EACH ROW
+BEGIN
+    DECLARE v_attributi test_string TEXT;
+
+    -- Eseguiamo il log SOLO se c'è stata una reale variazione nelle quantità
+    IF (OLD.Quantita_Nuovo <> NEW.Quantita_Nuovo) OR (OLD.Quantita_Usato <> NEW.Quantita_Usato) THEN
+        
+        
+        SELECT GROUP_CONCAT(CONCAT(attr.Nome, ': ', assoc.Valore) SEPARATOR ' | ')
+        INTO v_attributi
+        FROM Attributi_Associati AS assoc
+        JOIN Attributi_Articoli attr ON assoc.Attributo_Id = attr.Attributo_Id
+        WHERE assoc.Articolo_Id = NEW.Articolo_Id;
+
+        IF v_attributi IS NULL THEN
+            SET v_attributi = 'Nessun attributo associato';
+        END IF;
+
+        -- Inseriamo il record nello storico
+        INSERT INTO Log_Modifiche_Quantita (
+            Articolo_Id,
+            Numero_Scaffale,
+            Armadio_Id,
+            Qta_Nuovo_Precedente,
+            Qta_Nuovo_Aggiornata,
+            Qta_Usato_Precedente,
+            Qta_Usato_Aggiornata,
+            Attributi
+        ) VALUES (
+            NEW.Articolo_Id,
+            NEW.Numero,
+            NEW.Armadio_Id,
+            OLD.Quantita_Nuovo,
+            NEW.Quantita_Nuovo,
+            OLD.Quantita_Usato,
+            NEW.Quantita_Usato,
+            v_attributi
+        );
+        
+    END IF;
+END;
+
+DELIMITER //
+
+CREATE TRIGGER trg_log_inserimento_articoli
+AFTER INSERT ON Articoli_Scaffali
+FOR EACH ROW
+BEGIN
+    DECLARE v_attributi TEXT;
+
+    SELECT GROUP_CONCAT(CONCAT(attr.Nome, ': ', assoc.Valore) SEPARATOR ' | ')
+    INTO v_attributi
+    FROM Attributi_Associati assoc
+    JOIN Attributi_Articoli attr ON assoc.Attributo_Id = attr.Attributo_Id
+    WHERE assoc.Articolo_Id = NEW.Articolo_Id;
+
+    IF v_attributi IS NULL THEN
+        SET v_attributi = 'Nessun attributo associato';
+    END IF;
+
+    INSERT INTO Log_Modifiche_Quantita (
+        Articolo_Id,
+        Numero_Scaffale,
+        Armadio_Id,
+        Qta_Nuovo_Precedente,
+        Qta_Nuovo_Aggiornata,
+        Qta_Usato_Precedente,
+        Qta_Usato_Aggiornata,
+        Attributi
+    ) VALUES (
+        NEW.Articolo_Id,
+        NEW.Numero,
+        NEW.Armadio_Id,
+        0,
+        NEW.Quantita_Nuovo,
+        0,
+        NEW.Quantita_Usato,
+        v_attributi
+    );
+END;
+//
+
+DELIMITER ;

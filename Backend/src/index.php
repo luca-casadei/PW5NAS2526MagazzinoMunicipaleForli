@@ -1,9 +1,11 @@
 <?php
 declare(strict_types=1);
 namespace Backend;
+
 ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
+
 use Backend\config\IniParser;
 use Backend\Infrastructure\DatabaseConnector;
 use Backend\Infrastructure\SessionManager;
@@ -36,15 +38,11 @@ try{
     $config_dto = $iniconfig->load_maria_config("config.ini");
 
     $connection = DatabaseConnector::get_instance($config_dto);
-    $user_repository = new UserRepository($connection);
-    $userPwd_repository = new UserPwdRepository($connection);
+    
     $schoolClass_repository = new SchoolClassRepository($connection);
 
-    $user_service = new UserService($user_repository);
-    $userPwd_service = new UserPwdService($userPwd_repository);
     $schoolClass_service = new SchoolClassService($schoolClass_repository);
 
-    $auth_controller = new AuthController($user_service, $userPwd_service, $sessionManager);
     $class_Controller = new SchoolClassController($schoolClass_service, $user_service,$sessionManager);
 
     //prende solo url ed elimina anche parametri
