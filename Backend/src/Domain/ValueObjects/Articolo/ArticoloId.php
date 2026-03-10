@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Backend\Domain\ValueObjects\Identifier;
+namespace Backend\Domain\ValueObjects\Articolo;
 
 use InvalidArgumentException;
 
 /**
  * Wrapper immutabile per l'identificativo unico dell'articolo.
  */
-final readonly class AttributoId
+final readonly class ArticoloId
 {
     /**
      * @param int $valore Deve essere maggiore di zero.
@@ -17,7 +17,7 @@ final readonly class AttributoId
     public function __construct(public int $valore)
     {
         if ($valore <= 0) {
-            throw new InvalidArgumentException('L ID Attributo deve essere positivo.');
+            throw new InvalidArgumentException('L ID Articolo deve essere positivo.');
         }
     }
 }

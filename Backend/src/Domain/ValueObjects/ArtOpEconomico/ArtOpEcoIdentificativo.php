@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Backend\Domain\ValueObjects\Identifier;
+namespace Backend\Domain\ValueObjects\ArtOpEconomico;
 
 use InvalidArgumentException;
 
-final readonly class CodiceArOpEcIdentificativo
+final readonly class ArtOpEcoIdentificativo
 {
     public function __construct(public string $valore)
     {

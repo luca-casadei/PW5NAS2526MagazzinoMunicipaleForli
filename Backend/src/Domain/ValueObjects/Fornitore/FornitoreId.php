@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Backend\Domain\ValueObjects\Identifier;
+namespace Backend\Domain\ValueObjects\Fornitore;
 
 use InvalidArgumentException;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Backend\Domain\ValueObjects\Value;
+namespace Backend\Domain\ValueObjects\Scaffale;
 
 use InvalidArgumentException;
 
