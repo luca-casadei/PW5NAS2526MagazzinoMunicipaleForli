@@ -13,5 +13,8 @@ final readonly class TipologiaNome
         if (strlen(trim($nome)) < 0) {
             throw new InvalidArgumentException('la lunghezza del nome deve essere positiva.');
         }
+        if (mb_strlen($nome) > 100) {
+            throw new InvalidArgumentException('La lunghezza del nome deve essere minore di 100.');
+        }
     }
 }

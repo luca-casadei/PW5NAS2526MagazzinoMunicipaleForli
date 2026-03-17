@@ -1,4 +1,4 @@
-USE Project_WorkDB;
+USE Project_Work;
 CREATE TABLE Attributi_Articoli (
     Attributo_Id INT NOT NULL AUTO_INCREMENT,
     Nome VARCHAR(100) NOT NULL,
@@ -81,10 +81,8 @@ CREATE TABLE Log_Modifiche_Quantita (
     Articolo_Id INT NOT NULL,
     Numero_Scaffale INT NOT NULL,
     Armadio_Id INT NOT NULL,
-    Qta_Nuovo_Precedente INT NOT NULL,
-    Qta_Nuovo_Aggiornata INT NOT NULL,
-    Qta_Usato_Precedente INT NOT NULL,
-    Qta_Usato_Aggiornata INT NOT NULL,
+    QtaPrecedente INT NOT NULL,
+    QtaAggiornata INT NOT NULL,
     Attributi TEXT NOT NULL,
     PRIMARY KEY (Log_Id)
 );
@@ -96,7 +94,8 @@ BEGIN
     DECLARE v_attributi test_string TEXT;
 
     -- Eseguiamo il log SOLO se c'è stata una reale variazione nelle quantità
-    IF (OLD.Quantita_Nuovo <> NEW.Quantita_Nuovo) OR (OLD.Quantita_Usato <> NEW.Quantita_Usato) THEN
+    IF (OLD.Quantita <> NEW.Quantita)
+THEN
         
         
         SELECT GROUP_CONCAT(CONCAT(attr.Nome, ': ', assoc.Valore) SEPARATOR ' | ')
@@ -114,19 +113,15 @@ BEGIN
             Articolo_Id,
             Numero_Scaffale,
             Armadio_Id,
-            Qta_Nuovo_Precedente,
-            Qta_Nuovo_Aggiornata,
-            Qta_Usato_Precedente,
-            Qta_Usato_Aggiornata,
+            QtaPrecedente,
+            QtaAggiornata,
             Attributi
         ) VALUES (
             NEW.Articolo_Id,
             NEW.Numero,
             NEW.Armadio_Id,
-            OLD.Quantita_Nuovo,
-            NEW.Quantita_Nuovo,
-            OLD.Quantita_Usato,
-            NEW.Quantita_Usato,
+            OLD.Quantita
+            NEW.Quantita
             v_attributi
         );
         
@@ -155,19 +150,15 @@ BEGIN
         Articolo_Id,
         Numero_Scaffale,
         Armadio_Id,
-        Qta_Nuovo_Precedente,
-        Qta_Nuovo_Aggiornata,
-        Qta_Usato_Precedente,
-        Qta_Usato_Aggiornata,
+        QtaPrecedente,
+        QtaAggiornata,
         Attributi
     ) VALUES (
         NEW.Articolo_Id,
         NEW.Numero,
         NEW.Armadio_Id,
         0,
-        NEW.Quantita_Nuovo,
-        0,
-        NEW.Quantita_Usato,
+        NEW.Quantita,
         v_attributi
     );
 END;
