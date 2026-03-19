@@ -5,7 +5,6 @@ namespace Backend\config\dtos;
 readonly class MariaDTO
 {
     public string $host;
-    //#[SensitiveParameter] // Nasconde la password nei log di errore/stack trace, non so dove va
     public string $password;
     public string $user;
     public string $dbname;

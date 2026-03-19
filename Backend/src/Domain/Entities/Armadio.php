@@ -7,7 +7,9 @@ use Backend\Domain\ValueObjects\Armadio\ArmadioId;
 
 final readonly class Armadio
 {
-    public function __construct(public ArmadioId $id)
+    public function __construct(
+        public ArmadioId $id,
+        )
     {
     }
 }
