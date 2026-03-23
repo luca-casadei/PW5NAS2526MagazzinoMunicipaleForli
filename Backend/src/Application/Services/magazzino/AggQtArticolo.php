@@ -1,13 +1,10 @@
 <?php
 declare(strict_types=1);
 namespace Backend\Application\Services;
-use Backend\Application\interfaces\serv\ISchoolClassService;
-use Backend\Application\interfaces\repo\ISchoolClassRepository;
-use Backend\Application\commands\CreateSchoolClassDTO;
-use Backend\Application\mappers\CreateMapper;
-use Backend\Domain\SchoolClass;
 
-class SchoolClassService implements ISchoolClassService{
+use Backend\Application\interfaces\serv\IAggQtArticolo;
+
+class AggQtArticolo implements IAggQtArticolo{
     private ISchoolClassRepository $repo;
     public function __construct(ISchoolClassRepository $repository){
         $this->repo = $repository;
@@ -23,12 +20,6 @@ class SchoolClassService implements ISchoolClassService{
             throw new \Exception("Sei già iscritto a questa classe", 400);
         }
         $this->repo->addUserToClass($emailUser, $class->get_id());
-    }
-    public function getClassById(int $id):?SchoolClass{
-        return $this->repo->getClassById($id);
-    }
-    public function getClassesOfRespo(string $emailRespo):array {
-        return$this->repo->getClassesOfRespo($emailRespo);
     }
     public function getUserClasses(string $emailUser):array{
         return $this->repo->getUserClasses($emailUser);

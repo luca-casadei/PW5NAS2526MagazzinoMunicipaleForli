@@ -1,9 +1,8 @@
 <?php
 declare(strict_types=1);
 namespace Backend\Application\interfaces\serv;
-use Backend\Domain\SchoolClass;
-use Backend\Application\commands\CreateSchoolClassDTO;
-interface ISchoolClassService{
+
+interface IAggQtArticolo{
     public function enterClass(string $link, string $emailUser):void;
     public function getClassById(int $id):?SchoolClass;
     public function getClassesOfRespo(string $emailRespo):array;
