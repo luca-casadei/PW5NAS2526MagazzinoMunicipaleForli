@@ -1,6 +1,6 @@
 FROM php:8.2-apache
 
-# Installa driver per il DB
+# Installa libreria per il DB
 RUN docker-php-ext-install mysqli pdo pdo_mysql
 
 # Abilita il modulo rewrite
