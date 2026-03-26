@@ -11,5 +11,4 @@ class AggQtArticoloRepo implements IAggQtArticoloRepo{
     public function __construct(DatabaseConnector $connector){
         $this->connector = $connector;
     }
-    
 }
