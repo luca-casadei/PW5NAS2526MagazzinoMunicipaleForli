@@ -18,10 +18,18 @@ use Backend\Domain\ValueObjects\ArticoliInScaffali\QuantitaScorta;
 use Backend\Domain\ValueObjects\Articolo\ArticoloId;
 use Backend\Domain\ValueObjects\ArtOpEconomico\ArtOpEcoDescrizione;
 use Backend\Domain\ValueObjects\ArtOpEconomico\ArtOpEcoIdentificativo;
+use Backend\Domain\ValueObjects\ArtRegionale\ArtRegIdentificativo;
+use Backend\Domain\ValueObjects\ArtRegionale\ArtRegionaleDescrizione;
 use Backend\Domain\ValueObjects\AttributiAssociati\AttributiAssociatiId;
+use Backend\Domain\ValueObjects\AttributiAssociati\ValoreAttributo;
 use Backend\Domain\ValueObjects\Attributo\AttributoId;
+use Backend\Domain\ValueObjects\Attributo\AttributoNome;
+use Backend\Domain\ValueObjects\Fornitore\FornitoreId;
 use Backend\Domain\ValueObjects\Scaffale\NumeroScaffale;
 use Backend\Domain\ValueObjects\Scaffale\ScaffaleId;
+use Backend\Domain\ValueObjects\Tipologia\TipologiaDescrizione;
+use Backend\Domain\ValueObjects\Tipologia\TipologiaId;
+use Backend\Domain\ValueObjects\Tipologia\TipologiaNome;
 use Backend\Infrastructure\dtos\ArmadioDTO;
 use Backend\Infrastructure\dtos\ArticoliInScaffaliDTO;
 use Backend\Infrastructure\dtos\ArticoloDTO;
@@ -116,81 +124,75 @@ class Mapper{
     public static function ArtRegionale_To_DTO(ArtRegionale $artRegionale):ArtRegionaleDTO
     {
         return new ArtRegionaleDTO(
-            $scaffale->id->idArmadio->valore,
-            $scaffale->id->numScaffale->numero
+            $artRegionale->id->valore,
+            $artRegionale->descrizione->descrizione
         );
     }
 
     public static function DTO_To_ArtRegionale(ArtRegionaleDTO $artRegionaleDTO):ArtRegionale{
         return new ArtRegionale(
-            new ScaffaleId(
-                new ArmadioId($scaffaleDTO->armadioId),
-                new NumeroScaffale($scaffaleDTO->numeroScaffale)
-            )
+            new ArtRegIdentificativo($artRegionaleDTO->id),
+            new ArtRegionaleDescrizione($artRegionaleDTO->descrizione)
         );
     }
     public static function AttributiAssociati_To_DTO(AttributiAssociati $attributiAssociati):AttributiAssociatiDTO
     {
         return new AttributiAssociatiDTO(
-            $scaffale->id->idArmadio->valore,
-            $scaffale->id->numScaffale->numero
+            $attributiAssociati->id->idArticolo->valore,
+            $attributiAssociati->id->idAttributo->valore,
+            $attributiAssociati->valore->valore
         );
     }
 
     public static function DTO_To_AttributiAssociati(AttributiAssociatiDTO $attributiAssociatiDTO):AttributiAssociati{
         return new AttributiAssociati(
-            new ScaffaleId(
-                new ArmadioId($scaffaleDTO->armadioId),
-                new NumeroScaffale($scaffaleDTO->numeroScaffale)
-            )
+            new AttributiAssociatiId(
+                new ArticoloId($attributiAssociatiDTO->articoloId),
+                new AttributoId($attributiAssociatiDTO->attributoId)
+            ),
+            new ValoreAttributo($attributiAssociatiDTO->valore)
         );
     }
     public static function Attributo_To_DTO(Attributo $attributo):AttributoDTO
     {
         return new AttributoDTO(
-            $scaffale->id->idArmadio->valore,
-            $scaffale->id->numScaffale->numero
+            $attributo->id->valore,
+            $attributo->nome->nome
         );
     }
 
     public static function DTO_To_Attributo(AttributoDTO $attributoDTO):Attributo{
         return new Attributo(
-            new ScaffaleId(
-                new ArmadioId($scaffaleDTO->armadioId),
-                new NumeroScaffale($scaffaleDTO->numeroScaffale)
-            )
+            new AttributoId($attributoDTO->id),
+            new AttributoNome($attributoDTO->nome)
         );
     }
     public static function Fornitore_To_DTO(Fornitore $fornitore):FornitoreDTO
     {
         return new FornitoreDTO(
-            $scaffale->id->idArmadio->valore,
-            $scaffale->id->numScaffale->numero
+            $fornitore->id->ragioneSociale
         );
     }
 
     public static function DTO_To_Fornitore(FornitoreDTO $fornitoreDTO):Fornitore{
         return new Fornitore(
-            new ScaffaleId(
-                new ArmadioId($scaffaleDTO->armadioId),
-                new NumeroScaffale($scaffaleDTO->numeroScaffale)
-            )
+            new FornitoreId($fornitoreDTO->id)
         );
     }
     public static function Tipologia_To_DTO(Tipologia $tipologia):TipologiaDTO
     {
         return new TipologiaDTO(
-            $scaffale->id->idArmadio->valore,
-            $scaffale->id->numScaffale->numero
+            $tipologia->id->valore,
+            $tipologia->nome->nome,
+            $tipologia->descrizione->descrizione
         );
     }
 
-    public static function DTO_To_Tipologia(ScaffaleDTO $tipologiaDTO):Tipologia{
+    public static function DTO_To_Tipologia(TipologiaDTO $tipologiaDTO):Tipologia{
         return new Tipologia(
-            new ScaffaleId(
-                new ArmadioId($scaffaleDTO->armadioId),
-                new NumeroScaffale($scaffaleDTO->numeroScaffale)
-            )
+            new TipologiaId($tipologiaDTO->id),
+            new TipologiaNome($tipologiaDTO->nome),
+            new TipologiaDescrizione($tipologiaDTO->descrizione)
         );
     }
 }

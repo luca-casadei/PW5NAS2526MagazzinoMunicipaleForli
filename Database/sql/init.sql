@@ -87,16 +87,16 @@ CREATE TABLE Log_Modifiche_Quantita (
     PRIMARY KEY (Log_Id)
 );
 
+DELIMITER //
+
 CREATE TRIGGER trg_log_modifica_quantita
 AFTER UPDATE ON Articoli_Scaffali
 FOR EACH ROW
 BEGIN
-    DECLARE v_attributi test_string TEXT;
+    DECLARE v_attributi TEXT;
 
     -- Eseguiamo il log SOLO se c'è stata una reale variazione nelle quantità
-    IF (OLD.Quantita <> NEW.Quantita)
-THEN
-        
+    IF (OLD.Quantita <> NEW.Quantita) THEN
         
         SELECT GROUP_CONCAT(CONCAT(attr.Nome, ': ', assoc.Valore) SEPARATOR ' | ')
         INTO v_attributi
@@ -120,15 +120,16 @@ THEN
             NEW.Articolo_Id,
             NEW.Numero,
             NEW.Armadio_Id,
-            OLD.Quantita
-            NEW.Quantita
+            OLD.Quantita,
+            NEW.Quantita,
             v_attributi
         );
         
     END IF;
 END;
+//
 
-DELIMITER //
+DELIMITER ;
 
 CREATE TRIGGER trg_log_inserimento_articoli
 AFTER INSERT ON Articoli_Scaffali

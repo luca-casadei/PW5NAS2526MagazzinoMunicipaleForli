@@ -11,4 +11,15 @@ class AggQtArticoloRepo implements IAggQtArticoloRepo{
     public function __construct(DatabaseConnector $connector){
         $this->connector = $connector;
     }
+    public function aggiungiQuantita(int $idArticolo, int $numScaffale, int $idArmadio): void{
+        $db = $this->connector->get_db();
+        $query = "UPDATE Articoli_Scaffali
+            SET Quantita = Quantita + 1
+            WHERE Articolo_Id = ?
+                AND Numero = ? 
+                AND Armadio_Id = ?;";
+        $stmt = $db->prepare($query);
+        $stmt->bind_param("iii", $idArticolo, $numScaffale, $idArmadio);
+        $stmt->execute();
+    }
 }
