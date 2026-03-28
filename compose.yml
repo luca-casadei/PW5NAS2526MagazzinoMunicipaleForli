@@ -12,7 +12,7 @@ services:
     build: ./Backend
     #per tests
     #ports:
-      #- 5050:80
+      #- 5050:5050
     # Se il container crasha o si ferma, riavvialo sempre, 
     #a meno che non lo fermi io manualmente (docker stop).
     restart: unless-stopped

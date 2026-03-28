@@ -1,4 +1,5 @@
 <?php
+/*
 declare(strict_types=1);
 namespace Backend\Application\interfaces;
 
@@ -8,3 +9,4 @@ interface ISession {
     public function is_logged_in(): bool;
     public function get_current_user(): ?string;
 }
+    */

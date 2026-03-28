@@ -1,4 +1,5 @@
 <?php
+/*
 declare(strict_types=1);
 namespace Backend\Infrastructure;
 use Backend\Application\interfaces\ISession;
@@ -32,4 +33,6 @@ class SessionManager implements ISession {
         }
         return null;
     }
+        
 }
+    */
