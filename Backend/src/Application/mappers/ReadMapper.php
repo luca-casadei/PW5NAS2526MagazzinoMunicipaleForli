@@ -42,33 +42,33 @@ use Backend\Domain\ValueObjects\Tipologia\TipologiaId;
 use Backend\Domain\ValueObjects\Tipologia\TipologiaNome;
 class ReadMapper{
     //TODO
-    public static function ReadArmadio_To_DTO(Armadio $armadio):ReadArmadioDTO
+    public static function Armadio_To_DTO(Armadio $armadio):ReadArmadioDTO
     {
         return new ReadArmadioDTO(
             $armadio->id->valore
         );
     }
 
-    public static function DTO_To_ReadArmadio(ReadArmadioDTO $armadioDTO):Armadio{
+    public static function DTO_To_Armadio(ReadArmadioDTO $armadioDTO):Armadio{
         return new Armadio(
             new ArmadioId($armadioDTO->id)
         );
     }
 
-    public static function ReadArticolo_To_DTO(Articolo $articolo):ReadArticoloDTO
+    public static function Articolo_To_DTO(Articolo $articolo):ReadArticoloDTO
     {
         return new ReadArticoloDTO(
             $articolo->id->valore
         );
     }
 
-    public static function DTO_To_ReadArticolo(ReadArticoloDTO $articoloDTO):Articolo{
+    public static function DTO_To_Articolo(ReadArticoloDTO $articoloDTO):Articolo{
         return new Articolo(
             new ArticoloId($articoloDTO->id)
         );
     }
 
-    public static function ReadScaffale_To_DTO(Scaffale $scaffale):ReadScaffaleDTO
+    public static function Scaffale_To_DTO(Scaffale $scaffale):ReadScaffaleDTO
     {
         return new ReadScaffaleDTO(
             $scaffale->id->idArmadio->valore,
@@ -76,7 +76,7 @@ class ReadMapper{
         );
     }
 
-    public static function DTO_To_ReadScaffale(ReadScaffaleDTO $scaffaleDTO):Scaffale{
+    public static function DTO_To_Scaffale(ReadScaffaleDTO $scaffaleDTO):Scaffale{
         return new Scaffale(
             new ScaffaleId(
                 new ArmadioId($scaffaleDTO->armadioId),
@@ -84,7 +84,7 @@ class ReadMapper{
             )
         );
     }
-    public static function ReadArticoliInScaffali_To_DTO(ArticoliInScaffali $articoliInScaffali):ReadArticoliInScaffaliDTO
+    public static function ArticoliInScaffali_To_DTO(ArticoliInScaffali $articoliInScaffali):ReadArticoliInScaffaliDTO
     {
         return new ReadArticoliInScaffaliDTO(
             $articoliInScaffali->id->idScaffale->idArmadio->valore,
@@ -94,7 +94,7 @@ class ReadMapper{
         );
     }
 
-    public static function DTO_To_ReadArticoliInScaffali(ReadArticoliInScaffaliDTO $articoliInScaffaliDTO):ArticoliInScaffali{
+    public static function DTO_To_ArticoliInScaffali(ReadArticoliInScaffaliDTO $articoliInScaffaliDTO):ArticoliInScaffali{
         return new ArticoliInScaffali(
             new ArticoliInScaffaliId(
                 new ArticoloId($articoliInScaffaliDTO->articoloId),
@@ -106,7 +106,7 @@ class ReadMapper{
             new QuantitaScorta($articoliInScaffaliDTO->quantita)
         );
     }
-    public static function ReadArtOpEconomico_To_DTO(ArtOpEconomico $artOpEconomico):ReadArtOpEconomicoDTO
+    public static function ArtOpEconomico_To_DTO(ArtOpEconomico $artOpEconomico):ReadArtOpEconomicoDTO
     {
         return new ReadArtOpEconomicoDTO(
             $artOpEconomico->id->valore,
@@ -114,13 +114,13 @@ class ReadMapper{
         );
     }
 
-    public static function DTO_To_ReadArtOpEconomico(ReadArtOpEconomicoDTO $artOpEconomicoDTO):ArtOpEconomico{
+    public static function DTO_To_ArtOpEconomico(ReadArtOpEconomicoDTO $artOpEconomicoDTO):ArtOpEconomico{
         return new ArtOpEconomico(
             new ArtOpEcoIdentificativo($artOpEconomicoDTO->id),
             new ArtOpEcoDescrizione($artOpEconomicoDTO->descrizione)
         );
     }
-    public static function ReadArtRegionale_To_DTO(ArtRegionale $artRegionale):ReadArtRegionaleDTO
+    public static function ArtRegionale_To_DTO(ArtRegionale $artRegionale):ReadArtRegionaleDTO
     {
         return new ReadArtRegionaleDTO(
             $artRegionale->id->valore,
@@ -128,13 +128,13 @@ class ReadMapper{
         );
     }
 
-    public static function DTO_To_ReadArtRegionale(ReadArtRegionaleDTO $artRegionaleDTO):ArtRegionale{
+    public static function DTO_To_ArtRegionale(ReadArtRegionaleDTO $artRegionaleDTO):ArtRegionale{
         return new ArtRegionale(
             new ArtRegIdentificativo($artRegionaleDTO->id),
             new ArtRegionaleDescrizione($artRegionaleDTO->descrizione)
         );
     }
-    public static function ReadAttributiAssociati_To_DTO(AttributiAssociati $attributiAssociati):ReadAttributiAssociatiDTO
+    public static function AttributiAssociati_To_DTO(AttributiAssociati $attributiAssociati):ReadAttributiAssociatiDTO
     {
         return new ReadAttributiAssociatiDTO(
             $attributiAssociati->id->idArticolo->valore,
@@ -143,7 +143,7 @@ class ReadMapper{
         );
     }
 
-    public static function DTO_To_ReadAttributiAssociati(ReadAttributiAssociatiDTO $attributiAssociatiDTO):AttributiAssociati{
+    public static function DTO_To_AttributiAssociati(ReadAttributiAssociatiDTO $attributiAssociatiDTO):AttributiAssociati{
         return new AttributiAssociati(
             new AttributiAssociatiId(
                 new ArticoloId($attributiAssociatiDTO->articoloId),
@@ -152,7 +152,7 @@ class ReadMapper{
             new ValoreAttributo($attributiAssociatiDTO->valore)
         );
     }
-    public static function ReadAttributo_To_DTO(Attributo $attributo):ReadAttributoDTO
+    public static function Attributo_To_DTO(Attributo $attributo):ReadAttributoDTO
     {
         return new ReadAttributoDTO(
             $attributo->id->valore,
@@ -160,25 +160,25 @@ class ReadMapper{
         );
     }
 
-    public static function DTO_To_ReadAttributo(ReadAttributoDTO $attributoDTO):Attributo{
+    public static function DTO_To_Attributo(ReadAttributoDTO $attributoDTO):Attributo{
         return new Attributo(
             new AttributoId($attributoDTO->id),
             new AttributoNome($attributoDTO->nome)
         );
     }
-    public static function ReadFornitore_To_DTO(Fornitore $fornitore):ReadFornitoreDTO
+    public static function Fornitore_To_DTO(Fornitore $fornitore):ReadFornitoreDTO
     {
         return new ReadFornitoreDTO(
             $fornitore->id->ragioneSociale
         );
     }
 
-    public static function DTO_To_ReadFornitore(ReadFornitoreDTO $fornitoreDTO):Fornitore{
+    public static function DTO_To_Fornitore(ReadFornitoreDTO $fornitoreDTO):Fornitore{
         return new Fornitore(
             new FornitoreId($fornitoreDTO->id)
         );
     }
-    public static function ReadTipologia_To_DTO(Tipologia $tipologia):ReadTipologiaDTO
+    public static function Tipologia_To_DTO(Tipologia $tipologia):ReadTipologiaDTO
     {
         return new ReadTipologiaDTO(
             $tipologia->id->valore,
@@ -187,7 +187,7 @@ class ReadMapper{
         );
     }
 
-    public static function DTO_To_ReadTipologia(ReadTipologiaDTO $tipologiaDTO):Tipologia{
+    public static function DTO_To_Tipologia(ReadTipologiaDTO $tipologiaDTO):Tipologia{
         return new Tipologia(
             new TipologiaId($tipologiaDTO->id),
             new TipologiaNome($tipologiaDTO->nome),
