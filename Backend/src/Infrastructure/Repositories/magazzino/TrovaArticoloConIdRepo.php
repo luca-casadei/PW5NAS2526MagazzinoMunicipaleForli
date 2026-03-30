@@ -4,6 +4,8 @@ namespace Backend\Infrastructure\Repositories;
 
 use Backend\Application\interfaces\repo\ITrovaArticoloConIdRepo;
 use Backend\Infrastructure\DatabaseConnector;
+use Backend\Infrastructure\dtos\AttributiAssociatiDTO;
+use Backend\Infrastructure\mapper\Mapper;
 
 
 class TrovaArticoloConIdRepo implements ITrovaArticoloConIdRepo{
@@ -11,20 +13,21 @@ class TrovaArticoloConIdRepo implements ITrovaArticoloConIdRepo{
     public function __construct(DatabaseConnector $connector){
         $this->connector = $connector;
     }
-    public function getArtById(int $id)
+    public function getArtById(int $id): array
     {
         $db = $this->connector->get_db();
-        $query = "SELECT C.nome, C.link, C.materia, U.email 
-        FROM Classi AS C JOIN Utenti AS U ON C.Id_Utente_Respo = U.Utente_Id 
-        WHERE C.Classe_Id = ?";
+        $query = "SELECT AA.Articolo_Id, AA.Attributo_Id, AA.Valore 
+        FROM Attributi_Associati AS AA
+        WHERE AA.Articolo_Id = ?";
         $stmt = $db->prepare($query);
         $stmt->bind_param("i", $id);
         $stmt->execute();
-        $res = $stmt->get_result()->fetch_assoc();
-        if (!$res) {
-            return null;
+        $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $attributi = [];
+        foreach($result as $res){
+            $dto = new AttributiAssociatiDTO($res["Articolo_Id"], $res["Attributo_Id"], $res["Valore"]);
+            $attributi[] = Mapper::DTO_To_AttributiAssociati($dto);
         }
-        $dto = new SchoolClassDTO($id,$res["nome"], $res["link"], $res["materia"], $res["email"]);
-        return Mapper::DTO_To_SchoolClass($dto);
+        return $attributi;
     }
 }
