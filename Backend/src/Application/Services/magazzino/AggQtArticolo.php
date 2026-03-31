@@ -2,51 +2,55 @@
 declare(strict_types=1);
 namespace Backend\Application\Services;
 
+use Backend\Application\interfaces\repo\IAggiornaQtArticoloRepo;
+use Backend\Application\interfaces\repo\IGetQtArticoloRepo;
 use Backend\Application\interfaces\serv\IAggQtArticolo;
+use Backend\Domain\Entities\ArticoliInScaffali;
+use Backend\Domain\ValueObjects\Armadio\ArmadioId;
+use Backend\Domain\ValueObjects\ArticoliInScaffali\ArticoliInScaffaliId;
+use Backend\Domain\ValueObjects\ArticoliInScaffali\QuantitaScorta;
+use Backend\Domain\ValueObjects\Articolo\ArticoloId;
+use Backend\Domain\ValueObjects\Scaffale\NumeroScaffale;
+use Backend\Domain\ValueObjects\Scaffale\ScaffaleId;
+use Exception;
 
 class AggQtArticolo implements IAggQtArticolo{
-    private ISchoolClassRepository $repo;
-    public function __construct(ISchoolClassRepository $repository){
-        $this->repo = $repository;
+    private IAggiornaQtArticoloRepo $repoAgg;
+    private IGetQtArticoloRepo $repoQt;
+    public function __construct(IAggiornaQtArticoloRepo $repository, IGetQtArticoloRepo $repoQt){
+        $this->repoAgg = $repository;
+        $this->repoQt = $repoQt;
     }
-    public function enterClass(string $link, string $emailUser):void{
-        $class = $this->repo->getClassByLink($link);
-        if($class === null){
-            throw new \Exception("Link non valido", 400);
+    public function execute(int $articoloId, int $numeroScaffale, int $armadioId, int $quantitaDaAggiungere): void {
+        // 1. Validazione della logica di business
+        if ($quantitaDaAggiungere <= 0) {
+            throw new Exception("La quantità da aggiungere deve essere positiva.");
         }
-        // Controlliamo se l'utente è già iscritto alla classe
-        $isAlreadyInClass = $this->repo->isUserInClass($emailUser, $class->get_id());
-        if($isAlreadyInClass){
-            throw new \Exception("Sei già iscritto a questa classe", 400);
-        }
-        $this->repo->addUserToClass($emailUser, $class->get_id());
-    }
-    public function getUserClasses(string $emailUser):array{
-        return $this->repo->getUserClasses($emailUser);
-    }
-    public function createClass(CreateSchoolClassDTO $classCreate):string{
-        $link = "";
-        $is_unique = false;
-        $max_tentativi = 5; 
-        $tentativi_fatti = 0;
-        
-        do {
-            $link = bin2hex(random_bytes(16));
-            // Qui il Service chiama il suo stesso Repository (o un altro metodo)
-            $esiste_gia = $this->repo->is_link_exists($link);
-            
-            if (!$esiste_gia) {
-                $is_unique = true;
-            }
-            $tentativi_fatti++;
-        } while (!$is_unique && $tentativi_fatti < $max_tentativi);
 
-        if (!$is_unique) {
-            // Lanciamo l'eccezione, che verrà catturata dal blocco try-catch nel Controller
-            throw new \Exception("Errore di sistema: impossibile generare un link per la classe. Riprova.", 500);
+        // 2. Recupero della quantità attuale tramite Repository
+        $quantitaAttuale = $this->repoQt->getQuantita($articoloId, $numeroScaffale, $armadioId);
+
+        if (!$quantitaAttuale) {
+            // Gestione dell'errore se l'associazione articolo-scaffale non esiste
+            throw new Exception("L'articolo con ID $articoloId non è presente nello scaffale $numeroScaffale dell'armadio $armadioId.");
         }
-        $class = CreateMapper::CreateSchoolClassDTO_To_SchoolClass($classCreate, $link);
-        $this->repo->createClass($class);
-        return $link;
+
+        // 3. Calcolo della nuova quantità
+        $nuovaQuantitaTotale = $quantitaAttuale + $quantitaDaAggiungere;
+
+        // 4. Preparazione del DTO per l'aggiornamento
+        $quantitaAggiornataDto = new ArticoliInScaffali(
+            new ArticoliInScaffaliId(
+                new ArticoloId($articoloId),
+                new ScaffaleId(
+                    new ArmadioId($armadioId),
+                    new NumeroScaffale($numeroScaffale)
+                )
+            ),
+            new QuantitaScorta($nuovaQuantitaTotale)
+        );
+        // 5. Aggiornamento sul DB tramite Repository
+        // Restituisce il Model simulato aggiornato
+        return $this->repoAgg->updateQuantita($quantitaAggiornataDto);
     }
 }

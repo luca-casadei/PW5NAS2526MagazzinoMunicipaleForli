@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Backend\Infrastructure\Repositories;
 
 use Backend\Application\interfaces\repo\IAggQtArticoloRepo;
+use Backend\Domain\Entities\ArticoliInScaffali;
 use Backend\Infrastructure\DatabaseConnector;
 
 
@@ -11,15 +12,21 @@ class AggQtArticoloRepo implements IAggQtArticoloRepo{
     public function __construct(DatabaseConnector $connector){
         $this->connector = $connector;
     }
-    public function aggiungiQuantita(int $idArticolo, int $numScaffale, int $idArmadio): void{
+    public function updateQuantita(ArticoliInScaffali $articoliInScaffali): void
+    {
         $db = $this->connector->get_db();
         $query = "UPDATE Articoli_Scaffali
-            SET Quantita = Quantita + 1
-            WHERE Articolo_Id = ?
-                AND Numero = ? 
-                AND Armadio_Id = ?;";
+                  SET Quantita = ? 
+                  WHERE Articolo_Id = ? 
+                    AND Numero = ? 
+                    AND Armadio_Id = ?;";
         $stmt = $db->prepare($query);
-        $stmt->bind_param("iii", $idArticolo, $numScaffale, $idArmadio);
+        $stmt->bind_param("iiii", 
+            $articoliInScaffali->quantita,
+            $articoliInScaffali->id->idArticolo,
+            $articoliInScaffali->id->idScaffale->numScaffale,
+            $articoliInScaffali->id->idScaffale->idArmadio
+        );
         $stmt->execute();
     }
 }
