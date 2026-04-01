@@ -3,35 +3,31 @@ declare(strict_types=1);
 namespace Backend\Infrastructure\Repositories;
 
 use Backend\Infrastructure\DatabaseConnector;
-use Backend\Application\interfaces\repo\IGetQtArticoloRepo;
-class GetQtArticoloRepo implements IGetQtArticoloRepo{
+use Backend\Application\interfaces\repo\IGetQtTotArticoloRepo;
+class GetQtArticoloRepo implements IGetQtTotArticoloRepo{
     private DatabaseConnector $connector;
     public function __construct(DatabaseConnector $connector){
         $this->connector = $connector;
     }
-    public function getQuantita(int $articoloId, int $numeroScaffale, int $armadioId): int | null
+    public function getQuantita(int $articoloId): int | null
     {
         $db = $this->connector->get_db();
-        $query = "SELECT Quantita 
+        $query = "SELECT SUM(Quantita) AS QuantitaTotale
                   FROM Articoli_Scaffali
-                  WHERE Articolo_Id = ? 
-                    AND Numero = ? 
-                    AND Armadio_Id = ?;";
+                  WHERE Articolo_Id = ?;";
 
         $stmt = $db->prepare($query);
-        $stmt->bind_param("iii", $articoloId, $numeroScaffale, $armadioId);
+        $stmt->bind_param("i", $articoloId);
         $stmt->execute();
 
         // Recuperiamo il risultato
         $result = $stmt->get_result();
-        
-        // Se l'articolo non è nello scaffale, restituiamo null
+
         if ($result->num_rows === 0) {
             return null;
         }
-
         $row = $result->fetch_assoc();
 
-        return $row['Quantita'];
+        return $row['QuantitaTotale'];
     }
 }

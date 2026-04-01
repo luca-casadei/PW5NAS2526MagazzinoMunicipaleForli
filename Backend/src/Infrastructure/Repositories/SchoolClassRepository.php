@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Backend\Infrastructure\Repositories;
 use Backend\Infrastructure\DatabaseConnector;
+use Backend\Infrastructure\dtos\ArticoloDTO;
 use Backend\Infrastructure\mapper\Mapper;
 use Backend\Infrastructure\dtos\SchoolClassDTO;
 use Backend\Domain\SchoolClass;
@@ -107,11 +108,14 @@ class SchoolClassRepository implements ISchoolClassRepository{
         $db = $this->connector->get_db();
         // Contiamo quante righe hanno questo esatto link
         $query = "SELECT COUNT(*) as conteggio FROM Frequenta WHERE Id_Utente = (SELECT Utente_Id FROM Utenti WHERE email = ?) AND Id_Classe = ?";
-        $stmt = $db->prepare($query);
-        $stmt->bind_param("si", $userEmail, $classId);
-        $stmt->execute();
-        
-        $res = $stmt->get_result()->fetch_assoc();
-        return $res['conteggio'] > 0;
+        $result = $db->query($query);
+        $res = $result->fetch_all(MYSQLI_ASSOC);
+        $articoli = [];
+        foreach ($res as $elem) {
+            $dto = new ArticoloDTO($elem['Articolo_Id'], $elem['Tipologia_Id']);
+            array_push($articoli, Mapper::DTO_To_Articolo($dto));
+        }
+        return $articoli;
+
     }
 }

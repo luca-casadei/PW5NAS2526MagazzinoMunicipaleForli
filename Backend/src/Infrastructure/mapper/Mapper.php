@@ -59,13 +59,15 @@ class Mapper{
     public static function Articolo_To_DTO(Articolo $articolo):ArticoloDTO
     {
         return new ArticoloDTO(
-            $articolo->id->valore
+            $articolo->id->valore,
+            $articolo->tipologiaId->valore
         );
     }
 
     public static function DTO_To_Articolo(ArticoloDTO $articoloDTO):Articolo{
         return new Articolo(
-            new ArticoloId($articoloDTO->id)
+            new ArticoloId($articoloDTO->id),
+            new TipologiaId($articoloDTO->tipologiaId)
         );
     }
 
