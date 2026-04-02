@@ -9,9 +9,10 @@ use Backend\Application\interfaces\repo\IGetValoreAttributoRepo;
 use Backend\Application\interfaces\repo\IVediArticoliRepo;
 use Backend\Application\interfaces\repo\IVediTipologieRepo;
 use Backend\Application\response\ResponseAttributoConValoreDTO;
+use Backend\Application\interfaces\serv\IVediArticoli;
 
 
-class MostraTuttiArticoliService
+class MostraTuttiArticoliService implements IVediArticoli
 {
     private IVediArticoliRepo $articoliRepo;
     private IVediTipologieRepo $tipologiaRepo;
