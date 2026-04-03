@@ -11,5 +11,12 @@ class EliminaTipologiaRepo implements IEliminaTipologiaRepo{
     public function __construct(DatabaseConnector $connector){
         $this->connector = $connector;
     }
-    
+    public function eliminaByNome(string $nomeTipo): void{
+        $db = $this->connector->get_db();
+        $query = "DELETE FROM Tipologie WHERE Nome = ?";
+        $stmt = $db->prepare($query);
+        $stmt->bind_param("s", $nomeTipo);
+        $stmt->execute();
+        $stmt->close();
+    }
 }

@@ -66,6 +66,7 @@ class MostraTuttiArticoliQtBasseService implements IvediArticoliQtBasse
             {
                 $articoliCompleti[] = new ResponseArticoloCompletoDTO(
                     $articoloId,
+                    $articolo['Nome'],
                     $tipologia['Tipologia_Id'],
                     $attributiConValore,
                     $quantitaTotaleDto

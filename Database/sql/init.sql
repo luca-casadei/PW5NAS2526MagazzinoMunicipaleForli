@@ -23,7 +23,7 @@ CREATE TABLE Armadi (
 
 CREATE TABLE Tipologie (
     Tipologia_Id INT NOT NULL AUTO_INCREMENT,
-    Nome VARCHAR(100) NOT NULL,
+    Nome VARCHAR(100) NOT NULL UNIQUE,
     Descrizione VARCHAR(255) NOT NULL,
     PRIMARY KEY (Tipologia_Id)
 );
@@ -46,8 +46,9 @@ CREATE TABLE Scaffali (
 
 CREATE TABLE Articoli (
     Articolo_Id INT NOT NULL AUTO_INCREMENT,
-    Codice_ArReg VARCHAR(50) NOT NULL,
-    Codice_ArOpEc VARCHAR(50) NOT NULL,
+    Nome VARCHAR(255) NOT NULL,
+    Codice_ArReg VARCHAR(50),
+    Codice_ArOpEc VARCHAR(50),
     Tipologia_Id INT NOT NULL,
     PRIMARY KEY (Articolo_Id),
     FOREIGN KEY (Codice_ArReg) REFERENCES Articoli_Regionali(Codice_ArReg) ON DELETE CASCADE,

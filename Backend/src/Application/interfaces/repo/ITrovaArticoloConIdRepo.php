@@ -2,5 +2,6 @@
 declare(strict_types=1);
 namespace Backend\Application\interfaces\repo;
 
-interface ITrovaArticoloConIdRepo{
+interface IGetAttributiArticoloConIdRepo{
+    public function getArtById(int $id): array;
 }

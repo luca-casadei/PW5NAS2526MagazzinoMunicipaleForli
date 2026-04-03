@@ -2,13 +2,13 @@
 declare(strict_types=1);
 namespace Backend\Infrastructure\Repositories;
 
-use Backend\Application\interfaces\repo\ITrovaArticoloConIdRepo;
+use Backend\Application\interfaces\repo\IGetAttributiArticoloConIdRepo;
 use Backend\Infrastructure\DatabaseConnector;
 use Backend\Infrastructure\dtos\AttributiAssociatiDTO;
 use Backend\Infrastructure\mapper\Mapper;
 
 
-class TrovaArticoloConIdRepo implements ITrovaArticoloConIdRepo{
+class TrovaArticoloConIdRepo implements IGetAttributiArticoloConIdRepo{
     private DatabaseConnector $connector;
     public function __construct(DatabaseConnector $connector){
         $this->connector = $connector;

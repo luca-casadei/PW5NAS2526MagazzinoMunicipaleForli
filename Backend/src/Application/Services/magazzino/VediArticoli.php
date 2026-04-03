@@ -65,6 +65,7 @@ class MostraTuttiArticoliService implements IVediArticoli
             // d. Aggregazione di tutte le informazioni in un singolo Model (DTO)
             $articoliCompleti[] = new ResponseArticoloCompletoDTO(
                 $articoloId,
+                $articolo['Nome'],
                 $tipologia['Tipologia_Id'],
                 $attributiConValore,
                 $quantitaTotaleDto

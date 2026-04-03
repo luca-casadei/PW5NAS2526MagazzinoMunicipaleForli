@@ -16,6 +16,7 @@ use Backend\Domain\ValueObjects\Armadio\ArmadioId;
 use Backend\Domain\ValueObjects\ArticoliInScaffali\ArticoliInScaffaliId;
 use Backend\Domain\ValueObjects\ArticoliInScaffali\QuantitaScorta;
 use Backend\Domain\ValueObjects\Articolo\ArticoloId;
+use Backend\Domain\ValueObjects\Articolo\ArticoloNome;
 use Backend\Domain\ValueObjects\ArtOpEconomico\ArtOpEcoDescrizione;
 use Backend\Domain\ValueObjects\ArtOpEconomico\ArtOpEcoIdentificativo;
 use Backend\Domain\ValueObjects\ArtRegionale\ArtRegIdentificativo;
@@ -60,6 +61,7 @@ class Mapper{
     {
         return new ArticoloDTO(
             $articolo->id->valore,
+            $articolo->nome->valore,
             $articolo->tipologiaId->valore
         );
     }
@@ -67,6 +69,7 @@ class Mapper{
     public static function DTO_To_Articolo(ArticoloDTO $articoloDTO):Articolo{
         return new Articolo(
             new ArticoloId($articoloDTO->id),
+            new ArticoloNome($articoloDTO->nome),
             new TipologiaId($articoloDTO->tipologiaId)
         );
     }

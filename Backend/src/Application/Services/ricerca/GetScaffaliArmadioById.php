@@ -3,19 +3,19 @@ declare(strict_types=1);
 
 namespace Backend\Application\Services;
 
-use Backend\Application\interfaces\repo\IVediArmadiRepo;
 use Backend\Application\interfaces\serv\IGetScaffaliArmadioById;
+use Backend\Application\interfaces\repo\IVediScaffaliRepo;
 
 
 
 class GetScaffaliArmadioById implements IGetScaffaliArmadioById{
-    private IVediArmadiRepo $armadiRepo;
+    private IVediScaffaliRepo $scaffaliRepo;
 
-    public function __construct(IVediArmadiRepo $armadiRepo)
+    public function __construct(IVediScaffaliRepo $scaffaliRepo)
 {
-        $this->armadiRepo = $armadiRepo;
+        $this->scaffaliRepo = $scaffaliRepo;
     }
     public function execute(int $id): ?array {
-        return $this->armadiRepo->getScaffaliArmadioById($id);
+        return $this->scaffaliRepo->getScaffaliArmadioById($id);
     }
 }
