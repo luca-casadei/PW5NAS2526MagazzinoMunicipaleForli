@@ -2,10 +2,12 @@
 declare(strict_types=1);
 namespace Backend\Application\commands;
 class CreateAttributoDTO{
-    public string $nome;
+    public int $id;
+    public string $valore;
     
-    public function __construct(string $nome){
-        $this->nome = $nome;
+    public function __construct(int $id, string $valore){
+        $this->id = $id;
+        $this->valore = $valore;
     } 
 }
 ?>

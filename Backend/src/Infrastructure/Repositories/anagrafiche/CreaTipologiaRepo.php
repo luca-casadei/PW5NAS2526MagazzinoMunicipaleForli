@@ -20,4 +20,15 @@ class CreaTipologiaRepo implements ICreaTipologiaRepo{
         $stmt->execute();
         $stmt->close();
     }
+    public function verificaEsistenza(string $nome): bool {
+        $db = $this->connector->get_db();
+        $query = "SELECT COUNT(*) FROM Tipologie WHERE Nome = ?;";
+        $stmt = $db->prepare($query);
+        $stmt->bind_param("s", $nome);
+        $stmt->execute();
+        $stmt->bind_result($count);
+        $stmt->fetch();
+        $stmt->close();
+        return $count > 0;
+    }
 }

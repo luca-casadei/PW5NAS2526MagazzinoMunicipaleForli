@@ -51,8 +51,8 @@ CREATE TABLE Articoli (
     Codice_ArOpEc VARCHAR(50),
     Tipologia_Id INT NOT NULL,
     PRIMARY KEY (Articolo_Id),
-    FOREIGN KEY (Codice_ArReg) REFERENCES Articoli_Regionali(Codice_ArReg) ON DELETE CASCADE,
-    FOREIGN KEY (Codice_ArOpEc) REFERENCES Articoli_Operatori_Economici(Codice_ArOpEc) ON DELETE CASCADE,
+    FOREIGN KEY (Codice_ArReg) REFERENCES Articoli_Regionali(Codice_ArReg),
+    FOREIGN KEY (Codice_ArOpEc) REFERENCES Articoli_Operatori_Economici(Codice_ArOpEc),
     FOREIGN KEY (Tipologia_Id) REFERENCES Tipologie(Tipologia_Id) ON DELETE CASCADE
 );
 

@@ -13,6 +13,9 @@ class CreaTipologia implements ICreaTipologia{
         $this->repo = $repository;
     }
     public function execute(Tipologia $tipologia): void{
+        if ($this->repo->verificaEsistenza($tipologia->nome->nome)) {
+            throw new \Exception("Errore: Esiste già una tipologia con questo nome.");
+        }
         $this->repo->execute($tipologia);
     }
 }

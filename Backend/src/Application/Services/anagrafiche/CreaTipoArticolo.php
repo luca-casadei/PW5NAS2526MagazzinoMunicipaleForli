@@ -2,61 +2,72 @@
 declare(strict_types=1);
 namespace Backend\Application\Services;
 
-use Backend\Application\interfaces\repo\ICreaTipologiaRepo;
+
+use Backend\Application\commands\CreateAttrArtDTO;
+use Backend\Application\commands\CreateAttributoDTO;
+use Backend\Application\interfaces\repo\IAssociaAttributoRepo;
+use Backend\Application\interfaces\repo\ICreaArticoloRepo;
+use Backend\Application\interfaces\repo\ICreaAttributoRepo;
+use Backend\Application\interfaces\repo\IGetArticoloPerFirmaRepo;
+use Backend\Application\interfaces\repo\IGetAttributoByIdRepo;
 use Backend\Application\interfaces\serv\ICreaTipoArticolo;
 use Exception;
 
 
 class CreaTipoArticolo implements ICreaTipoArticolo{
-    private ICreaTipologiaRepo $repo;
-    public function __construct(ICreaTipologiaRepo $repository){
-        $this->repo = $repository;
+    private IAssociaAttributoRepo $associaAttributoRepo;
+    private ICreaArticoloRepo $creaArticoloRepo;
+    private ICreaAttributoRepo $creaAttributoRepo;
+    private IGetArticoloPerFirmaRepo $getArticoloPerFirmaRepo;
+    private IGetAttributoByIdRepo $getAttributoByIdRepo;
+    public function __construct(IAssociaAttributoRepo $associaAttributoRepo, 
+    ICreaArticoloRepo $creaArticoloRepo,
+    ICreaAttributoRepo $creaAttributoRepo,
+    IGetArticoloPerFirmaRepo $getArticoloPerFirmaRepo,
+    IGetAttributoByIdRepo $getAttributoByIdRepo
+    ){
+        $this->associaAttributoRepo = $associaAttributoRepo;
+        $this->creaArticoloRepo = $creaArticoloRepo;
+        $this->creaAttributoRepo = $creaAttributoRepo;
+        $this->getArticoloPerFirmaRepo = $getArticoloPerFirmaRepo;
+        $this->getAttributoByIdRepo = $getAttributoByIdRepo;
     }
-    public function execute(int $tipologiaId, array $attributi): void {
+    public function execute(int $tipologiaId, string $nome, array $attributi): void {
         
-        if (empty($nomiAttributi)) {
+        if (empty($attributi)) {
             throw new Exception("Un Tipo Articolo deve avere almeno un attributo.");
         }
 
+        $attributiConValori = [];
         $attributiIds = [];
 
-        // 1. GESTIONE DIZIONARIO ATTRIBUTI
-        foreach ($nomiAttributi as $nome) {
+        foreach ($attributi as $attr) {
+            //unico controllo che si può faare è eliminare spazi e maiuscole o minuscole per non crearne uguali
+            $nomeAttr = strtolower(trim($attr->nome));
             // Cerchiamo se la parola esiste già
-            $id = $this->attributiRepo->findIdByNome($nome);
+            $id = $this->getAttributoByIdRepo->findIdByNome($nomeAttr);
             
             if ($id === null) {
-                // Se non esiste, lo creiamo (come hai richiesto)
-                $id = $this->attributiRepo->creaAttributo($nome);
+                // Se non esiste, lo creiamo
+                $id = $this->creaAttributoRepo->creaAttributo($nomeAttr, "");
             }
-            
+            $attributiConValori[] = new CreateAttributoDTO($id, $attr->valore);
             $attributiIds[] = $id;
         }
 
-        // Rimuoviamo eventuali duplicati per sicurezza
-        $attributiIds = array_unique($attributiIds);
-
-        // 2. CONTROLLO FIRMA ESATTA (La correzione logica)
-        // Chiediamo al DB: "Esiste già un articolo della tipologia X che usa ESATTAMENTE questi ID?"
-        $articoloEsistenteId = $this->articoloSchemaRepo->trovaArticoloPerFirmaEsatta($tipologiaId, $attributiIds);
+        $articoloEsistenteId = $this->getArticoloPerFirmaRepo->trovaArticolo($nome, $tipologiaId, $attributiIds);
 
         if ($articoloEsistenteId !== null) {
             // Se esiste, blocchiamo tutto.
             throw new Exception("Errore: Questo Tipo Articolo (Tipologia + Combinazione esatta di Attributi) esiste già.");
         }
 
-        // 3. CREAZIONE DEL TIPO ARTICOLO
-        // Creiamo un articolo "Template" (dovrai fornire codici fittizi o auto-generati per i campi NOT NULL)
-        $nuovoArticoloId = $this->articoloSchemaRepo->creaArticoloTemplate(
-            'TEMPLATE-' . time(), // Codice fittizio
-            'TEMPLATE-INT',       // Codice fittizio
-            $tipologiaId
-        );
+        $nuovoArticoloId = $this->creaArticoloRepo->creaArticolo($nome, $tipologiaId);
 
-        // 4. ASSOCIAZIONE DEGLI ATTRIBUTI
-        foreach ($attributiIds as $attrId) {
-            // Inseriamo una stringa vuota o un placeholder poiché 'Valore' è NOT NULL nel tuo DB
-            $this->articoloSchemaRepo->associaAttributo($nuovoArticoloId, $attrId, "DA_COMPILARE");
+        foreach ($attributiConValori as $attVal) {
+            $this->associaAttributoRepo->associaAttributo(
+                new CreateAttrArtDTO($nuovoArticoloId, $attVal->id, $attVal->valore)
+            );
         }
     }
 }
