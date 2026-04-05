@@ -2,6 +2,8 @@
 declare(strict_types=1);
 namespace Backend\Application\interfaces\serv;
 
+use Backend\Application\commands\UpdateAggQuantitaDTO;
+
 interface IAggQtArticolo{
-    public function execute(int $articoloId, int $numeroScaffale, int $armadioId, int $quantitaDaAggiungere):void;
+    public function execute(UpdateAggQuantitaDTO $update):void;
 }

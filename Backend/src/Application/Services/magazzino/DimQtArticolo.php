@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Backend\Application\Services;
 
+use Backend\Application\commands\UpdateDimQuantitaDTO;
 use Backend\Application\interfaces\repo\IAggiornaQtArticoloRepo;
 use Backend\Application\interfaces\repo\IGetQtArticoloRepo;
 use Backend\Application\interfaces\serv\IDimQtArticolo;
@@ -21,13 +22,13 @@ class DimQtArticolo implements IDimQtArticolo{
         $this->repoDim = $repository;
         $this->repoQt = $repoQt;
     }
-    public function execute(int $articoloId, int $numeroScaffale, int $armadioId): void {
+    public function execute(UpdateDimQuantitaDTO $update): void {
         // 2. Recupero della quantità attuale tramite Repository
-        $quantitaAttuale = $this->repoQt->getQuantita($articoloId, $numeroScaffale, $armadioId);
+        $quantitaAttuale = $this->repoQt->getQuantita($update->articoloId, $update->numScaffale, $update->armadioId);
 
         if (!$quantitaAttuale) {
             // Gestione dell'errore se l'associazione articolo-scaffale non esiste
-            throw new Exception("L'articolo con ID $articoloId non è presente nello scaffale $numeroScaffale dell'armadio $armadioId.");
+            throw new Exception("L'articolo con ID $update->articoloId non è presente nello scaffale $update->numScaffale dell'armadio $update->armadioId.");
         }
         if ($quantitaAttuale == 0) {
             throw new Exception("Non è possibile togliere altre quantità");
@@ -39,10 +40,10 @@ class DimQtArticolo implements IDimQtArticolo{
         // 4. Preparazione del DTO per l'aggiornamento
         $quantitaAggiornataDto = new ArticoliInScaffali(
             new ArticoliInScaffaliId(
-                new ArticoloId($articoloId),
+                new ArticoloId($update->articoloId),
                 new ScaffaleId(
-                    new ArmadioId($armadioId),
-                    new NumeroScaffale($numeroScaffale)
+                    new ArmadioId($update->armadioId),
+                    new NumeroScaffale($update->numScaffale)
                 )
             ),
             new QuantitaScorta($nuovaQuantitaTotale)

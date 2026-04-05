@@ -15,7 +15,7 @@ class GetScaffaliArmadioById implements IGetScaffaliArmadioById{
 {
         $this->scaffaliRepo = $scaffaliRepo;
     }
-    public function execute(int $id): ?array {
+    public function execute(int $id): array {
         return $this->scaffaliRepo->getScaffaliArmadioById($id);
     }
 }

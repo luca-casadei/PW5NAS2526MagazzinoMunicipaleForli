@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 namespace Backend\Presentation\Controllers;
+use Backend\Application\commands\CreateScaffaleDTO;
 use Backend\Application\interfaces\serv\ICreaScaffale;
 use Backend\Application\interfaces\serv\IGetAllScaffali;
 use Backend\Application\interfaces\serv\IGetScaffaliArmadioById;
@@ -17,12 +18,15 @@ class ScaffaliController {
         $this->getAllScaffaliService = $getAllScaffaliService;
         $this->vediScaffaliOfArmadioService = $vediScaffaliOfArmadioService;
     }
-    public function get_scaffale_of_armadio(){
+    public function get_scaffali_of_armadio(){
         $input = json_decode(file_get_contents('php://input'), true);
         try{
-            $this->eliminaTipoService->eliminaByNome($input['nome']);
-            $resp = new Response("success", "Tipologia eliminata", 200);
-            $this->json_response($resp, $resp->get_code());
+            $scaffaliEntities = $this->vediScaffaliOfArmadioService->execute($input['armadioId']);
+            $scaffali = [];
+            foreach($scaffaliEntities as $scaffale){
+                $scaffali[] = PresentationMapper::scaffale_to_ResponseScaffale($scaffale);
+            }
+            $resp = new Response("success", "Scaffali dell'armadio ottenuti correttamente!", 200, $scaffali);
         }
         catch(\Exception $e){
             $resp = new Response("error", $e->getMessage(), $e->getCode() ?: 500);
@@ -32,12 +36,12 @@ class ScaffaliController {
     }
     public function get_all(){
         try{
-            $tipologieEntities = $this->vediTipoService->execute();
-            $tipologie = [];
-            foreach($tipologieEntities as $tipologia){
-                $tipologie[] = PresentationMapper::tipologia_to_ResponseTipologia($tipologia);
+            $scaffaliEntities = $this->getAllScaffaliService->execute();
+            $scaffali = [];
+            foreach($scaffaliEntities as $scaffale){
+                $scaffali[] = PresentationMapper::scaffale_to_ResponseScaffale($scaffale);
             }
-            $resp = new Response("success", "Tipologie ottenute correttamente!", 200, $tipologie);
+            $resp = new Response("success", "Scaffali ottenuti correttamente!", 200, $scaffali);
             $this->json_response($resp, $resp->get_code());
         }
         catch(\Exception $e){
@@ -50,13 +54,13 @@ class ScaffaliController {
     public function crea_scaffale() {
         $input = json_decode(file_get_contents('php://input'), true);
         // Creiamo il DTO senza descrizione
-        $createTipologia = new CreateTipologiaDTO(
-            $input['nome'], ""
+        $createScaffale = new CreateScaffaleDTO(
+            $input['armadioId']
         );
         
         try {
-            $this->creaTipoService->execute($createTipologia);
-            $resp = new Response("success","Tipologia creata", 201);
+            $this->creaScaffaleService->execute($createScaffale);
+            $resp = new Response("success","Scaffale creato", 201);
             $this->json_response($resp, $resp->get_code());
 
         } catch (\Exception $e) {

@@ -13,7 +13,7 @@ class VediScaffaliRepo implements IVediScaffaliRepo{
     public function __construct(DatabaseConnector $connector){
         $this->connector = $connector;
     }
-    public function getScaffaliArmadioById(int $id): ?array{
+    public function getScaffaliArmadioById(int $id): array{
         $db = $this->connector->get_db();
         
         $query = "SELECT Numero FROM Scaffali WHERE Armadio_Id = ?;";
@@ -23,10 +23,6 @@ class VediScaffaliRepo implements IVediScaffaliRepo{
         $stmt->execute();
         
         $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-        
-        if ($result === null || count($result) === 0) {
-            return null;
-        }
         
         $numeriScaffali = [];
         foreach ($result as $elem) {

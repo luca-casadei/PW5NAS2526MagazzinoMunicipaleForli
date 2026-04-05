@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Backend\Application\Services;
 
+use Backend\Application\commands\UpdateAggQuantitaDTO;
 use Backend\Application\interfaces\repo\IAggiornaQtArticoloRepo;
 use Backend\Application\interfaces\repo\IGetQtArticoloRepo;
 use Backend\Application\interfaces\serv\IAggQtArticolo;
@@ -21,30 +22,30 @@ class AggQtArticolo implements IAggQtArticolo{
         $this->repoAgg = $repository;
         $this->repoQt = $repoQt;
     }
-    public function execute(int $articoloId, int $numeroScaffale, int $armadioId, int $quantitaDaAggiungere): void {
+    public function execute(UpdateAggQuantitaDTO $update): void {
         // 1. Validazione della logica di business
-        if ($quantitaDaAggiungere <= 0) {
+        if ($update->quantitaAgg <= 0) {
             throw new Exception("La quantità da aggiungere deve essere positiva.");
         }
 
         // 2. Recupero della quantità attuale tramite Repository
-        $quantitaAttuale = $this->repoQt->getQuantita($articoloId, $numeroScaffale, $armadioId);
+        $quantitaAttuale = $this->repoQt->getQuantita($update->articoloId, $update->numScaffale, $update->armadioId);
 
         if (!$quantitaAttuale) {
             // Gestione dell'errore se l'associazione articolo-scaffale non esiste
-            throw new Exception("L'articolo con ID $articoloId non è presente nello scaffale $numeroScaffale dell'armadio $armadioId.");
+            throw new Exception("L'articolo con ID $update->articoloId non è presente nello scaffale $update->numScaffale dell'armadio $update->armadioId.");
         }
 
         // 3. Calcolo della nuova quantità
-        $nuovaQuantitaTotale = $quantitaAttuale + $quantitaDaAggiungere;
+        $nuovaQuantitaTotale = $quantitaAttuale + $update->quantitaAgg;
 
         // 4. Preparazione del DTO per l'aggiornamento
         $quantitaAggiornataDto = new ArticoliInScaffali(
             new ArticoliInScaffaliId(
-                new ArticoloId($articoloId),
+                new ArticoloId($update->articoloId),
                 new ScaffaleId(
-                    new ArmadioId($armadioId),
-                    new NumeroScaffale($numeroScaffale)
+                    new ArmadioId($update->armadioId),
+                    new NumeroScaffale($update->numScaffale)
                 )
             ),
             new QuantitaScorta($nuovaQuantitaTotale)
