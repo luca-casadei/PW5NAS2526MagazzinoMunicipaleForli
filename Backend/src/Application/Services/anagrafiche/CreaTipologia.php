@@ -2,9 +2,10 @@
 declare(strict_types=1);
 namespace Backend\Application\Services;
 
+use Backend\Application\commands\CreateTipologiaDTO;
 use Backend\Application\interfaces\repo\ICreaTipologiaRepo;
 use Backend\Application\interfaces\serv\ICreaTipologia;
-use Backend\Domain\Entities\Tipologia;
+use Backend\Application\mappers\CreateMapper;
 
 
 class CreaTipologia implements ICreaTipologia{
@@ -12,10 +13,11 @@ class CreaTipologia implements ICreaTipologia{
     public function __construct(ICreaTipologiaRepo $repository){
         $this->repo = $repository;
     }
-    public function execute(Tipologia $tipologia): void{
-        if ($this->repo->verificaEsistenza($tipologia->nome->nome)) {
+    public function execute(CreateTipologiaDTO $tipologia): void{
+        if ($this->repo->verificaEsistenza($tipologia->nome)) {
             throw new \Exception("Errore: Esiste già una tipologia con questo nome.");
         }
-        $this->repo->execute($tipologia);
+        $tipo = CreateMapper::DTO_To_Tipologia($tipologia);
+        $this->repo->execute($tipo);
     }
 }

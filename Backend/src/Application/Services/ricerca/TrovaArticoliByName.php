@@ -6,22 +6,22 @@ use App\Application\response\ResponseArticoloCompletoDTO;
 use Backend\Application\interfaces\repo\IGetAttributiByArtIdRepo;
 use Backend\Application\interfaces\repo\IGetQtTotArticoloRepo;
 use Backend\Application\interfaces\repo\IGetValoreAttributoRepo;
-use Backend\Application\interfaces\repo\IVediArticoliRepo;
+use Backend\Application\interfaces\repo\IVediArticoliByNomeRepo;
 use Backend\Application\interfaces\repo\IVediTipologieRepo;
 use Backend\Application\response\ResponseAttributoConValoreDTO;
-use Backend\Application\interfaces\serv\IVediArticoliQtBasse;
+use Backend\Application\interfaces\serv\ITrovaArticoliByNome;
 
 
-class MostraTuttiArticoliQtBasse implements IvediArticoliQtBasse
+class TrovaArticoliByName implements ITrovaArticoliByNome
 {
-    private IVediArticoliRepo $articoliRepo;
+    private IVediArticoliByNomeRepo $articoliRepo;
     private IVediTipologieRepo $tipologiaRepo;
     private IGetAttributiByArtIdRepo $attributiRepo;
     private IGetValoreAttributoRepo $valoreAttributoRepo;
     private IGetQtTotArticoloRepo $quantitaTotaleRepo;
 
     public function __construct(
-        IVediArticoliRepo $articoliRepo,
+        IVediArticoliByNomeRepo $articoliRepo,
         IVediTipologieRepo $tipologiaRepo,
         IGetAttributiByArtIdRepo $attributiRepo,
         IGetValoreAttributoRepo $valoreAttributoRepo,
@@ -33,10 +33,10 @@ class MostraTuttiArticoliQtBasse implements IvediArticoliQtBasse
         $this->valoreAttributoRepo = $valoreAttributoRepo;
         $this->quantitaTotaleRepo = $quantitaTotaleRepo;
     }
-    public function execute(int $quantitaMinima): array
+    public function getArticoliByNome(string $nome): array
     {
         // 1. Recupero della lista base di tutti gli articoli tramite Repository
-        $articoliBase = $this->articoliRepo->getAllArticoli();
+        $articoliBase = $this->articoliRepo->getArticoliByNome($nome);
 
         $articoliCompleti = [];
 
@@ -62,16 +62,14 @@ class MostraTuttiArticoliQtBasse implements IvediArticoliQtBasse
             // c. Recupero della quantità totale tramite Repository
             $quantitaTotaleDto = $this->quantitaTotaleRepo->getQuantita($articoloId);
 
-            if($quantitaTotaleDto <= $quantitaMinima)
-            {
-                $articoliCompleti[] = new ResponseArticoloCompletoDTO(
-                    $articoloId,
-                    $articolo['Nome'],
-                    $tipologia['Tipologia_Id'],
-                    $attributiConValore,
-                    $quantitaTotaleDto
-                );
-            }            
+            // d. Aggregazione di tutte le informazioni in un singolo Model (DTO)
+            $articoliCompleti[] = new ResponseArticoloCompletoDTO(
+                $articoloId,
+                $articolo['Nome'],
+                $tipologia['Tipologia_Id'],
+                $attributiConValore,
+                $quantitaTotaleDto
+            );
         }
         return $articoliCompleti;
     }

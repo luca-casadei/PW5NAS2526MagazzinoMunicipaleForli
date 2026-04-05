@@ -5,27 +5,40 @@ namespace Backend\Application\mappers;
 use Backend\Application\commands\CreateArtOpEconomicoDTO;
 use Backend\Application\commands\CreateArtRegionaleDTO;
 use Backend\Application\commands\CreateAttributoDTO;
+use Backend\Application\commands\CreateScaffaleDTO;
 use Backend\Application\commands\CreateTipologiaDTO;
 use Backend\Domain\Entities\ArtOpEconomico;
 use Backend\Domain\Entities\ArtRegionale;
 use Backend\Domain\Entities\Attributo;
+use Backend\Domain\Entities\Scaffale;
 use Backend\Domain\Entities\Tipologia;
+use Backend\Domain\ValueObjects\Armadio\ArmadioId;
 use Backend\Domain\ValueObjects\ArtOpEconomico\ArtOpEcoDescrizione;
 use Backend\Domain\ValueObjects\ArtOpEconomico\ArtOpEcoIdentificativo;
 use Backend\Domain\ValueObjects\ArtRegionale\ArtRegIdentificativo;
 use Backend\Domain\ValueObjects\ArtRegionale\ArtRegionaleDescrizione;
 use Backend\Domain\ValueObjects\Attributo\AttributoId;
 use Backend\Domain\ValueObjects\Attributo\AttributoNome;
+use Backend\Domain\ValueObjects\Scaffale\NumeroScaffale;
+use Backend\Domain\ValueObjects\Scaffale\ScaffaleId;
 use Backend\Domain\ValueObjects\Tipologia\TipologiaDescrizione;
 use Backend\Domain\ValueObjects\Tipologia\TipologiaId;
 use Backend\Domain\ValueObjects\Tipologia\TipologiaNome;
-class ReadMapper{
+class CreateMapper{
     //TODO
 
     public static function DTO_To_ArtOpEconomico(CreateArtOpEconomicoDTO $artOpEconomicoDTO):ArtOpEconomico{
         return new ArtOpEconomico(
             new ArtOpEcoIdentificativo($artOpEconomicoDTO->id),
             new ArtOpEcoDescrizione($artOpEconomicoDTO->descrizione)
+        );
+    }
+    public static function DTO_To_Scaffale(CreateScaffaleDTO $scaffaleDTO):Scaffale{
+        return new Scaffale(
+            new ScaffaleId(
+                new ArmadioId($scaffaleDTO->armadioId),
+                new NumeroScaffale(0)
+            )
         );
     }
 
@@ -39,7 +52,7 @@ class ReadMapper{
     public static function DTO_To_Attributo(CreateAttributoDTO $attributoDTO):Attributo{
         return new Attributo(
             new AttributoId(0),
-            new AttributoNome($attributoDTO->nome)
+            new AttributoNome($attributoDTO->valore)
         );
     }
     public static function DTO_To_Tipologia(CreateTipologiaDTO $tipologiaDTO):Tipologia{

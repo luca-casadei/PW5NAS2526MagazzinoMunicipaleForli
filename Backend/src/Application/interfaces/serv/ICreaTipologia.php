@@ -2,8 +2,7 @@
 declare(strict_types=1);
 namespace Backend\Application\interfaces\serv;
 
-use Backend\Domain\Entities\Tipologia;
-
+use Backend\Application\commands\CreateTipologiaDTO;
 interface ICreaTipologia{
-    public function execute(Tipologia $tipologia): void;
+    public function execute(CreateTipologiaDTO $tipologia): void;
 }

@@ -5,6 +5,8 @@ namespace Backend\Application\Services;
 
 use Backend\Application\commands\CreateAttrArtDTO;
 use Backend\Application\commands\CreateAttributoDTO;
+use Backend\Application\commands\CreateTipoArticoloDTO;
+use Backend\Application\dtos\ReadValoreAttributoDTO;
 use Backend\Application\interfaces\repo\IAssociaAttributoRepo;
 use Backend\Application\interfaces\repo\ICreaArticoloRepo;
 use Backend\Application\interfaces\repo\ICreaAttributoRepo;
@@ -32,16 +34,16 @@ class CreaTipoArticolo implements ICreaTipoArticolo{
         $this->getArticoloPerFirmaRepo = $getArticoloPerFirmaRepo;
         $this->getAttributoByIdRepo = $getAttributoByIdRepo;
     }
-    public function execute(int $tipologiaId, string $nome, array $attributi): void {
+    public function execute(CreateTipoArticoloDTO $command): void {
         
-        if (empty($attributi)) {
+        if (empty($command->attributi)) {
             throw new Exception("Un Tipo Articolo deve avere almeno un attributo.");
         }
 
         $attributiConValori = [];
         $attributiIds = [];
 
-        foreach ($attributi as $attr) {
+        foreach ($command->attributi as $attr) {
             //unico controllo che si può faare è eliminare spazi e maiuscole o minuscole per non crearne uguali
             $nomeAttr = strtolower(trim($attr->nome));
             // Cerchiamo se la parola esiste già
@@ -51,18 +53,18 @@ class CreaTipoArticolo implements ICreaTipoArticolo{
                 // Se non esiste, lo creiamo
                 $id = $this->creaAttributoRepo->creaAttributo($nomeAttr, "");
             }
-            $attributiConValori[] = new CreateAttributoDTO($id, $attr->valore);
+            $attributiConValori[] = new ReadValoreAttributoDTO($id, $attr->valore);
             $attributiIds[] = $id;
         }
 
-        $articoloEsistenteId = $this->getArticoloPerFirmaRepo->trovaArticolo($nome, $tipologiaId, $attributiIds);
+        $articoloEsistenteId = $this->getArticoloPerFirmaRepo->trovaArticolo($command->nome, $command->tipologiaId, $attributiIds);
 
         if ($articoloEsistenteId !== null) {
             // Se esiste, blocchiamo tutto.
             throw new Exception("Errore: Questo Tipo Articolo (Tipologia + Combinazione esatta di Attributi) esiste già.");
         }
 
-        $nuovoArticoloId = $this->creaArticoloRepo->creaArticolo($nome, $tipologiaId);
+        $nuovoArticoloId = $this->creaArticoloRepo->creaArticolo($command->nome, $command->tipologiaId);
 
         foreach ($attributiConValori as $attVal) {
             $this->associaAttributoRepo->associaAttributo(

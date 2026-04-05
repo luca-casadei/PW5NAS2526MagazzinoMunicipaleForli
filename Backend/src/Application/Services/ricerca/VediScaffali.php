@@ -11,7 +11,7 @@ use Backend\Application\interfaces\repo\IVediArticoliRepo;
 use Backend\Application\interfaces\repo\IVediTipologieRepo;
 use Backend\Application\response\ResponseAttributoConValoreDTO;
 
-class VediScaffali implements IVediScaffali{
+class VediContenutoScaffali implements IVediScaffali{
     private IVediArticoliRepo $articoliRepo;
     private IVediTipologieRepo $tipologiaRepo;
     private IGetAttributiByArtIdRepo $attributiRepo;
@@ -48,7 +48,7 @@ class VediScaffali implements IVediScaffali{
             // b. Recupero degli attributi e valori tramite Repository
             $attributiConValore = [];
             $attributi = $this->attributiRepo->getAttributiByArticoloId($articoloId);
-            foreach ($attributi as &$attributo) {
+            foreach ($attributi as $attributo) {
                 $valore = $this->valoreAttributoRepo->getValore($articoloId, $attributo['Attributo_Id']);
                 $attributiConValore[] = new ResponseAttributoConValoreDTO(
                     $attributo['Attributo_Id'],
@@ -63,6 +63,7 @@ class VediScaffali implements IVediScaffali{
             // d. Aggregazione di tutte le informazioni in un singolo Model (DTO)
             $articoliCompleti[] = new ResponseArticoloCompletoDTO(
                 $articoloId,
+                $articolo['Nome'],
                 $tipologia['Tipologia_Id'],
                 $attributiConValore,
                 $quantitaTotaleDto

@@ -12,7 +12,7 @@ use Backend\Application\response\ResponseAttributoConValoreDTO;
 use Backend\Application\interfaces\serv\IVediArticoli;
 
 
-class MostraTuttiArticoliService implements IVediArticoli
+class MostraTuttiArticoli implements IVediArticoli
 {
     private IVediArticoliRepo $articoliRepo;
     private IVediTipologieRepo $tipologiaRepo;
