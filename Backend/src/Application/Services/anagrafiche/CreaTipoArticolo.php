@@ -1,17 +1,15 @@
 <?php
 declare(strict_types=1);
-namespace Backend\Application\Services;
-
+namespace Backend\Application\Services\anagrafiche;
 
 use Backend\Application\commands\CreateAttrArtDTO;
-use Backend\Application\commands\CreateAttributoDTO;
 use Backend\Application\commands\CreateTipoArticoloDTO;
 use Backend\Application\dtos\ReadValoreAttributoDTO;
-use Backend\Application\interfaces\repo\IAssociaAttributoRepo;
-use Backend\Application\interfaces\repo\ICreaArticoloRepo;
-use Backend\Application\interfaces\repo\ICreaAttributoRepo;
-use Backend\Application\interfaces\repo\IGetArticoloPerFirmaRepo;
-use Backend\Application\interfaces\repo\IGetAttributoByIdRepo;
+use Backend\Application\interfaces\repo\gestioneTipoArticolo\IAssociaAttributoRepo;
+use Backend\Application\interfaces\repo\gestioneTipoArticolo\ICreaArticoloRepo;
+use Backend\Application\interfaces\repo\gestioneTipoArticolo\ICreaAttributoRepo;
+use Backend\Application\interfaces\repo\gestioneTipoArticolo\IGetArticoloPerFirmaRepo;
+use Backend\Application\interfaces\repo\gestioneTipoArticolo\IGetAttributoByIdRepo;
 use Backend\Application\interfaces\serv\ICreaTipoArticolo;
 use Exception;
 

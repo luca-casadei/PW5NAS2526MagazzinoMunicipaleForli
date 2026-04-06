@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Backend\Infrastructure\Repositories;
-
+namespace Backend\Infrastructure\Repositories\ricerca;
 use Backend\Application\interfaces\repo\IVediScaffaliRepo;
 use Backend\Infrastructure\DatabaseConnector;
 use Backend\Infrastructure\dtos\ScaffaleDTO;

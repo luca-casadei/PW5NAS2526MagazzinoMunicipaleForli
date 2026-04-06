@@ -1,10 +1,9 @@
 <?php
 declare(strict_types=1);
-namespace Backend\Infrastructure\Repositories;
-
+namespace Backend\Infrastructure\Repositories\magazzino;
 use Backend\Infrastructure\DatabaseConnector;
 use Backend\Application\interfaces\repo\IGetQtTotArticoloRepo;
-class GetQtArticoloRepo implements IGetQtTotArticoloRepo{
+class GetQtTotArtRepo implements IGetQtTotArticoloRepo{
     private DatabaseConnector $connector;
     public function __construct(DatabaseConnector $connector){
         $this->connector = $connector;

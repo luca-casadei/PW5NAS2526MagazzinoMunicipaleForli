@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Backend\Application\Services;
+namespace Backend\Application\Services\magazzino;
 
 use Backend\Application\interfaces\repo\IVediTutteTipologieRepo;
 use Backend\Application\interfaces\serv\IVediTipologie;

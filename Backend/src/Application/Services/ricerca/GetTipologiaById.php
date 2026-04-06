@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Backend\Application\Services;
+namespace Backend\Application\Services\ricerca;
 
 use Backend\Application\interfaces\repo\IGetTipologiaByIdRepo;
 use Backend\Application\interfaces\serv\IGetTipologiaById;

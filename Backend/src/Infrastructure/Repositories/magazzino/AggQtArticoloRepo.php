@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Backend\Infrastructure\Repositories;
+namespace Backend\Infrastructure\Repositories\magazzino;
 
 use Backend\Application\interfaces\repo\IAggiornaQtArticoloRepo;
 use Backend\Domain\Entities\ArticoliInScaffali;

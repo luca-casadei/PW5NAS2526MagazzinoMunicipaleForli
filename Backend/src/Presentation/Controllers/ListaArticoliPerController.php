@@ -3,26 +3,26 @@ declare(strict_types=1);
 namespace Backend\Presentation\Controllers;
 
 use Backend\Application\interfaces\serv\IGetTipologiaById;
-use Backend\Application\interfaces\serv\IVediArticoli;
-use Backend\Application\interfaces\serv\IVediArticoliQtBasse;
+use Backend\Application\interfaces\serv\ITrovaArticoliByNome;
+use Backend\Application\interfaces\serv\IVediScaffali;
 use Backend\Presentation\dtos\ResponseArticoli;
 use Backend\Presentation\Response;
 
 // Estendiamo la classe astratta invece di crearla da zero
-class ListaArticoliController {
-    private IVediArticoli $articoliService;
+class ListaArticoliPerController {
+    private ITrovaArticoliByNome $artNomeService;
+    private IVediScaffali $artScaffaliService;
     private IGetTipologiaById $getTipologiaService;
-    private IVediArticoliQtBasse $articoliQtBasseService;
-    public function __construct(IVediArticoli $articoliService, IGetTipologiaById $getTipologiaService, IVediArticoliQtBasse $articoliQtBasseService) {
-        $this->articoliService = $articoliService;
+    public function __construct(ITrovaArticoliByNome $artNomeService, IVediScaffali $artScaffaliService, IGetTipologiaById $getTipologiaService) {
+        $this->artNomeService = $artNomeService;
+        $this->artScaffaliService = $artScaffaliService;
         $this->getTipologiaService = $getTipologiaService;
-        $this->articoliQtBasseService = $articoliQtBasseService;
     }
-    public function get_articoli() {
+    public function get_articoli_per_nome() {
         $input = json_decode(file_get_contents('php://input'), true);
         
         try {
-            $articoliCompleti = $this->articoliService->execute();
+            $articoliCompleti = $this->artNomeService->getArticoliByNome($input['nomeArt']);
             $articoliResponse = [];
             foreach ($articoliCompleti as $articolo){
                 $tipologia = $this->getTipologiaService->execute($articolo->idTipologia);
@@ -44,11 +44,11 @@ class ListaArticoliController {
             return;
         }
     }
-    public function get_articoli_qt_bassa() {
+    public function get_articoli_per_scaffale() {
         $input = json_decode(file_get_contents('php://input'), true);
         
         try {
-            $articoliCompleti = $this->articoliQtBasseService->execute($input['qtMinima']);
+            $articoliCompleti = $this->artScaffaliService->getContenutoById($input['idArmadio'], $input['numScaffale']);
             $articoliResponse = [];
             foreach ($articoliCompleti as $articolo){
                 $tipologia = $this->getTipologiaService->execute($articolo->idTipologia);

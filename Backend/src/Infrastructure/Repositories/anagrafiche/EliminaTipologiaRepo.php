@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Backend\Infrastructure\Repositories;
+namespace Backend\Infrastructure\Repositories\anagrafiche;
 
 use Backend\Application\interfaces\repo\IEliminaTipologiaRepo;
 use Backend\Infrastructure\DatabaseConnector;

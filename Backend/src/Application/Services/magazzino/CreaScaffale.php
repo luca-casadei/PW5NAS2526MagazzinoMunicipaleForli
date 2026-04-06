@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Backend\Application\Services;
+namespace Backend\Application\Services\magazzino;
 
 use Backend\Application\commands\CreateScaffaleDTO;
 use Backend\Application\interfaces\repo\ICreaScaffaleRepo;
@@ -15,6 +15,6 @@ class CreaScaffale implements ICreaScaffale{
     }
     public function execute(CreateScaffaleDTO $dto): void{
         $scaffale = CreateMapper::DTO_To_Scaffale($dto);
-        return $this->repo->execute($scaffale);
+        $this->repo->execute($scaffale);
     }
 }

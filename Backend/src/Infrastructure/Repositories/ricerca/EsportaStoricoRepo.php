@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Backend\Infrastructure\Repositories;
+namespace Backend\Infrastructure\Repositories\ricerca;
 
 use Backend\Application\interfaces\repo\IEsportaStoricoRepo;
 use Backend\Application\response\ResponseLogMovimentoDTO;

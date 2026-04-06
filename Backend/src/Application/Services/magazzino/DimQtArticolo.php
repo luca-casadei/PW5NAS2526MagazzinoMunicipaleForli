@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Backend\Application\Services;
+namespace Backend\Application\Services\magazzino;
 
 use Backend\Application\commands\UpdateDimQuantitaDTO;
 use Backend\Application\interfaces\repo\IAggiornaQtArticoloRepo;
@@ -48,6 +48,6 @@ class DimQtArticolo implements IDimQtArticolo{
             ),
             new QuantitaScorta($nuovaQuantitaTotale)
         );
-        return $this->repoDim->updateQuantita($quantitaAggiornataDto);
+        $this->repoDim->updateQuantita($quantitaAggiornataDto);
     }
 }

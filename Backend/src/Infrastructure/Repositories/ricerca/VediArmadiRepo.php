@@ -1,8 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Backend\Infrastructure\Repositories;
-
+namespace Backend\Infrastructure\Repositories\ricerca;
 use Backend\Application\interfaces\repo\IVediArmadiRepo;
 use Backend\Infrastructure\DatabaseConnector;
 use Backend\Infrastructure\dtos\ArmadioDTO;

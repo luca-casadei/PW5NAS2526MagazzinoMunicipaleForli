@@ -1,4 +1,4 @@
-USE Project_Work;
+USE Project_WorkDB;
 CREATE TABLE Attributi_Articoli (
     Attributo_Id INT NOT NULL AUTO_INCREMENT,
     Nome VARCHAR(100) NOT NULL,

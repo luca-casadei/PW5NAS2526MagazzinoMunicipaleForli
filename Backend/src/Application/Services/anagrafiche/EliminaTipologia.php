@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Backend\Application\Services;
+namespace Backend\Application\Services\anagrafiche;
 
 use Backend\Application\interfaces\repo\IEliminaTipologiaRepo;
 use Backend\Application\interfaces\serv\IEliminaTipologia;

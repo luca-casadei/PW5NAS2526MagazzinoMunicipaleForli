@@ -16,7 +16,7 @@ final readonly class TipologiaId
      */
     public function __construct(public int $valore)
     {
-        if ($valore <= 0) {
+        if ($valore < 0) {
             throw new InvalidArgumentException('L ID Tipologia deve essere positivo.');
         }
     }

@@ -1,12 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Backend\Application\Services;
+namespace Backend\Application\Services\ricerca;
 
 use Backend\Application\interfaces\serv\IGetScaffaliArmadioById;
 use Backend\Application\interfaces\repo\IVediScaffaliRepo;
-
-
 
 class GetScaffaliArmadioById implements IGetScaffaliArmadioById{
     private IVediScaffaliRepo $scaffaliRepo;

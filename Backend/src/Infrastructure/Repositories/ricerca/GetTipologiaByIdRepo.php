@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Backend\Infrastructure\Repositories;
-
+namespace Backend\Infrastructure\Repositories\ricerca;
 use Backend\Application\interfaces\repo\IGetTipologiaByIdRepo;
 use Backend\Domain\Entities\Tipologia;
 use Backend\Infrastructure\DatabaseConnector;

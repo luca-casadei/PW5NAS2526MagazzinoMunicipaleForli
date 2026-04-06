@@ -16,7 +16,7 @@ final readonly class NumeroScaffale
      */
     public function __construct(public int $numero)
     {
-        if ($numero <= 0) {
+        if ($numero < 0) {
             throw new InvalidArgumentException('Il numero di scaffale deve essere positivo.');
         }
     }

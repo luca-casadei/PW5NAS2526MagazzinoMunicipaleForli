@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
-namespace Backend\Infrastructure\Repositories;
+namespace Backend\Infrastructure\Repositories\anagrafiche\gestioneTipoArticolo;
 
 use Backend\Application\commands\CreateAttrArtDTO;
-use Backend\Application\interfaces\repo\IAssociaAttributoRepo;
+use Backend\Application\interfaces\repo\gestioneTipoArticolo\IAssociaAttributoRepo;
 use Backend\Infrastructure\DatabaseConnector;
 
 

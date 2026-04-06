@@ -1,6 +1,6 @@
 <?php
-
-namespace Backend\Application\Services;
+declare(strict_types=1);
+namespace Backend\Application\Services\ricerca;
 
 use App\Application\response\ResponseArticoloCompletoDTO;
 use Backend\Application\interfaces\repo\IGetAttributiByArtIdRepo;

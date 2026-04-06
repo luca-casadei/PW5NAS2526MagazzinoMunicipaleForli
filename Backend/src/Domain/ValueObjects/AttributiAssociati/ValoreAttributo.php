@@ -10,7 +10,7 @@ final readonly class ValoreAttributo
 {
     public function __construct(public string $valore)
     {
-        if (strlen(trim($valore)) < 0) {
+        if (strlen(trim($valore)) <= 0) {
             throw new InvalidArgumentException('La qlunghezza del valore non può essere negativa.');
         }
     }

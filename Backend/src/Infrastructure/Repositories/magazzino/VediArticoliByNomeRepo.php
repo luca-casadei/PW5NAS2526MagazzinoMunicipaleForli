@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Backend\Infrastructure\Repositories;
-
+namespace Backend\Infrastructure\Repositories\magazzino;
 use Backend\Application\interfaces\repo\IVediArticoliByNomeRepo;
 use Backend\Infrastructure\DatabaseConnector;
 use Backend\Infrastructure\mapper\Mapper;

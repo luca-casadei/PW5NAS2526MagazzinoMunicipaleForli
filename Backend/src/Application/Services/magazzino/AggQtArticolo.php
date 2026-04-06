@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Backend\Application\Services;
+namespace Backend\Application\Services\magazzino;
 
 use Backend\Application\commands\UpdateAggQuantitaDTO;
 use Backend\Application\interfaces\repo\IAggiornaQtArticoloRepo;
@@ -52,6 +52,6 @@ class AggQtArticolo implements IAggQtArticolo{
         );
         // 5. Aggiornamento sul DB tramite Repository
         // Restituisce il Model simulato aggiornato
-        return $this->repoAgg->updateQuantita($quantitaAggiornataDto);
+        $this->repoAgg->updateQuantita($quantitaAggiornataDto);
     }
 }

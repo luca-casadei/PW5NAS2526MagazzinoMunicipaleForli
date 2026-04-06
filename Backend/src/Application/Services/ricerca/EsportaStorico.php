@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace Backend\Application\Services;
+namespace Backend\Application\Services\ricerca;
 
 use Backend\Application\interfaces\repo\IEsportaStoricoRepo;
 use Backend\Application\interfaces\serv\IEsportaStorico;
 
-class EsportaStoricoService implements IEsportaStorico {
+class EsportaStorico implements IEsportaStorico {
     private IEsportaStoricoRepo $storicoRepo;
 
     public function __construct(IEsportaStoricoRepo $storicoRepo) {

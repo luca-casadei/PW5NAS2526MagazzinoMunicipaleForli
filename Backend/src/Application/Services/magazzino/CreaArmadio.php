@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Backend\Application\Services;
+namespace Backend\Application\Services\magazzino;
 
 use Backend\Application\interfaces\repo\ICreaArmadioRepo;
 use Backend\Application\interfaces\serv\ICreaArmadio;
@@ -12,6 +12,6 @@ class CreaArmadio implements ICreaArmadio{
         $this->repo = $repository;
     }
     public function execute(): void{
-        return $this->repo->execute();
+        $this->repo->execute();
     }
 }

@@ -1,14 +1,13 @@
 <?php
 declare(strict_types=1);
-namespace Backend\Infrastructure\Repositories;
-
+namespace Backend\Infrastructure\Repositories\ricerca;
 use Backend\Application\interfaces\repo\ILocalizzaArticoloRepo;
 use Backend\Infrastructure\DatabaseConnector;
 use Backend\Infrastructure\dtos\ArticoliInScaffaliDTO;
 use Backend\Infrastructure\mapper\Mapper;
 
 
-class LocalizzaArticolo implements ILocalizzaArticoloRepo{
+class LocalizzaArticoloRepo implements ILocalizzaArticoloRepo{
     private DatabaseConnector $connector;
     public function __construct(DatabaseConnector $connector){
         $this->connector = $connector;

@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
-namespace Backend\Infrastructure\Repositories;
+namespace Backend\Infrastructure\Repositories\anagrafiche\gestioneTipoArticolo;
 
-use Backend\Application\interfaces\repo\IGetArticoloPerFirmaRepo;
+use Backend\Application\interfaces\repo\gestioneTipoArticolo\IGetArticoloPerFirmaRepo;
 use Backend\Infrastructure\DatabaseConnector;
 
 
