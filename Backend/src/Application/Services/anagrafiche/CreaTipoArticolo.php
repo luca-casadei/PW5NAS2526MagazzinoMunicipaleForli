@@ -49,7 +49,7 @@ class CreaTipoArticolo implements ICreaTipoArticolo{
             
             if ($id === null) {
                 // Se non esiste, lo creiamo
-                $id = $this->creaAttributoRepo->creaAttributo($nomeAttr, "");
+                $id = $this->creaAttributoRepo->creaAttributo($nomeAttr);
             }
             $attributiConValori[] = new ReadValoreAttributoDTO($id, $attr->valore);
             $attributiIds[] = $id;

@@ -27,6 +27,7 @@ class ScaffaliController {
                 $scaffali[] = PresentationMapper::scaffale_to_ResponseScaffale($scaffale);
             }
             $resp = new Response("success", "Scaffali dell'armadio ottenuti correttamente!", 200, $scaffali);
+            $this->json_response($resp, $resp->get_code());
         }
         catch(\Exception $e){
             $resp = new Response("error", $e->getMessage(), $e->getCode() ?: 500);

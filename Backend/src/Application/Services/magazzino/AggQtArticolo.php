@@ -32,8 +32,9 @@ class AggQtArticolo implements IAggQtArticolo{
         $quantitaAttuale = $this->repoQt->getQuantita($update->articoloId, $update->numScaffale, $update->armadioId);
 
         if (!$quantitaAttuale) {
+            $quantitaAttuale = 0;
             // Gestione dell'errore se l'associazione articolo-scaffale non esiste
-            throw new Exception("L'articolo con ID $update->articoloId non è presente nello scaffale $update->numScaffale dell'armadio $update->armadioId.");
+            //throw new Exception("L'articolo con ID $update->articoloId non è presente nello scaffale $update->numScaffale dell'armadio $update->armadioId.");
         }
 
         // 3. Calcolo della nuova quantità

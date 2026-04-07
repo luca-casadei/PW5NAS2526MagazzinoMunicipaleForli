@@ -27,11 +27,12 @@ class ArticoliQuantitaController {
             );
             $this->aggQtArticoloService->execute($update);
             $resp = new Response("success", "Quantità aggiunta correttamente", 200);
+            $this->json_response($resp, $resp->get_code());
         }
         catch(\Exception $e){
             $resp = new Response("error", $e->getMessage(), $e->getCode() ?: 500);
             $this->json_response($resp, $resp->get_code());
-             return;
+            return;
         }
     }
     public function diminuisci(){

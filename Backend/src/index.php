@@ -38,6 +38,7 @@ use Backend\Infrastructure\Repositories\magazzino\GetQtTotArtRepo;
 use Backend\Infrastructure\Repositories\magazzino\GetValoriAttributi;
 use Backend\Infrastructure\Repositories\magazzino\TrovaArticoloConIdRepo;
 use Backend\Infrastructure\Repositories\magazzino\VediArticoliByNomeRepo;
+use Backend\Infrastructure\Repositories\ricerca\VediArticoliPerScaffaleRepo;
 use Backend\Infrastructure\Repositories\magazzino\VediArticoliRepo;
 use Backend\Infrastructure\Repositories\magazzino\VediTipologieRepo;
 use Backend\Infrastructure\Repositories\magazzino\VediTutteTipologieRepo;
@@ -46,12 +47,6 @@ use Backend\Infrastructure\Repositories\ricerca\GetTipologiaByIdRepo;
 use Backend\Infrastructure\Repositories\ricerca\LocalizzaArticoloRepo;
 use Backend\Infrastructure\Repositories\ricerca\VediArmadiRepo;
 use Backend\Infrastructure\Repositories\ricerca\VediScaffaliRepo;
-
-ini_set('display_errors', '1');
-ini_set('display_startup_errors', '1');
-error_reporting(E_ALL);
-
-
 use Backend\Presentation\Controllers\ArmadiController;
 use Backend\Presentation\Controllers\ArticoliQuantitaController;
 use Backend\Presentation\Controllers\EsportaStoricoCsvController;
@@ -63,6 +58,10 @@ use Backend\Presentation\Controllers\TipoArticoloController;
 use Backend\Presentation\Controllers\TipologieController;
 use Backend\config\IniParser;
 use Backend\Infrastructure\DatabaseConnector;
+
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
 
 
 try{
@@ -109,6 +108,7 @@ try{
     $localizzaArtRepo = new LocalizzaArticoloRepo($connection);
     $vediArmadiRepo = new VediArmadiRepo($connection);
     $vediScaffaliRepo = new VediScaffaliRepo($connection);
+    $vediArtPerScaffaleRepo = new VediArticoliPerScaffaleRepo($connection);
     
     //services
     $creaTipoArtService = new CreaTipoArticolo(
@@ -154,7 +154,7 @@ try{
     );
     $vediArmadiService = new VediArmadi($vediArmadiRepo);
     $vediScaffaliService = new VediContenutoScaffali(
-        $vediArtRepo,
+        $vediArtPerScaffaleRepo,
         $vediTipologieRepo,
         $getAttrByArtIdRepo,
         $getValoriAttrRepo,
@@ -251,7 +251,7 @@ try{
                 $tipologieController->method_not_allowed();
             }
             break;
-        case '/tipi articoli':
+        case '/tipiArticoli':
             if ($method === 'POST') {
                 $tipoArticoloController->crea_tipoArticolo();
             }
@@ -262,7 +262,7 @@ try{
                 $tipoArticoloController->method_not_allowed();
             }
             break;
-        case '/localizza articolo':
+        case '/localizzaArticolo':
             if ($method === 'POST') {
                 $localizzaArticoloController->localizza();
             }
@@ -286,7 +286,7 @@ try{
                 $listaArticoliController->method_not_allowed();
             }
             break;
-        case '/articoli/per nome':
+        case '/articoli/perNome':
             if ($method === 'POST') {
                 $articoliPerController->get_articoli_per_nome();
             }
@@ -294,7 +294,7 @@ try{
                 $articoliPerController->method_not_allowed();
             }
             break;
-        case '/articoli/per scaffale':
+        case '/articoli/perScaffale':
             if ($method === 'POST') {
                 $articoliPerController->get_articoli_per_scaffale();
             }

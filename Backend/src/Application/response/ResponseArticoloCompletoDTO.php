@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Application\response;
+namespace Backend\Application\response;
 
 // DTO che rappresenta un articolo completo di tutte le informazioni,
 // rispecchiando l'aggregazione di più tabelle.

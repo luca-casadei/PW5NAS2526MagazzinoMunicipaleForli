@@ -20,7 +20,11 @@ class VediArticoliRepo implements IVediArticoliRepo{
         $res = $result->fetch_all(MYSQLI_ASSOC);
         $articoli = [];
         foreach ($res as $elem) {
-            $dto = new ArticoloDTO($elem['Articolo_Id'], $elem['Nome'], $elem['Tipologia_Id']);
+            $dto = new ArticoloDTO(
+                (int)$elem['Articolo_Id'], 
+                $elem['Nome'], 
+                (int)$elem['Tipologia_Id']
+            );
             array_push($articoli, Mapper::DTO_To_Articolo($dto));
         }
         return $articoli;

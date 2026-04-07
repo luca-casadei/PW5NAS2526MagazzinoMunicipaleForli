@@ -19,7 +19,7 @@ class TipoArticoloController {
         $input = json_decode(file_get_contents('php://input'), true);
         try{
             $this->eliminaTipoArticoloService->execute($input['articoloId']);
-            $resp = new Response("success", "Tipologia eliminata", 200);
+            $resp = new Response("success", "Articolo eliminato", 200);
             $this->json_response($resp, $resp->get_code());
         }
         catch(\Exception $e){
@@ -52,7 +52,7 @@ class TipoArticoloController {
                 $attributiOggetti
             );
             $this->creaTipoArticoloService->execute($command);
-            $resp = new Response("success","Tipologia creata", 201);
+            $resp = new Response("success","Articolo creato", 201);
             $this->json_response($resp, $resp->get_code());
 
         } catch (\Exception $e) {

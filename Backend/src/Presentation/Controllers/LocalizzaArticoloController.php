@@ -16,6 +16,11 @@ class LocalizzaArticoloController {
         
         try {
             $articoliInScaffali = $this->localizzaService->localizzaById($input['articoloId']);
+            if(empty($articoliInScaffali)) {
+                $resp = new Response("success", "Articolo non presente in nessuno scaffale", 200);
+                $this->json_response($resp, $resp->get_code());
+                return;
+            }
             $resp = new Response("success","Articolo trovato", 200, $articoliInScaffali);
             $this->json_response($resp, $resp->get_code());
 

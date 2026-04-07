@@ -27,6 +27,6 @@ class GetQtTotArtRepo implements IGetQtTotArticoloRepo{
         }
         $row = $result->fetch_assoc();
 
-        return $row['QuantitaTotale'];
+        return (int)$row['QuantitaTotale'];
     }
 }

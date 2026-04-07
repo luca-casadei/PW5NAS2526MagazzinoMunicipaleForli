@@ -11,12 +11,12 @@ class CreaAttributoRepo implements ICreaAttributoRepo{
     public function __construct(DatabaseConnector $connector){
         $this->connector = $connector;
     }
-    public function creaAttributo(string $nome, string $descrizione): int {
+    public function creaAttributo(string $nome): int {
         $db = $this->connector->get_db();
         
-        $query = "INSERT INTO Attributi_Articoli (Nome, Descrizione) VALUES (?, ?);";
+        $query = "INSERT INTO Attributi_Articoli (Nome) VALUES (?);";
         $stmt = $db->prepare($query);
-        $stmt->bind_param("ss", $nome, $descrizione);
+        $stmt->bind_param("s", $nome);
         $stmt->execute();
 
         $nuovoId = (int)$stmt->insert_id; 

@@ -74,7 +74,7 @@ CREATE TABLE Articoli_Scaffali (
     PRIMARY KEY (Articolo_Id, Numero, Armadio_Id),
     FOREIGN KEY (Articolo_Id) REFERENCES Articoli(Articolo_Id) ON DELETE CASCADE,
     FOREIGN KEY (Numero, Armadio_Id) REFERENCES Scaffali(Numero, Armadio_Id) ON DELETE CASCADE,
-    CHECK (Quantita >= 0),
+    CHECK (Quantita >= 0)
 );
 CREATE TABLE Log_Modifiche_Quantita (
     Log_Id INT NOT NULL AUTO_INCREMENT,

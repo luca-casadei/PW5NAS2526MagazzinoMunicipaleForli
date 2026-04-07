@@ -34,6 +34,11 @@ class ListaArticoliPerController {
                     $articolo->quantitaTotale
                 );
             }
+            if (empty($articoliResponse)) {
+                $resp = new Response("success", "Nessun articolo trovato con il nome specificato", 200, []);
+                $this->json_response($resp, $resp->get_code());
+                return;
+            }
             $resp = new Response("success","Articoli trovati", 200, $articoliResponse);
             $this->json_response($resp, $resp->get_code());
 
@@ -60,7 +65,12 @@ class ListaArticoliPerController {
                     $articolo->quantitaTotale
                 );
             }
-            $resp = new Response("success","Articoli con quantita basse trovati", 200, $articoliResponse);
+            if (empty($articoliResponse)) {
+                $resp = new Response("success", "Nessun articolo trovato nello scaffale specificato", 200, []);
+                $this->json_response($resp, $resp->get_code());
+                return;
+            }
+            $resp = new Response("success","Articoli per scaffali trovati", 200, $articoliResponse);
             $this->json_response($resp, $resp->get_code());
 
         } catch (\Exception $e) {

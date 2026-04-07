@@ -60,6 +60,10 @@ class ListaArticoliController {
                     $articolo->quantitaTotale
                 );
             }
+            if (empty($articoliResponse)) {
+                $resp = new Response("success","Nessun articolo con quantità basse trovato", 200, []);
+                $this->json_response($resp, $resp->get_code());
+            }
             $resp = new Response("success","Articoli con quantita basse trovati", 200, $articoliResponse);
             $this->json_response($resp, $resp->get_code());
 

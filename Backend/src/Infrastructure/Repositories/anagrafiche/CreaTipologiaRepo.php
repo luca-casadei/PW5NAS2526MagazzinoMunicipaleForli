@@ -5,6 +5,7 @@ namespace Backend\Infrastructure\Repositories\anagrafiche;
 use Backend\Application\interfaces\repo\ICreaTipologiaRepo;
 use Backend\Domain\Entities\Tipologia;
 use Backend\Infrastructure\DatabaseConnector;
+use Backend\Infrastructure\mapper\Mapper;
 
 
 class CreaTipologiaRepo implements ICreaTipologiaRepo{
@@ -16,7 +17,8 @@ class CreaTipologiaRepo implements ICreaTipologiaRepo{
         $db = $this->connector->get_db();
         $query = "INSERT INTO Tipologie (Nome, Descrizione) VALUES (?, ?);";
         $stmt = $db->prepare($query);
-        $stmt->bind_param("ss", $tipologia->nome, $tipologia->descrizione);
+        $dto = Mapper::Tipologia_To_DTO($tipologia);
+        $stmt->bind_param("ss", $dto->nome, $dto->descrizione);
         $stmt->execute();
         $stmt->close();
     }
