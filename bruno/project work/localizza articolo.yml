@@ -1,0 +1,21 @@
+info:
+  name: localizza articolo
+  type: http
+  seq: 17
+
+http:
+  method: POST
+  url: http://localhost:5050/localizzaArticolo
+  body:
+    type: json
+    data: |-
+      {
+        "articoloId":1
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,21 @@
+info:
+  name: elimina tipologia
+  type: http
+  seq: 11
+
+http:
+  method: DELETE
+  url: http://localhost:5050/tipologie
+  body:
+    type: json
+    data: |-
+      {
+        "nome": "bella"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,24 @@
+info:
+  name: aumenta quantita articolo
+  type: http
+  seq: 20
+
+http:
+  method: PUT
+  url: http://localhost:5050/articolo/quantita/aggiungi
+  body:
+    type: json
+    data: |-
+      {
+        "articoloId": 1,
+        "numeroScaffale": 1,
+        "armadioId": 1,
+        "quantita": 2
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,36 @@
+info:
+  name: crea articoli
+  type: http
+  seq: 13
+
+http:
+  method: POST
+  url: http://localhost:5050/tipiArticoli
+  body:
+    type: json
+    data: |-
+      {
+        "tipologiaId": 1,
+        "nome": "Pantaloni",
+        "attributi": [
+          {
+            "nome": "colore",
+            "valore": "rosso"
+          },
+          {
+            "nome": "taglia",
+            "valore": "L"
+          },
+          {
+            "nome": "materiale",
+            "valore": "lana"
+          }
+        ]
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

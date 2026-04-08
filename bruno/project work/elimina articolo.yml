@@ -1,0 +1,21 @@
+info:
+  name: elimina articolo
+  type: http
+  seq: 15
+
+http:
+  method: DELETE
+  url: http://localhost:5050/tipiArticoli
+  body:
+    type: json
+    data: |-
+      {
+        "articoloId":1
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

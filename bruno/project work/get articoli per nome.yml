@@ -1,0 +1,21 @@
+info:
+  name: get articoli per nome
+  type: http
+  seq: 16
+
+http:
+  method: POST
+  url: http://localhost:5050/articoli/perNome
+  body:
+    type: json
+    data: |-
+      {
+        "nomeArt":"Pantaloi"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
