@@ -13,5 +13,5 @@ Il progetto è stato realizzato dagli alunni:
 * **Bertaccini**
 * **Impagnatiello**
 
-**Istituto:** ITT Blaise Pascal - Forlì  
+**Istituto:** ITT Blaise Pascal - Cesena 
 **Classe:** 5N **Anno Scolastico:** 2025/2026
