@@ -49,4 +49,8 @@ abstract class AbstractEsportaStoricoController {
         echo json_encode($resp);
         exit();
     }
+    public function method_not_allowed(){
+        $resp = new Response("error", "Metodo non consentito", 405);
+        $this->json_response($resp, $resp->get_code());
+    }
 }

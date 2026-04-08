@@ -318,6 +318,14 @@ try{
                 $articoliQuantitaController->method_not_allowed();
             }
             break;
+        case '/esportaStorico':
+            if ($method === 'GET') {
+                $esportaStoricoCSVController->esporta();
+            }
+            else{
+                $esportaStoricoCSVController->method_not_allowed();
+            }
+            break;
         // --- SE NESSUNA ROTTA CORRISPONDE ---
         default:
             http_response_code(404);
