@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Backend\Presentation\Controllers;
 use Backend\Application\commands\CreateScaffaleDTO;
+use Backend\Application\dtos\ReadArmadioDTO;
 use Backend\Application\interfaces\serv\ICreaScaffale;
 use Backend\Application\interfaces\serv\IGetAllScaffali;
 use Backend\Application\interfaces\serv\IGetScaffaliArmadioById;
@@ -21,7 +22,8 @@ class ScaffaliController {
     public function get_scaffali_of_armadio(){
         $input = json_decode(file_get_contents('php://input'), true);
         try{
-            $scaffaliEntities = $this->vediScaffaliOfArmadioService->execute($input['armadioId']);
+            $armadioDTO = new ReadArmadioDTO($input['armadioId']);
+            $scaffaliEntities = $this->vediScaffaliOfArmadioService->execute($armadioDTO);
             $scaffali = [];
             foreach($scaffaliEntities as $scaffale){
                 $scaffali[] = PresentationMapper::scaffale_to_ResponseScaffale($scaffale);

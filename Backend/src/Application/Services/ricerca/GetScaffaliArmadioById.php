@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Backend\Application\Services\ricerca;
 
+use Backend\Application\dtos\ReadArmadioDTO;
 use Backend\Application\interfaces\serv\IGetScaffaliArmadioById;
 use Backend\Application\interfaces\repo\IVediScaffaliRepo;
 
@@ -13,7 +14,7 @@ class GetScaffaliArmadioById implements IGetScaffaliArmadioById{
 {
         $this->scaffaliRepo = $scaffaliRepo;
     }
-    public function execute(int $id): array {
-        return $this->scaffaliRepo->getScaffaliArmadioById($id);
+    public function execute(ReadArmadioDTO $id): array {
+        return $this->scaffaliRepo->getScaffaliArmadioById($id->id);
     }
 }

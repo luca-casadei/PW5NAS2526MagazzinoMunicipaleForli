@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Backend\Presentation\Controllers;
 
+use Backend\Application\dtos\ReadQuantitaDTO;
 use Backend\Application\interfaces\serv\IGetTipologiaById;
 use Backend\Application\interfaces\serv\IVediArticoli;
 use Backend\Application\interfaces\serv\IVediArticoliQtBasse;
@@ -48,7 +49,8 @@ class ListaArticoliController {
         $input = json_decode(file_get_contents('php://input'), true);
         
         try {
-            $articoliCompleti = $this->articoliQtBasseService->execute($input['qtMinima']);
+            $quantitaMinima = new ReadQuantitaDTO($input['qtMinima']);
+            $articoliCompleti = $this->articoliQtBasseService->execute($quantitaMinima);
             $articoliResponse = [];
             foreach ($articoliCompleti as $articolo){
                 $tipologia = $this->getTipologiaService->execute($articolo->idTipologia);

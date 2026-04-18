@@ -33,9 +33,9 @@ class VediContenutoScaffali implements IVediScaffali{
         $this->valoreAttributoRepo = $valoreAttributoRepo;
         $this->quantitaRepo = $quantitaRepo;
     }
-    public function getContenutoById(int $armadioId, int $numScaffale): array
+    public function getContenutoById(ReadScaffaleDTO $readScaffale): array
     {
-        $readScaffale = new ReadScaffaleDTO($armadioId, $numScaffale);
+        $readScaffale = new ReadScaffaleDTO($readScaffale->armadioId, $readScaffale->numeroScaffale);
         $scaffale = ReadMapper::DTO_To_Scaffale($readScaffale);
         // 1. Recupero della lista base di tutti gli articoli tramite Repository
         $articoliBase = $this->articoliRepo->getArticoli($scaffale);
@@ -65,7 +65,7 @@ class VediContenutoScaffali implements IVediScaffali{
             }
 
             // c. Recupero della quantità totale tramite Repository
-            $quantitaTotaleDto = $this->quantitaRepo->getQuantita($articoloId, $numScaffale, $armadioId);
+            $quantitaTotaleDto = $this->quantitaRepo->getQuantita($articoloId, $readScaffale->numeroScaffale, $readScaffale->armadioId);
             if($quantitaTotaleDto === null) {
                 $quantitaTotaleDto = 0; // o un DTO con quantità 0, a seconda di come è strutturato
             }

@@ -7,7 +7,7 @@
     <nav aria-label="Navigazione principale magazzino">
         <ul class="action-grid">
             <li class="action-card">
-                <a href="/percorso-gestisci-articoli" class="action-link" aria-label="Vai alla pagina Gestisci Articoli">
+                <a href="/pages/gestisciArticoli/index_gestisciArticoli.php" class="action-link" aria-label="Vai alla pagina Gestisci Articoli">
                     <div class="icon-placeholder" aria-hidden="true">
                         <span class="icon">📦</span>
                     </div>
@@ -60,7 +60,7 @@
                     </div>
                     <h2>Esporta Storico</h2>
                     <p class="action-desc">
-                        Effettua l'esportazione dei dati sotto forma di file csv
+                        Effettua l'esportazione dei dati sotto forma di file csv (relativi all'ultimo anno)
                     </p>
                 </a>
             </li>

@@ -126,6 +126,20 @@
     grid-column: 1 / -1; 
 }
 
+.action-link:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--primary-color);
+    background-color: var(--primary-color); /* <-- Aggiunto questo */
+    color: white; /* <-- Aggiunto questo per la leggibilità */
+}
+
+.action-link:hover h2,
+.action-link:hover .icon-placeholder,
+.action-link:hover .action-desc {
+    color: white;
+}
+
 /* Rispetto per chi preferisce meno animazioni (Accessibilità OS) */
 @media (prefers-reduced-motion: reduce) {
     .action-link {

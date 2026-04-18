@@ -2,6 +2,7 @@
 
 namespace Backend\Application\Services\magazzino;
 
+use Backend\Application\dtos\ReadQuantitaDTO;
 use Backend\Application\mappers\ReadMapper;
 use Backend\Application\response\ResponseArticoloCompletoDTO;
 use Backend\Application\interfaces\repo\IGetAttributiByArtIdRepo;
@@ -34,7 +35,7 @@ class MostraTuttiArticoliQtBasse implements IvediArticoliQtBasse
         $this->valoreAttributoRepo = $valoreAttributoRepo;
         $this->quantitaTotaleRepo = $quantitaTotaleRepo;
     }
-    public function execute($quantitaMinima): array
+    public function execute(ReadQuantitaDTO $quantitaMinima): array
     {
         // 1. Recupero della lista base di tutti gli articoli tramite Repository
         $articoliBase = $this->articoliRepo->getAllArticoli();
@@ -69,7 +70,7 @@ class MostraTuttiArticoliQtBasse implements IvediArticoliQtBasse
                 $quantitaTotaleDto = 0; // o un DTO con quantità 0, a seconda di come è strutturato
             }
 
-            if($quantitaTotaleDto <= $quantitaMinima){
+            if($quantitaTotaleDto <= $quantitaMinima->quantita){
                 $articoliCompleti[] = new ResponseArticoloCompletoDTO(
                     $articoloId,
                     $readArt->nome,

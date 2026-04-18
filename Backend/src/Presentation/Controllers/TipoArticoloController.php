@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Backend\Presentation\Controllers;
 use Backend\Application\commands\CreateAttributoDTO;
 use Backend\Application\commands\CreateTipoArticoloDTO;
+use Backend\Application\commands\DeleteTipoArticoloDTO;
 use Backend\Application\interfaces\serv\ICreaTipoArticolo;
 use Backend\Application\interfaces\serv\IEliminaTipoArticolo;
 use Backend\Presentation\Response;
@@ -18,7 +19,8 @@ class TipoArticoloController {
     public function elimina_tipoArticolo(){
         $input = json_decode(file_get_contents('php://input'), true);
         try{
-            $this->eliminaTipoArticoloService->execute($input['articoloId']);
+            $eliminaTipo = new DeleteTipoArticoloDTO($input['articoloId']);
+            $this->eliminaTipoArticoloService->execute($eliminaTipo);
             $resp = new Response("success", "Articolo eliminato", 200);
             $this->json_response($resp, $resp->get_code());
         }

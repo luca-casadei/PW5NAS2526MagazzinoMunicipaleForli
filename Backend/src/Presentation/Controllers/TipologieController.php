@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Backend\Presentation\Controllers;
 use Backend\Application\commands\CreateTipologiaDTO;
+use Backend\Application\commands\DeleteTipologiaDTO;
 use Backend\Application\interfaces\serv\ICreaTipologia;
 use Backend\Application\interfaces\serv\IEliminaTipologia;
 use Backend\Application\interfaces\serv\IVediTipologie;
@@ -21,7 +22,8 @@ class TipologieController {
     public function elimina_tipologia(){
         $input = json_decode(file_get_contents('php://input'), true);
         try{
-            $this->eliminaTipoService->eliminaByNome($input['nome']);
+            $eliminaTipo = new DeleteTipologiaDTO($input['nome']);
+            $this->eliminaTipoService->eliminaByNome($eliminaTipo);
             $resp = new Response("success", "Tipologia eliminata", 200);
             $this->json_response($resp, $resp->get_code());
         }

@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Backend\Application\Services\ricerca;
 
+use Backend\Application\commands\GetArtNomeDTO;
 use Backend\Application\response\ResponseArticoloCompletoDTO;
 use Backend\Application\interfaces\repo\IGetAttributiByArtIdRepo;
 use Backend\Application\interfaces\repo\IGetQtTotArticoloRepo;
@@ -34,10 +35,10 @@ class TrovaArticoliByName implements ITrovaArticoliByNome
         $this->valoreAttributoRepo = $valoreAttributoRepo;
         $this->quantitaTotaleRepo = $quantitaTotaleRepo;
     }
-    public function getArticoliByNome(string $nome): array
+    public function getArticoliByNome(GetArtNomeDTO $nome): array
     {
         // 1. Recupero della lista base di tutti gli articoli tramite Repository
-        $articoliBase = $this->articoliRepo->getArticoliByNome($nome);
+        $articoliBase = $this->articoliRepo->getArticoliByNome($nome->nome);
 
         $articoliCompleti = [];
 

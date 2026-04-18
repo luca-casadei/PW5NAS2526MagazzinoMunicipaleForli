@@ -2,6 +2,8 @@
 declare(strict_types=1);
 namespace Backend\Presentation\Controllers;
 
+use Backend\Application\commands\GetArtNomeDTO;
+use Backend\Application\dtos\ReadScaffaleDTO;
 use Backend\Application\interfaces\serv\IGetTipologiaById;
 use Backend\Application\interfaces\serv\ITrovaArticoliByNome;
 use Backend\Application\interfaces\serv\IVediScaffali;
@@ -22,7 +24,8 @@ class ListaArticoliPerController {
         $input = json_decode(file_get_contents('php://input'), true);
         
         try {
-            $articoliCompleti = $this->artNomeService->getArticoliByNome($input['nomeArt']);
+            $nomeArt = new GetArtNomeDTO($input['nomeArt']);
+            $articoliCompleti = $this->artNomeService->getArticoliByNome($nomeArt);
             $articoliResponse = [];
             foreach ($articoliCompleti as $articolo){
                 $tipologia = $this->getTipologiaService->execute($articolo->idTipologia);
@@ -53,7 +56,8 @@ class ListaArticoliPerController {
         $input = json_decode(file_get_contents('php://input'), true);
         
         try {
-            $articoliCompleti = $this->artScaffaliService->getContenutoById($input['idArmadio'], $input['numScaffale']);
+            $scaffaleDTO = new ReadScaffaleDTO($input['idArmadio'], $input['numScaffale']);
+            $articoliCompleti = $this->artScaffaliService->getContenutoById($scaffaleDTO);
             $articoliResponse = [];
             foreach ($articoliCompleti as $articolo){
                 $tipologia = $this->getTipologiaService->execute($articolo->idTipologia);

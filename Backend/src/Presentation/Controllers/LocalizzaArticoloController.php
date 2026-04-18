@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Backend\Presentation\Controllers;
 
+use Backend\Application\commands\GetArticoloDTO;
 use Backend\Application\interfaces\serv\ILocalizzaArticolo;
 use Backend\Presentation\Response;
 
@@ -15,7 +16,8 @@ class LocalizzaArticoloController {
         $input = json_decode(file_get_contents('php://input'), true);
         
         try {
-            $articoliInScaffali = $this->localizzaService->localizzaById($input['articoloId']);
+            $articolo = new GetArticoloDTO($input['articoloId']);
+            $articoliInScaffali = $this->localizzaService->localizzaById($articolo);
             if(empty($articoliInScaffali)) {
                 $resp = new Response("success", "Articolo non presente in nessuno scaffale", 200);
                 $this->json_response($resp, $resp->get_code());
