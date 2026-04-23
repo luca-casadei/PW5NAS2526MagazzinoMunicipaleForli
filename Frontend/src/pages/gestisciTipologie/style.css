@@ -1,0 +1,107 @@
+/* ==========================================================================
+   FORM: DISTANZIATURA BOTTONE SALVA
+   ========================================================================== */
+
+/* Aggiungiamo spazio sotto il riquadro Dati Tipologia per staccare il bottone */
+.form-section fieldset {
+    margin-bottom: 1rem;
+}
+
+/* ==========================================================================
+   VISUALIZZAZIONE: GRIGLIA E CARD TIPOLOGIE
+   ========================================================================== */
+
+.tipologie-grid {
+    display: grid;
+    /* Riduciamo leggermente la larghezza minima a 200px dato che ora il contenuto è in colonna */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.tipologia-card {
+    display: flex;
+    flex-direction: column; /* MODIFICA: Sposta il bottone SOTTO al titolo */
+    align-items: flex-start; /* Allinea il testo a sinistra */
+    padding: 1.5rem; /* Leggermente aumentato per dare più respiro */
+    background: var(--card-bg);
+    border: 1px solid var(--secondary-color);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    height: 100%; /* Fa in modo che tutte le card sulla stessa riga siano alte uguali */
+}
+
+/* Effetto al passaggio del mouse */
+.tipologia-card:hover {
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.tipologia-card h3 {
+    margin: 0 0 1.5rem 0; /* Aggiunto margine sotto il titolo per separarlo dal bottone */
+    font-size: 1.15rem;
+    color: var(--text-main);
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+/* Il bottone elimina dentro la card */
+.tipologia-card .btn-danger {
+    width: auto;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    margin-top: auto; /* MAGIA CSS: Spinge il bottone sempre in fondo, allineandolo con le altre card! */
+}
+
+/* ==========================================================================
+   FINESTRA MODALE (DIALOG) PER L'ELIMINAZIONE
+   ========================================================================== */
+
+.modal-dialog {
+    border: none;
+    border-radius: var(--radius);
+    padding: 0;
+    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
+    max-width: 500px;
+    width: 90%;
+    background: transparent; 
+}
+
+.modal-dialog::backdrop {
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: var(--radius);
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.modal-content p {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin-bottom: 0;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.modal-actions button {
+    width: auto;
+    min-width: 120px;
+}
+
+.text-danger {
+    color: var(--danger-color);
+}

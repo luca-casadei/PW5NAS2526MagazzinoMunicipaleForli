@@ -19,7 +19,7 @@ abstract class AbstractEsportaStoricoController {
             $logGrezziDto = $this->esportaStoricoService->execute();
 
             if (empty($logGrezziDto)) {
-                $resp = new Response("error", "Nessun movimento trovato nell'ultimo anno.", 404);
+                $resp = new Response("success", "Nessun movimento trovato nell'ultimo anno.", 200);
                 $this->json_response($resp, $resp->get_code());
                 return;
             }

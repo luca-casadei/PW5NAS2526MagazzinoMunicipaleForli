@@ -1,0 +1,124 @@
+/* ==========================================================================
+   STRUTTURA GERARCHICA (Accordion)
+   ========================================================================== */
+
+.armadi-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Stile per l'Armadio (Livello 1) */
+.armadio-section {
+    background: var(--card-bg);
+    border: 1px solid var(--secondary-color);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.armadio-summary {
+    padding: 1.25rem 1.5rem;
+    background: #f1f5f9;
+    font-size: 1.3rem;
+    font-weight: 700;
+    cursor: pointer;
+    list-style: none; /* Rimuove la freccetta di default su alcuni browser */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid transparent;
+}
+
+.armadio-section[open] .armadio-summary {
+    border-bottom-color: var(--secondary-color);
+}
+
+.armadio-summary::after {
+    content: '▼';
+    font-size: 0.8rem;
+    transition: transform 0.2s;
+}
+
+.armadio-section[open] .armadio-summary::after {
+    transform: rotate(180deg);
+}
+
+/* Stile per lo Scaffale (Livello 2) */
+.scaffale-container {
+    padding: 1rem 1.5rem;
+}
+
+.scaffale-section {
+    border-left: 4px solid var(--primary-color);
+    margin-bottom: 1rem;
+    background: #fafafa;
+}
+
+.scaffale-summary {
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+}
+
+/* ==========================================================================
+   GRIGLIA ARTICOLI E CONTROLLI QUANTITÀ
+   ========================================================================== */
+
+.articoli-scaffale-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.articolo-mini-card {
+    background: white;
+    border: 1px solid var(--secondary-color);
+    border-radius: var(--radius);
+    padding: 1rem;
+}
+
+.articolo-mini-card h4 { margin: 0 0 0.5rem 0; font-size: 1.1rem; }
+
+/* Controlli Quantità */
+.controlli-qt {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.input-add-qt {
+    width: 60px;
+    padding: 0.4rem;
+    border: 1px solid var(--secondary-color);
+    border-radius: 4px;
+    text-align: center;
+}
+
+.btn-qt-minus {
+    background: var(--danger-color);
+    color: white;
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+}
+
+.btn-qt-add {
+    background: var(--success-color);
+    color: white;
+    font-size: 0.8rem;
+}
+
+.badge-qt {
+    font-weight: bold;
+    color: var(--primary-color);
+    background: #eff6ff;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+}

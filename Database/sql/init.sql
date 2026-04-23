@@ -1,4 +1,5 @@
 USE Project_WorkDB;
+
 CREATE TABLE Attributi_Articoli (
     Attributo_Id INT NOT NULL AUTO_INCREMENT,
     Nome VARCHAR(100) NOT NULL,
@@ -28,7 +29,6 @@ CREATE TABLE Tipologie (
     PRIMARY KEY (Tipologia_Id)
 );
 
-
 CREATE TABLE Articoli_Operatori_Economici (
     Codice_ArOpEc VARCHAR(50) NOT NULL,
     Descrizione VARCHAR(255) NULL,
@@ -56,7 +56,6 @@ CREATE TABLE Articoli (
     FOREIGN KEY (Tipologia_Id) REFERENCES Tipologie(Tipologia_Id) ON DELETE CASCADE
 );
 
-
 CREATE TABLE Attributi_Associati (
     Articolo_Id INT NOT NULL,
     Attributo_Id INT NOT NULL,
@@ -76,10 +75,13 @@ CREATE TABLE Articoli_Scaffali (
     FOREIGN KEY (Numero, Armadio_Id) REFERENCES Scaffali(Numero, Armadio_Id) ON DELETE CASCADE,
     CHECK (Quantita >= 0)
 );
+
+-- Tabella Log modificata: tolti gli ID, inseriti i nomi
 CREATE TABLE Log_Modifiche_Quantita (
     Log_Id INT NOT NULL AUTO_INCREMENT,
     Data_Ora_Modifica DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    Articolo_Id INT NOT NULL,
+    Nome_Articolo VARCHAR(255) NOT NULL,
+    Nome_Tipologia VARCHAR(100) NOT NULL,
     Numero_Scaffale INT NOT NULL,
     Armadio_Id INT NOT NULL,
     QtaPrecedente INT NOT NULL,
@@ -95,10 +97,18 @@ AFTER UPDATE ON Articoli_Scaffali
 FOR EACH ROW
 BEGIN
     DECLARE v_attributi TEXT;
+    DECLARE v_nome_articolo VARCHAR(255);
+    DECLARE v_nome_tipologia VARCHAR(100);
 
     -- Eseguiamo il log SOLO se c'è stata una reale variazione nelle quantità
     IF (OLD.Quantita <> NEW.Quantita) THEN
         
+        SELECT a.Nome, t.Nome 
+        INTO v_nome_articolo, v_nome_tipologia
+        FROM Articoli a
+        JOIN Tipologie t ON a.Tipologia_Id = t.Tipologia_Id
+        WHERE a.Articolo_Id = NEW.Articolo_Id;
+
         SELECT GROUP_CONCAT(CONCAT(attr.Nome, ': ', assoc.Valore) SEPARATOR ' | ')
         INTO v_attributi
         FROM Attributi_Associati AS assoc
@@ -109,16 +119,17 @@ BEGIN
             SET v_attributi = 'Nessun attributo associato';
         END IF;
 
-        -- Inseriamo il record nello storico
         INSERT INTO Log_Modifiche_Quantita (
-            Articolo_Id,
+            Nome_Articolo,
+            Nome_Tipologia,
             Numero_Scaffale,
             Armadio_Id,
             QtaPrecedente,
             QtaAggiornata,
             Attributi
         ) VALUES (
-            NEW.Articolo_Id,
+            v_nome_articolo,
+            v_nome_tipologia,
             NEW.Numero,
             NEW.Armadio_Id,
             OLD.Quantita,
@@ -132,11 +143,21 @@ END;
 
 DELIMITER ;
 
+DELIMITER //
+
 CREATE TRIGGER trg_log_inserimento_articoli
 AFTER INSERT ON Articoli_Scaffali
 FOR EACH ROW
 BEGIN
     DECLARE v_attributi TEXT;
+    DECLARE v_nome_articolo VARCHAR(255);
+    DECLARE v_nome_tipologia VARCHAR(100);
+
+    SELECT a.Nome, t.Nome 
+    INTO v_nome_articolo, v_nome_tipologia
+    FROM Articoli a
+    JOIN Tipologie t ON a.Tipologia_Id = t.Tipologia_Id
+    WHERE a.Articolo_Id = NEW.Articolo_Id;
 
     SELECT GROUP_CONCAT(CONCAT(attr.Nome, ': ', assoc.Valore) SEPARATOR ' | ')
     INTO v_attributi
@@ -149,14 +170,16 @@ BEGIN
     END IF;
 
     INSERT INTO Log_Modifiche_Quantita (
-        Articolo_Id,
+        Nome_Articolo,
+        Nome_Tipologia,
         Numero_Scaffale,
         Armadio_Id,
         QtaPrecedente,
         QtaAggiornata,
         Attributi
     ) VALUES (
-        NEW.Articolo_Id,
+        v_nome_articolo,
+        v_nome_tipologia,
         NEW.Numero,
         NEW.Armadio_Id,
         0,

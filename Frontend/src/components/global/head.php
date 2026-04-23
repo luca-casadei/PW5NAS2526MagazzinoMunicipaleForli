@@ -9,6 +9,7 @@
     <?php foreach ($page_info->get_sheets() as $sheet): ?>
         <link rel="stylesheet" href="<?php echo $sheet; ?>"> 
     <?php endforeach; ?>
+    
 
     <?php foreach ($page_info->get_scripts() as $script): ?>
         <script type="module" src="<?php echo $script; ?>"></script> 

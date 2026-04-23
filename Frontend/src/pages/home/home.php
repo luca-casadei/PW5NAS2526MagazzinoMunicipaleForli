@@ -19,7 +19,7 @@
             </li>
 
             <li class="action-card">
-                <a href="/percorso-gestisci-tipologie" class="action-link" aria-label="Vai alla pagina Gestisci Tipologie">
+                <a href="/pages/gestisciTipologie/index_gestisciTipologie.php" class="action-link" aria-label="Vai alla pagina Gestisci Tipologie">
                     <div class="icon-placeholder" aria-hidden="true">
                         <span class="icon">🏷️</span>
                     </div>
@@ -31,7 +31,7 @@
             </li>
 
             <li class="action-card">
-                <a href="/percorso-gestisci-tipi-articoli" class="action-link" aria-label="Vai alla pagina Gestisci Tipi Articoli">
+                <a href="/pages/gestisciTipiArticoli/index_gestisciTipiArticoli.php" class="action-link" aria-label="Vai alla pagina Gestisci Tipi Articoli">
                     <div class="icon-placeholder" aria-hidden="true">
                         <span class="icon">⚙️</span>
                     </div>
@@ -43,7 +43,7 @@
             </li>
 
             <li class="action-card">
-                <a href="/percorso-vedi-armadi" class="action-link" aria-label="Vai alla pagina Vedi Armadi">
+                <a href="/pages/armadi/index_armadi.php" class="action-link" aria-label="Vai alla pagina Vedi Armadi">
                     <div class="icon-placeholder" aria-hidden="true">
                         <span class="icon">🗄️</span>
                     </div>
@@ -54,7 +54,7 @@
                 </a>
             </li>
             <li class="action-card card-esporta">
-                <a href="/percorso-esporta-storico" class="action-link" aria-label="Vai alla pagina Esporta Storico">
+                <a href="/services/esportaStorico_service.php" class="action-link" aria-label="scarica storico">
                     <div class="icon-placeholder" aria-hidden="true">
                         <span class="icon">📊</span>
                     </div>

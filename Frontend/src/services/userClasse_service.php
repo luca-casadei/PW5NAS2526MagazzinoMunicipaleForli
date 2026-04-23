@@ -1,12 +1,4 @@
 <?php
-require_once __DIR__ . '/../Session.php';
-$session = new Session();
-
-if (!$session->is_logged_in()) {
-    http_response_code(401);
-    echo json_encode(["status" => "error", "message" => "Utente non autenticato nel frontend"]);
-    exit;
-}
 
 $ch = curl_init("http://backend/myClasses"); 
 

@@ -9,18 +9,29 @@ class EsportaStoricoCsvController extends AbstractEsportaStoricoController {
         
         // Impostiamo gli header per il download del CSV
         header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename=storico_movimenti.csv');
+        header('Content-Disposition: attachment; filename="storico_movimenti.csv"'); // Ho aggiunto gli apici al filename per sicurezza
 
         $output = fopen('php://output', 'w');
 
-        fputcsv($output, ['Log_Id', 'Data_Ora', 'IdArticolo', 'Scaffale', 'QtaPrecedente', 'QtaAggiornata', 'DettagliSnapshot']);
+        // Intestazione aggiornata: rimosso IdArticolo, aggiunti Articolo e Tipologia
+        fputcsv($output, [
+            'Log_Id', 
+            'Data_Ora', 
+            'Articolo', 
+            'Tipologia', 
+            'Posizione', 
+            'Qta_Precedente', 
+            'Qta_Aggiornata', 
+            'Dettagli_Snapshot'
+        ]);
 
         foreach ($logGrezziDto as $logDto) {
             fputcsv($output, [
                 $logDto->logId,
                 $logDto->dataOraModifica,
-                $logDto->articoloId,
-                "Scaffale $logDto->numeroScaffale / Armadio $logDto->armadioId",
+                $logDto->nomeArticolo,     // Nuovo campo dal DTO
+                $logDto->nomeTipologia,    // Nuovo campo dal DTO
+                "Armadio $logDto->armadioId / Scaffale $logDto->numeroScaffale", // Riordinato per logica (dal più grande al più piccolo)
                 $logDto->qtaPrecedente,
                 $logDto->qtaAggiornata,
                 $logDto->attributiSnapshot
