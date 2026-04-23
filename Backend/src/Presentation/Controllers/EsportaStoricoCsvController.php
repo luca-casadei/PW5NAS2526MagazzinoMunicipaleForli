@@ -5,7 +5,7 @@ use Backend\Presentation\Controllers\abstracts\AbstractEsportaStoricoController;
 
 // Estendiamo la classe astratta invece di crearla da zero
 class EsportaStoricoCsvController extends AbstractEsportaStoricoController {
-    protected function formatAndOutput(array $logGrezziDto): void {
+    protected function formatAndOutput(array $logGrezziDto, bool $errore): void {
         
         // Impostiamo gli header per il download del CSV
         header('Content-Type: text/csv; charset=utf-8');
@@ -13,29 +13,67 @@ class EsportaStoricoCsvController extends AbstractEsportaStoricoController {
 
         $output = fopen('php://output', 'w');
 
-        // Intestazione aggiornata: rimosso IdArticolo, aggiunti Articolo e Tipologia
-        fputcsv($output, [
-            'Log_Id', 
-            'Data_Ora', 
-            'Articolo', 
-            'Tipologia', 
-            'Posizione', 
-            'Qta_Precedente', 
-            'Qta_Aggiornata', 
-            'Dettagli_Snapshot'
-        ]);
-
-        foreach ($logGrezziDto as $logDto) {
+        if(empty($logGrezziDto))
+        {
             fputcsv($output, [
-                $logDto->logId,
-                $logDto->dataOraModifica,
-                $logDto->nomeArticolo,     // Nuovo campo dal DTO
-                $logDto->nomeTipologia,    // Nuovo campo dal DTO
-                "Armadio $logDto->armadioId / Scaffale $logDto->numeroScaffale", // Riordinato per logica (dal più grande al più piccolo)
-                $logDto->qtaPrecedente,
-                $logDto->qtaAggiornata,
-                $logDto->attributiSnapshot
+                'Risposta'
             ]);
+            fputcsv($output, [
+                    "Nessun movimento presente nell'ultimo anno"
+                ]
+            );
+        }
+        elseif($errore)
+        {
+            fputcsv($output, [
+                'Log_Id', 
+                'Data_Ora', 
+                'Articolo', 
+                'Tipologia', 
+                'Posizione', 
+                'Qta_Precedente', 
+                'Qta_Aggiornata', 
+                'Dettagli_Snapshot'
+            ]);
+
+            foreach ($logGrezziDto as $logDto) {
+                fputcsv($output, [
+                    $logDto->logId,
+                    $logDto->dataOraModifica,
+                    $logDto->nomeArticolo,     
+                    $logDto->nomeTipologia,    
+                    "Armadio $logDto->armadioId / Scaffale $logDto->numeroScaffale", 
+                    $logDto->qtaPrecedente,
+                    $logDto->qtaAggiornata,
+                    $logDto->attributiSnapshot
+                ]);
+            }
+        }
+        else
+        {
+            fputcsv($output, [
+                'Log_Id', 
+                'Data_Ora', 
+                'Articolo', 
+                'Tipologia', 
+                'Posizione', 
+                'Qta_Precedente', 
+                'Qta_Aggiornata', 
+                'Dettagli_Snapshot'
+            ]);
+
+            foreach ($logGrezziDto as $logDto) {
+                fputcsv($output, [
+                    $logDto->logId,
+                    $logDto->dataOraModifica,
+                    $logDto->nomeArticolo,     
+                    $logDto->nomeTipologia,    
+                    "Armadio $logDto->armadioId / Scaffale $logDto->numeroScaffale", 
+                    $logDto->qtaPrecedente,
+                    $logDto->qtaAggiornata,
+                    $logDto->attributiSnapshot
+                ]);
+            }
         }
         
         fclose($output);

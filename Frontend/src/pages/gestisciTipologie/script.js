@@ -3,16 +3,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const formCrea = document.getElementById('form-crea-tipologia');
     const msgCreazione = document.getElementById('msg-creazione');
     
-    // Elementi del modale
     const modal = document.getElementById('modal-eliminazione');
     const spanNomeDaEliminare = document.getElementById('nome-tipologia-da-eliminare');
     const btnAnnulla = document.getElementById('btn-annulla-elimina');
     const btnConfermaElimina = document.getElementById('btn-conferma-elimina');
     
-    // Variabile di stato per ricordare cosa stiamo eliminando
     let idTipologiaInEliminazione = null;
 
-    // --- 1. SIMULAZIONE CHIAMATA: CARICA TIPOLOGIE ---
+    // carica tipologie
     async function caricaTipologie() {
         try {
             // SIMULAZIONE: Sostituisci con fetch() verso GET /tipologie
@@ -24,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ]);
             }, 500));
 
-            // Ordinamento alfabetico
+            // ordina alfabetico
             tipologie.sort((a, b) => a.nome.localeCompare(b.nome));
 
             listaTipologie.replaceChildren();
@@ -36,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Genera le card
+            // genera card
             tipologie.forEach(tipo => {
                 const card = document.createElement('article');
                 card.className = 'tipologia-card';
@@ -49,7 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnElimina.textContent = 'Elimina';
                 btnElimina.setAttribute('aria-label', `Elimina tipologia ${tipo.nome}`);
                 
-                // Al click, apriamo il modale passando i dati
                 btnElimina.addEventListener('click', () => apriModaleEliminazione(tipo.id, tipo.nome));
 
                 card.appendChild(title);
@@ -66,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- 2. LOGICA CREAZIONE TIPOLOGIA ---
+    // crea tipologia
     formCrea.addEventListener('submit', async (e) => {
         e.preventDefault();
         const inputNome = document.getElementById('nome-tipologia').value.trim();
@@ -94,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- 3. LOGICA ELIMINAZIONE (MODALE) ---
+    // eliminazione
     function apriModaleEliminazione(id, nome) {
         idTipologiaInEliminazione = id; // Salviamo l'ID nascosto
         spanNomeDaEliminare.textContent = nome; // Mostriamo il nome per conferma
@@ -107,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
         idTipologiaInEliminazione = null;
     });
 
-    // Se l'utente clicca "Sì, Elimina Tutto"
+    // elimina tutto
     btnConfermaElimina.addEventListener('click', async () => {
         if (!idTipologiaInEliminazione) return;
 
@@ -132,6 +129,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Init
     caricaTipologie();
 });

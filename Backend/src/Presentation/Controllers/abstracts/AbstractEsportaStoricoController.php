@@ -17,28 +17,19 @@ abstract class AbstractEsportaStoricoController {
         try {
             // recupero dati
             $logGrezziDto = $this->esportaStoricoService->execute();
-
-            if (empty($logGrezziDto)) {
-                $resp = new Response("success", "Nessun movimento trovato nell'ultimo anno.", 200);
-                $this->json_response($resp, $resp->get_code());
-                return;
-            }
-            //logica specifica dei "figli"
-            $this->formatAndOutput($logGrezziDto);
+            $this->formatAndOutput($logGrezziDto, false);
 
         } catch (Exception $e) {
-            // 3. Logica condivisa: Gestione centralizzata degli errori
-            $statusCode = $e->getCode() ?: 500;
-            $statusCode = ($statusCode >= 100 && $statusCode < 600) ? $statusCode : 500; 
-
-            $resp = new Response("error", "Errore durante l'export: " . $e->getMessage(), $statusCode);
-            $this->json_response($resp, $resp->get_code());
-            return;
+            $arrayErrore = [];
+            $arrayErrore['campo'] = "Errore";
+            $arrayErrore['valore'] = "C'è stato un errore nella generazione del csv";
+            $this->formatAndOutput($arrayErrore, true);
         }
+        
     }
 
     //contratto da implementare
-    abstract protected function formatAndOutput(array $logGrezziDto): void;
+    abstract protected function formatAndOutput(array $logGrezziDto, bool $errore): void;
 
     /**
      * Helper condiviso per le risposte JSON
