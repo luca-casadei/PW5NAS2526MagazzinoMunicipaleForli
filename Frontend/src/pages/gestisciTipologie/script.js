@@ -1,32 +1,27 @@
+import { ApiRequest } from "../../components/global/ApiRequest.js";
+
 document.addEventListener('DOMContentLoaded', () => {
     const listaTipologie = document.getElementById('lista-tipologie');
-    const formCrea = document.getElementById('form-crea-tipologia');
-    const msgCreazione = document.getElementById('msg-creazione');
+    const formCreate = document.getElementById('form-crea-tipologia');
+    const messageCreate = document.getElementById('msg-creazione');
     
-    const modal = document.getElementById('modal-eliminazione');
+    const dialog = document.getElementById('modal-eliminazione');
     const spanNomeDaEliminare = document.getElementById('nome-tipologia-da-eliminare');
     const btnAnnulla = document.getElementById('btn-annulla-elimina');
     const btnConfermaElimina = document.getElementById('btn-conferma-elimina');
     
-    let idTipologiaInEliminazione = null;
-
+    let nomeTipoDelete = null;
     // carica tipologie
     async function caricaTipologie() {
         try {
-            // SIMULAZIONE: Sostituisci con fetch() verso GET /tipologie
-            const tipologie = await new Promise(resolve => setTimeout(() => {
-                resolve([
-                    { id: 3, nome: 'Scarpe Antinfortunistiche' },
-                    { id: 1, nome: 'Pantaloni' },
-                    { id: 2, nome: 'T-Shirt' }
-                ]);
-            }, 500));
-
+            const $servizio = 'tipologie_service.php';
+            const responseJSON = await ApiRequest.request($servizio, 'GET');
+            if(!responseJSON || !Array.isArray(responseJSON.body)) throw new Error("Dati tipologie non validi");
+            const tipologie = responseJSON.body;
             // ordina alfabetico
             tipologie.sort((a, b) => a.nome.localeCompare(b.nome));
 
             listaTipologie.replaceChildren();
-
             if (tipologie.length === 0) {
                 const emptyMsg = document.createElement('p');
                 emptyMsg.textContent = "Nessuna tipologia presente.";
@@ -34,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // genera card
+            // genera card tipologie
             tipologie.forEach(tipo => {
                 const card = document.createElement('article');
                 card.className = 'tipologia-card';
@@ -47,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnElimina.textContent = 'Elimina';
                 btnElimina.setAttribute('aria-label', `Elimina tipologia ${tipo.nome}`);
                 
-                btnElimina.addEventListener('click', () => apriModaleEliminazione(tipo.id, tipo.nome));
+                btnElimina.addEventListener('click', () => apriDialogEliminazione(tipo.nome));
 
                 card.appendChild(title);
                 card.appendChild(btnElimina);
@@ -58,74 +53,74 @@ document.addEventListener('DOMContentLoaded', () => {
             listaTipologie.replaceChildren();
             const errMsg = document.createElement('p');
             errMsg.className = 'text-danger';
-            errMsg.textContent = 'Errore nel caricamento delle tipologie.';
+            errMsg.textContent = 'Errore nel caricamento delle tipologie.' + error.message;
             listaTipologie.appendChild(errMsg);
         }
     }
 
     // crea tipologia
-    formCrea.addEventListener('submit', async (e) => {
+    formCreate.addEventListener('submit', async (e) => {
         e.preventDefault();
         const inputNome = document.getElementById('nome-tipologia').value.trim();
         
-        msgCreazione.replaceChildren();
-        msgCreazione.className = 'msg-feedback'; // reset classi
+        messageCreate.replaceChildren();
+        messageCreate.className = 'msg-feedback'; // reset classi
 
         try {
-            // SIMULAZIONE: Sostituisci con fetch() verso POST /tipologie
-            await new Promise((resolve, reject) => setTimeout(() => {
-                // Simuliamo un successo
-                resolve();
-            }, 600));
+            const $service = 'creaTipologia_service.php';
+            const $responseJSON = await ApiRequest.request($service, 'POST', { nome: inputNome });
+            if($responseJSON.status !== 'success') throw new Error($responseJSON.message || "Errore nella risposta del server");
 
             // Feedback visivo
-            msgCreazione.textContent = `Tipologia "${inputNome}" creata con successo!`;
-            msgCreazione.classList.add('msg-success');
+            messageCreate.textContent = `Tipologia "${inputNome}" creata con successo!`;
+            messageCreate.classList.add('msg-success');
             
-            formCrea.reset(); // Svuota l'input
+            formCreate.reset(); // Svuota l'input
             caricaTipologie(); // Ricarica la lista aggiornata
 
         } catch (error) {
-            msgCreazione.textContent = `Errore durante la creazione della tipologia.`;
-            msgCreazione.classList.add('msg-error');
+            messageCreate.textContent = `Errore durante la creazione della tipologia.`;
+            messageCreate.classList.add('msg-error');
         }
     });
 
     // eliminazione
-    function apriModaleEliminazione(id, nome) {
-        idTipologiaInEliminazione = id; // Salviamo l'ID nascosto
-        spanNomeDaEliminare.textContent = nome; // Mostriamo il nome per conferma
-        modal.showModal(); // API nativa per aprire il <dialog>
+    function apriDialogEliminazione(nome) {
+        nomeTipoDelete = nome; // Salviamo l'ID nascosto
+        spanNomeDaEliminare.textContent = nome;
+        dialog.showModal(); // API nativa per aprire il <dialog>
     }
 
-    // Se l'utente clicca "Annulla"
+    // Se annulla
     btnAnnulla.addEventListener('click', () => {
-        modal.close();
-        idTipologiaInEliminazione = null;
+        dialog.close();
+        nomeTipoDelete = null;
     });
 
-    // elimina tutto
+    // se elimina
     btnConfermaElimina.addEventListener('click', async () => {
-        if (!idTipologiaInEliminazione) return;
+        if (!nomeTipoDelete) return;
 
         // Disabilitiamo il bottone per evitare doppi click
         btnConfermaElimina.disabled = true;
         btnConfermaElimina.textContent = 'Eliminazione...';
 
         try {
-            // SIMULAZIONE: fetch verso DELETE /tipologie passando l'ID
-            await new Promise(resolve => setTimeout(resolve, 800));
+            const $service = 'eliminaTipologia_service.php';
+            const $responseJSON = await ApiRequest.request($service, 'DELETE', { nome: nomeTipoDelete });
+            if($responseJSON.status !== 'success') throw new Error($responseJSON.message || "Errore nella risposta del server");
 
-            modal.close();
-            caricaTipologie(); // Ricarica la lista per far sparire la tipologia
-
-        } catch (error) {
+            dialog.close();
+            caricaTipologie(); // ricarica lista
+        } 
+        catch (error) {
             alert('Errore durante l\'eliminazione.');
-        } finally {
-            // Ripristiniamo lo stato del bottone
+        } 
+        finally {
+            // ripristino stato bottone
             btnConfermaElimina.disabled = false;
             btnConfermaElimina.textContent = 'Sì, Elimina Tutto';
-            idTipologiaInEliminazione = null;
+            nomeTipoDelete = null;
         }
     });
 

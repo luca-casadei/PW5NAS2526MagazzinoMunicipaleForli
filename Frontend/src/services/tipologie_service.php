@@ -1,5 +1,5 @@
 <?php
-$ch = curl_init("http://backend/myClasses"); 
+$ch = curl_init("http://backend/tipologie"); 
 
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
