@@ -22,10 +22,6 @@
                         <input type="text" id="nome-articolo" name="nome" required aria-required="true">
                     </div>
                     <div class="form-group">
-                        <label for="codice-articolo">Codice Identificativo *</label>
-                        <input type="text" id="codice-articolo" name="codice" required aria-required="true">
-                    </div>
-                    <div class="form-group">
                         <label for="tipologia-selezionata">Tipologia *</label>
                         <select id="tipologia-selezionata" name="tipologiaId" required aria-required="true">
                             <option value="">Caricamento...</option>
@@ -35,8 +31,13 @@
 
                 <fieldset>
                     <legend>Attributi Aggiuntivi (Facoltativi)</legend>
-                    <div id="contenitore-attributi" class="dynamic-attributes"></div>
-                    <button type="button" id="btn-aggiungi-attributo" class="btn-secondary" style="margin-top: 1rem;">
+                    <div id="contenitore-attributi" class="dynamic-attributes">
+                        <div>
+                            <input type="text" placeholder="Nome (es. Peso)" required>
+                            <input type="text" placeholder="Valore (es. 5kg)" required>
+                        </div>
+                    </div>
+                    <button type="button" id="btn-aggiungi-attributo" class="btn-secondary">
                         + Aggiungi Campo
                     </button>
                 </fieldset>
@@ -61,7 +62,11 @@
 <dialog id="modal-delete" class="modal-dialog" aria-labelledby="modal-titolo">
     <div class="modal-content">
         <h2 id="modal-titolo" class="text-danger">Conferma Eliminazione</h2>
-        <p>Stai per eliminare definitivamente <strong><span id="nome-art-delete"></span></strong> dal catalogo.</p>
+        <p>Stai per eliminare definitivamente 
+            <strong>
+                <span id="nome-art-delete"></span>
+            </strong> dal catalogo.
+        </p>
         <p>L'azione è irreversibile. Vuoi procedere?</p>
         <div class="modal-actions">
             <button type="button" id="btn-cancel" class="btn-secondary">Annulla</button>

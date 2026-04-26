@@ -47,7 +47,6 @@ class TipoArticoloController {
                 $attributiOggetti[] = new CreateAttributoDTO($attrArray['nome'], $attrArray['valore']);
             }
 
-            // 3. Imballiamo tutto nel Command DTO principale
             $command = new CreateTipoArticoloDTO(
                 (int)$input['tipologiaId'],
                 $input['nome'],

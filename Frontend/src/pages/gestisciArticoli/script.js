@@ -1,119 +1,226 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // --- ELEMENTI DEL DOM ---
-    const grigliaArticoli = document.getElementById('griglia-articoli');
+import { ApiRequest } from "../../components/global/ApiRequest.js";
+import { FilterManager } from "../../components/global/filters-manager.js";
 
-    // --- 1. SIMULAZIONE CHIAMATA: CARICA ARTICOLI ---
+//RICORDATI DI DIRE A CLIENTE DI SVUOTARE A MANO IL FILTRO SE RIVUOLE VECCHI ELEMENTI NEL FILTRO
+document.addEventListener('DOMContentLoaded', () => {
+    const gridArticoli = document.getElementById('griglia-articoli');
+    const chkbSoglia = document.getElementById('chk-soglia');
+    const valSoglia = document.getElementById('val-soglia');
+    
+    let tuttiGliArticoli = []; // articoli generici
+
+    // filtri
+    const gestoreFiltri = new FilterManager((valoriAttuali) => {
+        applicaFiltri(valoriAttuali);
+    });
+
+    // soglia quantita minima
+    chkbSoglia.addEventListener('change', () => {
+        valSoglia.disabled = !chkbSoglia.checked;
+        caricaArticoli(); 
+    });
+
+    valSoglia.addEventListener('change', () => {
+        if (chkbSoglia.checked) caricaArticoli();
+    });
+
+    // carica articoli
     async function caricaArticoli() {
         try {
-            // SIMULAZIONE: Sostituisci con fetch() verso il tuo backend
-            const articoli = await new Promise(resolve => setTimeout(() => {
-                resolve([
-                    {
-                        id: 1,
-                        nome: "Pantaloni da Lavoro",
-                        tipologia: "Pantaloni",
-                        quantitaTotale: 45,
-                        attributi: [
-                            { nome: "Colore", valore: "Blu" },
-                            { nome: "Taglia", valore: "L" },
-                            { nome: "Tessuto", valore: "Cotone" }
-                        ]
-                    },
-                    {
-                        id: 2,
-                        nome: "Maglietta Estiva",
-                        tipologia: "T-Shirt",
-                        quantitaTotale: 0,
-                        attributi: [{ nome: "Taglia", valore: "M" }]
-                    },
-                    {
-                        id: 3,
-                        nome: "Scarpe Antinfortunistiche",
-                        tipologia: "Calzature",
-                        quantitaTotale: 12,
-                        attributi: [
-                            { nome: "Materiale", valore: "Pelle" },
-                            { nome: "Taglia", valore: "42" },
-                            { nome: "Certificazione", valore: "S3" }
-                        ]
-                    }
-                ]);
-            }, 600));
+            // caricamento visivo
+            gridArticoli.replaceChildren(); 
+            const pLoading = document.createElement('p');
+            pLoading.className = 'loading-text';
+            pLoading.textContent = 'Caricamento articoli in corso...';
+            gridArticoli.appendChild(pLoading);
 
-            // --- ORDINAMENTO 1: Articoli per Nome ---
-            articoli.sort((a, b) => a.nome.localeCompare(b.nome));
+            // scarica articoli
+            let responseJSON;
+            if (chkbSoglia.checked) {
+                const soglia = valSoglia.value;
+                const $service = 'articoli_qtBasse_service.php';
+                responseJSON = await ApiRequest.request($service, 'POST', { qtMinima: soglia });
+            } else {
+                const $service = 'articoli_service.php';
+                responseJSON = await ApiRequest.request($service, 'GET');
+            }
 
-            grigliaArticoli.replaceChildren(); // Rimuovi il testo "Caricamento..."
+            if(!responseJSON || !Array.isArray(responseJSON.body)) throw new Error("Dati articoli non validi");
 
-            articoli.forEach(art => {
-                const card = document.createElement('article');
-                card.className = 'article-card';
-                
-                const title = document.createElement('h3');
-                title.textContent = art.nome;
-
-                const tag = document.createElement('span');
-                tag.className = 'tag-tipologia';
-                tag.textContent = art.tipologia;
-
-                const qt = document.createElement('p');
-                qt.className = 'qt-badge';
-                qt.textContent = `Quantità in magazzino: ${art.quantitaTotale}`;
-
-                const ul = document.createElement('ul');
-                ul.className = 'attr-list';
-
-                // --- ORDINAMENTO 2: Attributi per Nome (Dinamico per ogni articolo) ---
-                if (art.attributi && art.attributi.length > 0) {
-                    
-                    // Ordiniamo l'array degli attributi prima di creare gli elementi <li>
-                    art.attributi.sort((a, b) => a.nome.localeCompare(b.nome));
-
-                    art.attributi.forEach(attr => {
-                        const li = document.createElement('li');
-                        const strong = document.createElement('strong');
-                        strong.textContent = `${attr.nome}: `;
-                        li.appendChild(strong);
-                        li.appendChild(document.createTextNode(attr.valore));
-                        ul.appendChild(li);
-                    });
-                } else {
-                    const li = document.createElement('li');
-                    li.textContent = 'Nessun attributo specifico';
-                    ul.appendChild(li);
-                }
-
-                const btnLocalizza = document.createElement('button');
-                btnLocalizza.className = 'btn-secondary btn-localizza';
-                btnLocalizza.textContent = '📍 Localizza';
-                btnLocalizza.addEventListener('click', () => eseguiLocalizzazione(art.id));
-
-                const resultContainer = document.createElement('div');
-                resultContainer.className = 'loc-result-container';
-                resultContainer.id = `loc-res-${art.id}`;
-
-                // Assembliamo la card
-                card.appendChild(title);
-                card.appendChild(tag);
-                card.appendChild(qt);
-                card.appendChild(ul);
-                card.appendChild(btnLocalizza);
-                card.appendChild(resultContainer);
-
-                grigliaArticoli.appendChild(card);
-            });
+            // prende dati in variabile
+            tuttiGliArticoli = responseJSON.body;
+            
+            // cambia filtri
+            popolaFiltri(tuttiGliArticoli);
+            
+            // Applichiamo eventuali filtri già scritti dall'utente e disegniamo l'HTML
+            applicaFiltri(gestoreFiltri.getValues());
 
         } catch (error) {
-            grigliaArticoli.replaceChildren();
+            gridArticoli.replaceChildren();
             const errP = document.createElement('p');
             errP.className = 'error-text text-danger';
             errP.textContent = 'Errore nel caricamento degli articoli.';
-            grigliaArticoli.appendChild(errP);
+            gridArticoli.appendChild(errP);
+            console.error(error);
         }
     }
 
-    // --- 2. SIMULAZIONE CHIAMATA: LOCALIZZA ARTICOLO (Invariata) ---
-    async function eseguiLocalizzazione(articoloId) {
+    // filtri in locale
+    function applicaFiltri(filtri) {
+        if (!tuttiGliArticoli || tuttiGliArticoli.length === 0) {
+            mostraArticoli([]); 
+            return;
+        }
+
+        const articoliFiltrati = tuttiGliArticoli.filter(art => {
+            // Assicuriamoci che i campi esistano prima di fare toLowerCase() per evitare errori
+            const nomeArt = art.nomeArticolo || "";
+            const nomeTip = art.nomeTipologia || "";
+
+            // filtro nome art
+            const matchNome = filtri.nome === '' || 
+                              nomeArt.toLowerCase().includes(filtri.nome.toLowerCase());
+            
+            // filtro tipologia (usiamo direttamente art.nomeTipologia!)
+            const matchTipologia = filtri.tipologia === '' || 
+                                   nomeTip.toLowerCase().includes(filtri.tipologia.toLowerCase());
+            
+            // filtro attr
+            let matchAttributi = true; 
+            if (filtri.attributoNome !== '') {
+                const attrTrovato = art.attributi && art.attributi.find(a => 
+                    a.nome.toLowerCase().includes(filtri.attributoNome.toLowerCase())
+                );
+                
+                if (!attrTrovato) {
+                    matchAttributi = false; // Non ha l'attributo
+                } else if (filtri.attributoValore !== '') {
+                    const matchValore = attrTrovato.valore.toLowerCase().includes(filtri.attributoValore.toLowerCase());
+                    if (!matchValore) matchAttributi = false; // Il valore non corrisponde
+                }
+            }
+
+            return matchNome && matchTipologia && matchAttributi;
+        });
+
+        // genera html
+        mostraArticoli(articoliFiltrati);
+    }
+
+    // popola filtri
+    function popolaFiltri(articoli) {
+        const setNomi = new Set();
+        const setTipologie = new Set();
+        const setAttrNomi = new Set();
+        const setAttrValori = new Set();
+
+        articoli.forEach(art => {
+            if (art.nomeArticolo) setNomi.add(art.nomeArticolo);
+            
+            // Usiamo direttamente il nome della tipologia dall'articolo
+            if (art.nomeTipologia) setTipologie.add(art.nomeTipologia);
+            
+            if (art.attributi && Array.isArray(art.attributi)) {
+                art.attributi.forEach(attr => {
+                    if (attr.nome) setAttrNomi.add(attr.nome);
+                    if (attr.valore) setAttrValori.add(attr.valore);
+                });
+            }
+        });
+
+        const riempiDatalist = (idDatalist, setDati) => {
+            const datalist = document.getElementById(idDatalist);
+            if (!datalist) return;
+            datalist.replaceChildren(); 
+            
+            Array.from(setDati).sort().forEach(valore => {
+                const opt = document.createElement('option');
+                opt.value = valore;
+                datalist.appendChild(opt);
+            });
+        };
+
+        riempiDatalist('lista-nomi', setNomi);
+        riempiDatalist('lista-tipologie', setTipologie);
+        riempiDatalist('lista-attributi', setAttrNomi);
+        riempiDatalist('lista-valori', setAttrValori);
+    }
+
+    // fa html
+    function mostraArticoli(articoliDaMostrare) {
+        gridArticoli.replaceChildren(); 
+
+        if (!articoliDaMostrare || articoliDaMostrare.length === 0) {
+            const emptyMsg = document.createElement('p');
+            emptyMsg.textContent = "Nessun articolo trovato per questi criteri.";
+            gridArticoli.appendChild(emptyMsg);
+            return;
+        }
+
+        articoliDaMostrare.sort((a, b) => a.nomeArticolo.localeCompare(b.nomeArticolo));
+
+        articoliDaMostrare.forEach(art => {
+            const card = document.createElement('article');
+            card.className = 'article-card';
+            
+            const title = document.createElement('h3');
+            title.textContent = art.nomeArticolo;
+
+            const tag = document.createElement('span');
+            tag.className = 'tag-tipologia';
+            // Inseriamo direttamente la stringa dal backend
+            tag.textContent = art.nomeTipologia || "Sconosciuta";
+
+            const qt = document.createElement('p');
+            qt.className = 'qt-badge';
+            qt.textContent = `Quantità in magazzino: ${art.quantitaTotale}`;
+
+            const ul = document.createElement('ul');
+            ul.className = 'attr-list';
+
+            if (art.attributi && art.attributi.length > 0) {
+                art.attributi.sort((a, b) => a.nome.localeCompare(b.nome));
+
+                art.attributi.forEach(attr => {
+                    const li = document.createElement('li');
+                    
+                    const spanLabel = document.createElement('span');
+                    spanLabel.className = 'attr-label';
+                    spanLabel.textContent = `${attr.nome}: `;
+                    
+                    li.appendChild(spanLabel);
+                    li.appendChild(document.createTextNode(attr.valore));
+                    ul.appendChild(li);
+                });
+            } else {
+                const li = document.createElement('li');
+                li.textContent = 'Nessun attributo specifico';
+                ul.appendChild(li);
+            }
+
+            const btnLocalizza = document.createElement('button');
+            btnLocalizza.className = 'btn-secondary btn-localizza';
+            btnLocalizza.textContent = '📍 Localizza';
+            btnLocalizza.addEventListener('click', () => localizza(art.idArticolo));
+
+            const resultContainer = document.createElement('div');
+            resultContainer.className = 'loc-result-container';
+            resultContainer.id = `loc-res-${art.idArticolo}`;
+
+            card.appendChild(title);
+            card.appendChild(tag);
+            card.appendChild(qt);
+            card.appendChild(ul);
+            card.appendChild(btnLocalizza);
+            card.appendChild(resultContainer);
+
+            gridArticoli.appendChild(card);
+        });
+    }
+
+    // localizza
+    async function localizza(articoloId) {
         const resultContainer = document.getElementById(`loc-res-${articoloId}`);
         resultContainer.replaceChildren(); 
         
@@ -123,18 +230,12 @@ document.addEventListener('DOMContentLoaded', () => {
         resultContainer.appendChild(loadingDiv);
 
         try {
-            const posizioni = await new Promise(resolve => setTimeout(() => {
-                if (articoloId === 1) {
-                    resolve([{ armadio: 1, scaffale: 2 }, { armadio: 3, scaffale: 1 }]);
-                } else if (articoloId === 3) {
-                    resolve([{ armadio: 2, scaffale: 4 }]);
-                } else {
-                    resolve([]); 
-                }
-            }, 800));
+            const servizio = 'loc_art_service.php';
+            const responseJSON = await ApiRequest.request(servizio, 'POST', { articoloId: articoloId });
+            if(!responseJSON || !Array.isArray(responseJSON.body)) throw new Error("Dati localizzazione non validi");
+            const posizioni = responseJSON.body || [];
 
             resultContainer.replaceChildren();
-
             if (posizioni.length === 0) {
                 const emptyDiv = document.createElement('div');
                 emptyDiv.className = 'loc-result error-loc'; 
@@ -146,9 +247,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const successDiv = document.createElement('div');
             successDiv.className = 'loc-result';
             
-            const strong = document.createElement('strong');
-            strong.textContent = 'Trovato in:';
-            successDiv.appendChild(strong);
+            const spanLabel = document.createElement('span');
+            spanLabel.className = 'attr-label';
+            spanLabel.textContent = 'Trovato in:';
+            successDiv.appendChild(spanLabel);
 
             const ulRes = document.createElement('ul');
             posizioni.forEach(pos => {
@@ -156,8 +258,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 li.textContent = `Armadio ${pos.armadio}, Scaffale ${pos.scaffale}`;
                 ulRes.appendChild(li);
             });
+
             successDiv.appendChild(ulRes);
-            
             resultContainer.appendChild(successDiv);
 
         } catch (error) {
@@ -169,6 +271,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- INIT ---
+    // avvia pagina
     caricaArticoli();
 });

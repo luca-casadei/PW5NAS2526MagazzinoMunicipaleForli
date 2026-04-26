@@ -10,7 +10,7 @@ http:
     type: json
     data: |-
       {
-        "qtMinima": -1
+        "qtMinima": 1000
       }
   auth: inherit
 

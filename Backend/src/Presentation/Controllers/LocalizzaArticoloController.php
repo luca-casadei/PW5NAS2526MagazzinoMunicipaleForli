@@ -19,7 +19,7 @@ class LocalizzaArticoloController {
             $articolo = new GetArticoloDTO($input['articoloId']);
             $articoliInScaffali = $this->localizzaService->localizzaById($articolo);
             if(empty($articoliInScaffali)) {
-                $resp = new Response("success", "Articolo non presente in nessuno scaffale", 200);
+                $resp = new Response("success", "Articolo non presente in nessuno scaffale", 200, []);
                 $this->json_response($resp, $resp->get_code());
                 return;
             }

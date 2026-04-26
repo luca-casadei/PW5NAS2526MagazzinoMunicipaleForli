@@ -122,3 +122,29 @@
     padding: 0.2rem 0.5rem;
     border-radius: 4px;
 }
+.actions-bar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1.5rem;
+}
+
+/* Bottone per aggiungere scaffali (Stile tratteggiato "dropzone") */
+.btn-add-scaffale {
+    display: block;
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.8rem;
+    background: transparent;
+    border: 2px dashed var(--secondary-color);
+    color: var(--text-muted);
+    border-radius: var(--radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-add-scaffale:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background-color: #eff6ff; /* Azzurrino leggerissimo */
+}

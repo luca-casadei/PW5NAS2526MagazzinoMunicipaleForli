@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Backend\Presentation\Controllers;
 
+use Backend\Application\commands\GetTipologiaDTO;
 use Backend\Application\dtos\ReadQuantitaDTO;
 use Backend\Application\interfaces\serv\IGetTipologiaById;
 use Backend\Application\interfaces\serv\IVediArticoli;
@@ -26,7 +27,8 @@ class ListaArticoliController {
             $articoliCompleti = $this->articoliService->execute();
             $articoliResponse = [];
             foreach ($articoliCompleti as $articolo){
-                $tipologia = $this->getTipologiaService->execute($articolo->idTipologia);
+                $dtoTipo = new GetTipologiaDTO($articolo->idTipologia);
+                $tipologia = $this->getTipologiaService->execute($dtoTipo);
                 $articoliResponse[] = new ResponseArticoli(
                     $articolo->idArticolo,
                     $articolo->nomeArticolo,
@@ -49,11 +51,12 @@ class ListaArticoliController {
         $input = json_decode(file_get_contents('php://input'), true);
         
         try {
-            $quantitaMinima = new ReadQuantitaDTO($input['qtMinima']);
+            $quantitaMinima = new ReadQuantitaDTO((int)$input['qtMinima']);
             $articoliCompleti = $this->articoliQtBasseService->execute($quantitaMinima);
             $articoliResponse = [];
             foreach ($articoliCompleti as $articolo){
-                $tipologia = $this->getTipologiaService->execute($articolo->idTipologia);
+                $dtoTipo = new GetTipologiaDTO($articolo->idTipologia);
+                $tipologia = $this->getTipologiaService->execute($dtoTipo);
                 $articoliResponse[] = new ResponseArticoli(
                     $articolo->idArticolo,
                     $articolo->nomeArticolo,

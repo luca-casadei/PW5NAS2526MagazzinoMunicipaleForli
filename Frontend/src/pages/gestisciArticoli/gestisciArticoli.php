@@ -9,6 +9,18 @@
         <p>Consulta l'elenco degli articoli presenti, verifica le quantità e localizza la loro posizione.</p>
     </header>
 
+    <div class="soglia-container" role="group" aria-label="Filtro scorte in esaurimento">
+        <div class="soglia-controlli">
+            <input type="checkbox" id="chk-soglia" name="chk-soglia">
+            <label for="chk-soglia">Mostra solo articoli in esaurimento</label>
+            
+            <div class="soglia-input-group">
+                <label for="val-soglia" class="sr-only">Soglia quantità</label>
+                <input type="number" id="val-soglia" min="0" value="10" disabled>
+            </div>
+        </div>
+    </div>
+
     <?php
         require $root_dir . "/components/global/filters.php";
     ?>

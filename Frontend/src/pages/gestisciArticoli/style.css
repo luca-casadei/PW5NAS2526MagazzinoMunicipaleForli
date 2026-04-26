@@ -1,4 +1,53 @@
 /* ==========================================================================
+   FILTRO SOGLIA QUANTITA'
+   ========================================================================== */
+
+.soglia-container {
+    background-color: var(--card-bg);
+    border: 1px solid var(--secondary-color);
+    border-left: 4px solid var(--primary-color);
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius);
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.soglia-controlli {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    font-weight: 600;
+}
+
+.soglia-controlli input[type="checkbox"] {
+    width: 1.2rem;
+    height: 1.2rem;
+    cursor: pointer;
+}
+
+.soglia-input-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto; /* Lo spinge a destra su schermi larghi */
+}
+
+.soglia-input-group input[type="number"] {
+    width: 80px;
+    padding: 0.4rem;
+    border: 1px solid var(--secondary-color);
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.soglia-input-group input[type="number"]:disabled {
+    background-color: #f1f5f9;
+    color: #94a3b8;
+    cursor: not-allowed;
+}
+
+/* ==========================================================================
    VISUALIZZAZIONE: GRIGLIA E CARD ARTICOLI
    ========================================================================== */
 
@@ -6,7 +55,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 2rem;
-    padding: 0.5rem; /* Margine interno per non tagliare le ombre ai lati */
+    padding: 0.5rem;
 }
 
 .article-card {
@@ -21,7 +70,6 @@
     transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
-/* Leggero effetto quando si passa sopra col mouse */
 .article-card:hover {
     box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
     transform: translateY(-2px);
@@ -51,12 +99,11 @@
     font-size: 0.95rem;
 }
 
-/* Lista attributi interni alla card */
 .attr-list {
     list-style: none;
     padding: 0;
     margin: 0 0 1.5rem 0;
-    flex-grow: 1; /* Spinge il bottone localizza verso il basso */
+    flex-grow: 1;
 }
 
 .attr-list li {
@@ -70,12 +117,13 @@
     border-bottom: none;
 }
 
-.attr-list strong {
+.attr-label {
+    font-weight: bold; /* o 'bold' */
     color: var(--text-main);
 }
 
 /* ==========================================================================
-   RISULTATO LOCALIZZAZIONE
+   RISULTATO LOCALIZZAZIONE E ANIMAZIONI
    ========================================================================== */
 
 .loc-result-container {
@@ -92,20 +140,13 @@
     animation: slideDown 0.3s ease-out;
 }
 
-.loc-result ul {
-    margin: 0.5rem 0 0 0;
-    padding-left: 1.25rem;
-}
+.loc-result ul { margin: 0.5rem 0 0 0; padding-left: 1.25rem; }
 
 .loc-result.error-loc {
     border-left-color: var(--danger-color);
     background: #fee2e2;
     color: #991b1b;
 }
-
-/* ==========================================================================
-   ANIMAZIONI
-   ========================================================================== */
 
 @keyframes slideDown {
     from { opacity: 0; max-height: 0; }

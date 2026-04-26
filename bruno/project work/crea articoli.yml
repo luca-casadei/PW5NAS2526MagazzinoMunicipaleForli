@@ -10,8 +10,8 @@ http:
     type: json
     data: |-
       {
-        "tipologiaId": 1,
-        "nome": "Pantaloni",
+        "tipologiaId": 10,
+        "nome": "Maglietta",
         "attributi": [
           {
             "nome": "colore",

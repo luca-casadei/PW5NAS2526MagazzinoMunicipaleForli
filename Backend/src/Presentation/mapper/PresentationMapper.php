@@ -11,6 +11,7 @@ class PresentationMapper {
     //TODO
     public static function tipologia_to_ResponseTipologia(Tipologia $tipologia): ResponseTipologia {
         return new ResponseTipologia(
+            $tipologia->id->valore,
             $tipologia->nome->nome
         );
     }
