@@ -89,12 +89,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     function applicaFiltri(filtri) {
-        if (!articoli || articoli.length === 0) {
+        if (!tuttiGliArticoli || tuttiGliArticoli.length === 0) {
             mostraArticoli([]); 
             return;
         }
 
-        const articoliFiltrati = articoli.filter(art => {
+        aggiornaValoriAttributi(filtri.attributoNome);
+
+        const articoliFiltrati = tuttiGliArticoli.filter(art => {
             // Assicuriamoci che i campi esistano prima di fare toLowerCase() per evitare errori
             const nomeArt = art.nomeArticolo || "";
             const nomeTip = art.nomeTipologia || "";
@@ -124,17 +126,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
             return matchNome && matchTipologia && matchAttributi;
         });
+
         // genera html
         mostraArticoli(articoliFiltrati);
     }
 
-    function popolaFiltri(articols) {
+    function aggiornaValoriAttributi(attributo){
+        const datalistValori = document.getElementById('lista-valori');
+        if (!datalistValori) return;
+        datalistValori.replaceChildren(); 
+
+        if (!attributo) return;
+
+        const setValori = new Set();
+        attributo = attributo.toLowerCase();
+
+        tuttiGliArticoli.forEach(art => {
+            if (art.attributi && Array.isArray(art.attributi)) {
+                art.attributi.forEach(attr => {
+                    // prendo valore attributo solo se corrisponde
+                    if (attr.nome.toLowerCase().includes(cerca)) {
+                        if (attr.valore) setValori.add(attr.valore);
+                    }
+                });
+            }
+        });
+
+        Array.from(setValori).sort().forEach(valore => {
+            const opt = document.createElement('option');
+            opt.value = valore;
+            datalistValori.appendChild(opt);
+        });
+    }
+
+    // popola filtri
+    function popolaFiltri(articoli) {
         const setNomi = new Set();
         const setTipologie = new Set();
         const setAttrNomi = new Set();
-        const setAttrValori = new Set();
+        //const setAttrValori = new Set();
 
-        articols.forEach(art => {
+        articoli.forEach(art => {
             if (art.nomeArticolo) setNomi.add(art.nomeArticolo);
             
             // Usiamo direttamente il nome della tipologia dall'articolo
@@ -143,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (art.attributi && Array.isArray(art.attributi)) {
                 art.attributi.forEach(attr => {
                     if (attr.nome) setAttrNomi.add(attr.nome);
-                    if (attr.valore) setAttrValori.add(attr.valore);
+                    //if (attr.valore) setAttrValori.add(attr.valore);
                 });
             }
         });
@@ -163,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
         riempiDatalist('lista-nomi', setNomi);
         riempiDatalist('lista-tipologie', setTipologie);
         riempiDatalist('lista-attributi', setAttrNomi);
-        riempiDatalist('lista-valori', setAttrValori);
+        //riempiDatalist('lista-valori', setAttrValori);
     }
 
     function mostraArticoli(artFiltrati){

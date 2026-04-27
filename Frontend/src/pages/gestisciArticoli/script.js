@@ -1,20 +1,21 @@
 import { ApiRequest } from "../../components/global/ApiRequest.js";
 import { FilterManager } from "../../components/global/filters-manager.js";
 
-//RICORDATI DI DIRE A CLIENTE DI SVUOTARE A MANO IL FILTRO SE RIVUOLE VECCHI ELEMENTI NEL FILTRO
 document.addEventListener('DOMContentLoaded', () => {
     const gridArticoli = document.getElementById('griglia-articoli');
     const chkbSoglia = document.getElementById('chk-soglia');
     const valSoglia = document.getElementById('val-soglia');
     
-    let tuttiGliArticoli = []; // articoli generici
+    let tuttiGliArticoli = []; 
 
     // filtri
-    const gestoreFiltri = new FilterManager((valoriAttuali) => {
-        applicaFiltri(valoriAttuali);
+    const gestoreFiltri = new FilterManager(() => {
+        const articoliFiltrati = gestoreFiltri.filtraArray(tuttiGliArticoli);
+        //mostra a scermo card
+        mostraArticoli(articoliFiltrati);
     });
 
-    // soglia quantita minima
+    // soglie
     chkbSoglia.addEventListener('change', () => {
         valSoglia.disabled = !chkbSoglia.checked;
         caricaArticoli(); 
@@ -24,17 +25,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (chkbSoglia.checked) caricaArticoli();
     });
 
-    // carica articoli
+    // 
     async function caricaArticoli() {
         try {
-            // caricamento visivo
+            // visivo
             gridArticoli.replaceChildren(); 
             const pLoading = document.createElement('p');
             pLoading.className = 'loading-text';
             pLoading.textContent = 'Caricamento articoli in corso...';
             gridArticoli.appendChild(pLoading);
 
-            // scarica articoli
+            // prendo dati
             let responseJSON;
             if (chkbSoglia.checked) {
                 const soglia = valSoglia.value;
@@ -47,14 +48,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if(!responseJSON || !Array.isArray(responseJSON.body)) throw new Error("Dati articoli non validi");
 
-            // prende dati in variabile
             tuttiGliArticoli = responseJSON.body;
-            
-            // cambia filtri
-            popolaFiltri(tuttiGliArticoli);
-            
-            // Applichiamo eventuali filtri già scritti dall'utente e disegniamo l'HTML
-            applicaFiltri(gestoreFiltri.getValues());
+            // popola filtri
+            gestoreFiltri.popolaFiltriBase(tuttiGliArticoli);
+            // filtra articoli
+            const filtratiIniziali = gestoreFiltri.filtraArray(tuttiGliArticoli);
+            mostraArticoli(filtratiIniziali);
 
         } catch (error) {
             gridArticoli.replaceChildren();
@@ -66,88 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // filtri in locale
-    function applicaFiltri(filtri) {
-        if (!tuttiGliArticoli || tuttiGliArticoli.length === 0) {
-            mostraArticoli([]); 
-            return;
-        }
-
-        const articoliFiltrati = tuttiGliArticoli.filter(art => {
-            // Assicuriamoci che i campi esistano prima di fare toLowerCase() per evitare errori
-            const nomeArt = art.nomeArticolo || "";
-            const nomeTip = art.nomeTipologia || "";
-
-            // filtro nome art
-            const matchNome = filtri.nome === '' || 
-                              nomeArt.toLowerCase().includes(filtri.nome.toLowerCase());
-            
-            // filtro tipologia (usiamo direttamente art.nomeTipologia!)
-            const matchTipologia = filtri.tipologia === '' || 
-                                   nomeTip.toLowerCase().includes(filtri.tipologia.toLowerCase());
-            
-            // filtro attr
-            let matchAttributi = true; 
-            if (filtri.attributoNome !== '') {
-                const attrTrovato = art.attributi && art.attributi.find(a => 
-                    a.nome.toLowerCase().includes(filtri.attributoNome.toLowerCase())
-                );
-                
-                if (!attrTrovato) {
-                    matchAttributi = false; // Non ha l'attributo
-                } else if (filtri.attributoValore !== '') {
-                    const matchValore = attrTrovato.valore.toLowerCase().includes(filtri.attributoValore.toLowerCase());
-                    if (!matchValore) matchAttributi = false; // Il valore non corrisponde
-                }
-            }
-
-            return matchNome && matchTipologia && matchAttributi;
-        });
-
-        // genera html
-        mostraArticoli(articoliFiltrati);
-    }
-
-    // popola filtri
-    function popolaFiltri(articoli) {
-        const setNomi = new Set();
-        const setTipologie = new Set();
-        const setAttrNomi = new Set();
-        const setAttrValori = new Set();
-
-        articoli.forEach(art => {
-            if (art.nomeArticolo) setNomi.add(art.nomeArticolo);
-            
-            // Usiamo direttamente il nome della tipologia dall'articolo
-            if (art.nomeTipologia) setTipologie.add(art.nomeTipologia);
-            
-            if (art.attributi && Array.isArray(art.attributi)) {
-                art.attributi.forEach(attr => {
-                    if (attr.nome) setAttrNomi.add(attr.nome);
-                    if (attr.valore) setAttrValori.add(attr.valore);
-                });
-            }
-        });
-
-        const riempiDatalist = (idDatalist, setDati) => {
-            const datalist = document.getElementById(idDatalist);
-            if (!datalist) return;
-            datalist.replaceChildren(); 
-            
-            Array.from(setDati).sort().forEach(valore => {
-                const opt = document.createElement('option');
-                opt.value = valore;
-                datalist.appendChild(opt);
-            });
-        };
-
-        riempiDatalist('lista-nomi', setNomi);
-        riempiDatalist('lista-tipologie', setTipologie);
-        riempiDatalist('lista-attributi', setAttrNomi);
-        riempiDatalist('lista-valori', setAttrValori);
-    }
-
-    // fa html
+    // mostra a schermo
     function mostraArticoli(articoliDaMostrare) {
         gridArticoli.replaceChildren(); 
 
@@ -169,7 +87,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const tag = document.createElement('span');
             tag.className = 'tag-tipologia';
-            // Inseriamo direttamente la stringa dal backend
             tag.textContent = art.nomeTipologia || "Sconosciuta";
 
             const qt = document.createElement('p');
@@ -208,18 +125,12 @@ document.addEventListener('DOMContentLoaded', () => {
             resultContainer.className = 'loc-result-container';
             resultContainer.id = `loc-res-${art.idArticolo}`;
 
-            card.appendChild(title);
-            card.appendChild(tag);
-            card.appendChild(qt);
-            card.appendChild(ul);
-            card.appendChild(btnLocalizza);
-            card.appendChild(resultContainer);
-
+            card.append(title, tag, qt, ul, btnLocalizza, resultContainer);
             gridArticoli.appendChild(card);
         });
     }
 
-    // localizza
+    // localizzazione articoli
     async function localizza(articoloId) {
         const resultContainer = document.getElementById(`loc-res-${articoloId}`);
         resultContainer.replaceChildren(); 
@@ -271,6 +182,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // avvia pagina
+    // init
     caricaArticoli();
 });

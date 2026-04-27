@@ -1,9 +1,7 @@
-/* ==========================================================================
-   1. VARIABILI GLOBALI (L'anima del progetto)
-   ========================================================================== */
-    *, *::before, *::after {
-        box-sizing: border-box;
-    }
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
    :root {
     /* Colori Identitari (Blu) */
     --primary-color: #2563eb;
@@ -28,9 +26,7 @@
     --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
 }
 
-/* ==========================================================================
-   2. RESET E STILI BASE (Corpo e Tipografia)
-   ========================================================================== */
+
 body {
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     background-color: var(--bg-color);
@@ -42,27 +38,49 @@ body {
 h1, h2, h3 { margin-top: 0; color: var(--text-main); }
 p { margin-top: 0; }
 
-/* ==========================================================================
-   3. COMPONENTI COMUNI (Bottoni, Navigazione, Feedback)
-   ========================================================================== */
 
 /* Navbar superiore fissa */
 .top-nav {
     position: sticky;
     top: 0;
-    background-color: var(--card-bg);
+    /* Sfondo bianco con leggera trasparenza per far passare il colore sotto */
+    background-color: rgba(255, 255, 255, 0.85); 
+    /* L'effetto sfocatura magico (vetro) */
+    backdrop-filter: blur(12px); 
+    -webkit-backdrop-filter: blur(12px);
+    
     padding: 1rem 2rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-bottom: 1px solid var(--secondary-color);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
     z-index: 100;
 }
 
+/* Pulsante "Torna alla Home" - Stile a pillola con hover interattivo */
 .btn-back {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    color: var(--primary-color);
+    color: var(--text-muted); /* Parte neutro... */
     text-decoration: none;
     font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0.5rem 1rem;
+    border-radius: 999px; /* Forma a pillola */
+    transition: all 0.3s ease;
+}
+
+.btn-back:hover {
+    color: var(--primary-color); /* ...diventa blu al passaggio */
+    background-color: #eff6ff; /* Sfondo azzurro leggerissimo */
+}
+
+/* Animazione fluida della freccia (⬅️) verso sinistra */
+.btn-back span {
+    transition: transform 0.3s ease;
+}
+
+.btn-back:hover span {
+    transform: translateX(-4px); 
 }
 
 /* Bottoni Standard */
@@ -98,9 +116,6 @@ p { margin-top: 0; }
 .msg-success { background: #d1fae5; color: #065f46; border-color: #34d399; }
 .msg-error { background: #fee2e2; color: #991b1b; border-color: #f87171; }
 
-/* ==========================================================================
-   4. STRUTTURE LAYOUT CONDIVISE
-   ========================================================================== */
 .dashboard-container {
     max-width: 1400px;
     margin: 0 auto;
@@ -125,9 +140,6 @@ p { margin-top: 0; }
     padding: 1.5rem;
     box-shadow: var(--shadow-sm);
 }
-/* ==========================================================================
-   COMPONENTE GLOBALE: BARRA DEI FILTRI
-   ========================================================================== */
 
 .filter-bar-container {
     display: flex;
@@ -177,6 +189,32 @@ p { margin-top: 0; }
 /* Animazione fluida quando appare il campo del valore */
 #filter-bar-valore-container {
     animation: filterFadeIn 0.3s ease;
+}
+.page-header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px dashed var(--secondary-color); /* Elegante linea di separazione */
+}
+
+.page-header h1 {
+    font-size: 2.25rem;
+    font-weight: 800;
+    letter-spacing: -0.02em; /* Stringe leggermente i caratteri, molto moderno */
+    margin-bottom: 0.5rem;
+    
+    /* Effetto testo con sfumatura (Gradiente dal nero al blu primario) */
+    background: linear-gradient(135deg, var(--text-main) 30%, var(--primary-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.page-header p {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    margin: 0;
+    max-width: 600px; /* Evita che il sottotitolo diventi una riga troppo lunga */
+    line-height: 1.6;
 }
 
 @keyframes filterFadeIn {
