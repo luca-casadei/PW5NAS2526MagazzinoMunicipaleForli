@@ -144,7 +144,6 @@ document.addEventListener('DOMContentLoaded', () => {
         resultContainer.innerHTML = '<div class="loc-result">Ricerca in corso...</div>';
 
         try {
-            // FIX: Assicuriamo che articoloId sia intero
             const idIntero = parseInt(articoloId, 10);
             const resp = await ApiRequest.request('loc_art_service.php', 'POST', { articoloId: idIntero });
             const posizioni = resp?.body || [];
@@ -165,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const ul = document.createElement('ul');
             posizioni.forEach(pos => {
                 const li = document.createElement('li');
-                li.textContent = `Armadio ${pos.armadio}, Scaffale ${pos.scaffale}`;
+                li.textContent = `Armadio ${pos.armadioId}, Scaffale ${pos.numeroScaffale}`;
                 ul.appendChild(li);
             });
 

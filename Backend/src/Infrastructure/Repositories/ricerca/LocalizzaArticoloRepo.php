@@ -25,7 +25,7 @@ class LocalizzaArticoloRepo implements ILocalizzaArticoloRepo{
         
         $articoliInScaffali = [];
         foreach ($result as $elem) {
-            $dto = new ArticoliInScaffaliDTO($id, $elem['Numero'], $elem['Armadio_Id'], $elem['Quantita']);
+            $dto = new ArticoliInScaffaliDTO($elem['Armadio_Id'], $elem['Numero'], $id, $elem['Quantita']);
             array_push($articoliInScaffali, Mapper::DTO_To_ArticoliInScaffali($dto));
         }
         return $articoliInScaffali;

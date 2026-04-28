@@ -4,6 +4,7 @@ namespace Backend\Presentation\Controllers;
 
 use Backend\Application\commands\GetArticoloDTO;
 use Backend\Application\interfaces\serv\ILocalizzaArticolo;
+use Backend\Presentation\mapper\PresentationMapper;
 use Backend\Presentation\Response;
 
 // Estendiamo la classe astratta invece di crearla da zero
@@ -17,7 +18,11 @@ class LocalizzaArticoloController {
         
         try {
             $articolo = new GetArticoloDTO($input['articoloId']);
-            $articoliInScaffali = $this->localizzaService->localizzaById($articolo);
+            $articoliInScaffaliDaRepo = $this->localizzaService->localizzaById($articolo);
+            $articoliInScaffali = [];
+            foreach($articoliInScaffaliDaRepo as $art){
+                $articoliInScaffali[] = PresentationMapper::artInScaffali_to_ResponseArtInScaffali($art);
+            }
             if(empty($articoliInScaffali)) {
                 $resp = new Response("success", "Articolo non presente in nessuno scaffale", 200, []);
                 $this->json_response($resp, $resp->get_code());

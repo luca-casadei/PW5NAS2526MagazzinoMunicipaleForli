@@ -2,9 +2,11 @@
 declare(strict_types=1);
 namespace Backend\Presentation\mapper;
 use Backend\Domain\Entities\Armadio;
+use Backend\Domain\Entities\ArticoliInScaffali;
 use Backend\Domain\Entities\Scaffale;
 use Backend\Domain\Entities\Tipologia;
 use Backend\Presentation\dtos\ResponseArmadio;
+use Backend\Presentation\dtos\ResponseArtInScaffali;
 use Backend\Presentation\dtos\ResponseScaffale;
 use Backend\Presentation\dtos\ResponseTipologia;
 class PresentationMapper {
@@ -24,6 +26,13 @@ class PresentationMapper {
         return new ResponseScaffale(
             $scaffale->id->idArmadio->valore,
             $scaffale->id->numScaffale->numero
+        );
+    }
+    public static function artInScaffali_to_ResponseArtInScaffali(ArticoliInScaffali $art): ResponseArtInScaffali {
+        return new ResponseArtInScaffali(
+            $art->id->idScaffale->idArmadio->valore,
+            $art->id->idScaffale->numScaffale->numero,
+            $art->quantita->valore
         );
     }
 }
