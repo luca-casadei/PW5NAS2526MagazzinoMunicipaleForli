@@ -6,7 +6,7 @@ if (!$dati) {
     echo json_encode(["error" => "Nessun dato ricevuto"]);
     exit;
 }
-$ch = curl_init("http://backend/tipologie");
+$ch = curl_init("http://backend/articoli/perScaffale");
 
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_POST, true);

@@ -13,10 +13,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let idDaEliminare = null;
     let attrCounter = 1;
-    let articoli = [];
+    let tuttiGliArticoli = []; 
 
-    const gestoreFiltri = new FilterManager((valoriAttuali) => {
-        applicaFiltri(valoriAttuali);
+    const gestoreFiltri = new FilterManager(() => {
+        const articoliFiltrati = gestoreFiltri.filtraArray(tuttiGliArticoli);
+        mostraArticoli(articoliFiltrati);
     });
 
     // tipologie per sleect
@@ -30,10 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
             tipologie.sort((a, b) => a.nome.localeCompare(b.nome));
 
             selectTipologia.replaceChildren();
-            /*const option = document.createElement('option');
+            
+            const option = document.createElement('option');
             option.value = ""; 
             option.textContent = "Seleziona tipologia...";
-            selectTipologia.appendChild(option);*/ //guarda se meglio rimetterlo o no
+            selectTipologia.appendChild(option); //guarda se meglio rimetterlo o no
 
             tipologie.forEach(t => {
                 const opt = document.createElement('option');
@@ -72,134 +74,37 @@ document.addEventListener('DOMContentLoaded', () => {
     // carica e mostra articoli
     async function caricaArticoli() {
         try {
+            grigliaArticoli.innerHTML = '<p class="loading-text">Caricamento modelli...</p>';
+
             const $service = 'articoli_service.php';
             const responseJSON = await ApiRequest.request($service, 'GET');
             if(!responseJSON || !Array.isArray(responseJSON.body)) throw new Error("Dati articoli non validi");
 
             // prende dati in variabile
-            articoli = responseJSON.body;
+            tuttiGliArticoli = responseJSON.body;
+            tuttiGliArticoli.sort((a, b) => a.nomeArticolo.localeCompare(b.nomeArticolo));
 
-            popolaFiltri(articoli);
-            applicaFiltri(gestoreFiltri.getValues());
-            articoli.sort((a, b) => a.nomeArticolo.localeCompare(b.nomeArticolo));
+            gestoreFiltri.popolaFiltriBase(tuttiGliArticoli);
+            
+            const filtratiIniziali = gestoreFiltri.filtraArray(tuttiGliArticoli);
+            mostraArticoli(filtratiIniziali);
         } 
         catch (e) { 
             console.log(e.message);
-            grigliaArticoli.textContent = "Errore caricamento."; 
+            grigliaArticoli.innerHTML = '<p class="error-text text-danger">Errore caricamento modelli.</p>'; 
         }
-    }
-    function applicaFiltri(filtri) {
-        if (!tuttiGliArticoli || tuttiGliArticoli.length === 0) {
-            mostraArticoli([]); 
-            return;
-        }
-
-        aggiornaValoriAttributi(filtri.attributoNome);
-
-        const articoliFiltrati = tuttiGliArticoli.filter(art => {
-            // Assicuriamoci che i campi esistano prima di fare toLowerCase() per evitare errori
-            const nomeArt = art.nomeArticolo || "";
-            const nomeTip = art.nomeTipologia || "";
-
-            // filtro nome art
-            const matchNome = filtri.nome === '' || 
-                              nomeArt.toLowerCase().includes(filtri.nome.toLowerCase());
-            
-            // filtro tipologia (usiamo direttamente art.nomeTipologia!)
-            const matchTipologia = filtri.tipologia === '' || 
-                                   nomeTip.toLowerCase().includes(filtri.tipologia.toLowerCase());
-            
-            // filtro attr
-            let matchAttributi = true; 
-            if (filtri.attributoNome !== '') {
-                const attrTrovato = art.attributi && art.attributi.find(a => 
-                    a.nome.toLowerCase().includes(filtri.attributoNome.toLowerCase())
-                );
-                
-                if (!attrTrovato) {
-                    matchAttributi = false; // Non ha l'attributo
-                } else if (filtri.attributoValore !== '') {
-                    const matchValore = attrTrovato.valore.toLowerCase().includes(filtri.attributoValore.toLowerCase());
-                    if (!matchValore) matchAttributi = false; // Il valore non corrisponde
-                }
-            }
-
-            return matchNome && matchTipologia && matchAttributi;
-        });
-
-        // genera html
-        mostraArticoli(articoliFiltrati);
-    }
-
-    function aggiornaValoriAttributi(attributo){
-        const datalistValori = document.getElementById('lista-valori');
-        if (!datalistValori) return;
-        datalistValori.replaceChildren(); 
-
-        if (!attributo) return;
-
-        const setValori = new Set();
-        attributo = attributo.toLowerCase();
-
-        tuttiGliArticoli.forEach(art => {
-            if (art.attributi && Array.isArray(art.attributi)) {
-                art.attributi.forEach(attr => {
-                    // prendo valore attributo solo se corrisponde
-                    if (attr.nome.toLowerCase().includes(cerca)) {
-                        if (attr.valore) setValori.add(attr.valore);
-                    }
-                });
-            }
-        });
-
-        Array.from(setValori).sort().forEach(valore => {
-            const opt = document.createElement('option');
-            opt.value = valore;
-            datalistValori.appendChild(opt);
-        });
-    }
-
-    // popola filtri
-    function popolaFiltri(articoli) {
-        const setNomi = new Set();
-        const setTipologie = new Set();
-        const setAttrNomi = new Set();
-        //const setAttrValori = new Set();
-
-        articoli.forEach(art => {
-            if (art.nomeArticolo) setNomi.add(art.nomeArticolo);
-            
-            // Usiamo direttamente il nome della tipologia dall'articolo
-            if (art.nomeTipologia) setTipologie.add(art.nomeTipologia);
-            
-            if (art.attributi && Array.isArray(art.attributi)) {
-                art.attributi.forEach(attr => {
-                    if (attr.nome) setAttrNomi.add(attr.nome);
-                    //if (attr.valore) setAttrValori.add(attr.valore);
-                });
-            }
-        });
-
-        const riempiDatalist = (idDatalist, setDati) => {
-            const datalist = document.getElementById(idDatalist);
-            if (!datalist) return;
-            datalist.replaceChildren(); 
-            
-            Array.from(setDati).sort().forEach(valore => {
-                const opt = document.createElement('option');
-                opt.value = valore;
-                datalist.appendChild(opt);
-            });
-        };
-
-        riempiDatalist('lista-nomi', setNomi);
-        riempiDatalist('lista-tipologie', setTipologie);
-        riempiDatalist('lista-attributi', setAttrNomi);
-        //riempiDatalist('lista-valori', setAttrValori);
     }
 
     function mostraArticoli(artFiltrati){
         grigliaArticoli.replaceChildren();
+
+        if (!artFiltrati || artFiltrati.length === 0) {
+            const emptyMsg = document.createElement('p');
+            emptyMsg.textContent = "Nessun modello trovato in catalogo.";
+            grigliaArticoli.appendChild(emptyMsg);
+            return;
+        }
+
         artFiltrati.forEach(art => {
             const card = document.createElement('article');
             card.className = 'article-card';
@@ -208,22 +113,27 @@ document.addEventListener('DOMContentLoaded', () => {
             h3.textContent = art.nomeArticolo;
             const tag = document.createElement('span'); 
             tag.className = 'tag-tipologia'; 
-            tag.textContent = art.nomeTipologia;
+            tag.textContent = art.nomeTipologia || "Sconosciuta";
             
             const ul = document.createElement('ul');
             ul.className = 'attr-list';
 
-            art.attributi.sort((a, b) => a.nome.localeCompare(b.nome));
-
-            art.attributi.forEach(attr => {
+            if (art.attributi && art.attributi.length > 0) {
+                art.attributi.sort((a, b) => a.nome.localeCompare(b.nome));
+                art.attributi.forEach(attr => {
+                    const li = document.createElement('li');
+                    const spanLabel = document.createElement('span');
+                    spanLabel.className = 'attr-label';
+                    spanLabel.textContent = `${attr.nome}: `;
+                    li.appendChild(spanLabel);
+                    li.appendChild(document.createTextNode(attr.valore));
+                    ul.appendChild(li);
+                });
+            } else {
                 const li = document.createElement('li');
-                const spanLabel = document.createElement('span');
-                spanLabel.className = 'attr-label';
-                spanLabel.textContent = `${attr.nome}: `;
-                li.appendChild(spanLabel);
-                li.appendChild(document.createTextNode(attr.valore));
+                li.textContent = 'Nessun attributo specifico';
                 ul.appendChild(li);
-            });
+            }
 
             const btnDel = document.createElement('button');
             btnDel.className = "btn-danger"; 
@@ -235,6 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('nome-art-delete').textContent = art.nomeArticolo;
                 modal.showModal();
             };
+            
             card.append(h3, tag, ul, btnDel);
             grigliaArticoli.appendChild(card);
         });
@@ -245,6 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.close();
         idDaEliminare = null;
     } 
+
     btnConfirm.onclick = async () => {
         if (!idDaEliminare) return; 
 
@@ -262,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
             caricaArticoli(); 
         } 
         catch (error) {
-            alert('Errore durante l\'eliminazione: ');
+            alert('Errore durante l\'eliminazione: ' + error.message);
         } 
         finally {
             btnConfirm.disabled = false;
@@ -296,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const payload = {
-            tipologiaId: parseInt(tipologiaId), // Convertiamo in numero per il database
+            tipologiaId: parseInt(tipologiaId),
             nome: nomeArticolo,
             attributi: attributi
         };
@@ -318,9 +230,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // rimuovo attributi aggiunti
             const righeAggiuntive = containerAttributi.querySelectorAll('.attribute-row');
             righeAggiuntive.forEach(riga => riga.remove());
-            attrCounter = 1; // Resetto il contatore
+            attrCounter = 1; 
 
-            caricaArticoli();
+            caricaArticoli(); 
 
         } catch (error) {
             mostraFeedback('Errore durante il salvataggio: ' + error.message, 'error');

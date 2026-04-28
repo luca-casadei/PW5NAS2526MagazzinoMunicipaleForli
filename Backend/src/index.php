@@ -197,8 +197,8 @@ catch (\Throwable $e){
     echo json_encode([
             "error" => "Errore files", 
             "detail" => $e->getMessage(),
-            "file" => $e->getFile(),     // <--- AGGIUNGI QUESTO
-            "line" => $e->getLine()      // <--- E QUESTO
+            "file" => $e->getFile(),
+            "line" => $e->getLine()
         ]);
     exit;
 }
@@ -326,7 +326,7 @@ try{
                 $esportaStoricoCSVController->method_not_allowed();
             }
             break;
-        // --- SE NESSUNA ROTTA CORRISPONDE ---
+        // SE NESSUNA ROTTA CORRISPONDE
         default:
             http_response_code(404);
             echo json_encode(["error" => "Endpoint non trovato", "path" => $path]);

@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Backend\Presentation\Controllers;
 
 use Backend\Application\commands\GetArtNomeDTO;
+use Backend\Application\commands\GetTipologiaDTO;
 use Backend\Application\dtos\ReadScaffaleDTO;
 use Backend\Application\interfaces\serv\IGetTipologiaById;
 use Backend\Application\interfaces\serv\ITrovaArticoliByNome;
@@ -60,7 +61,8 @@ class ListaArticoliPerController {
             $articoliCompleti = $this->artScaffaliService->getContenutoById($scaffaleDTO);
             $articoliResponse = [];
             foreach ($articoliCompleti as $articolo){
-                $tipologia = $this->getTipologiaService->execute($articolo->idTipologia);
+                $tipoDTO = new GetTipologiaDTO($articolo->idTipologia);
+                $tipologia = $this->getTipologiaService->execute($tipoDTO);
                 $articoliResponse[] = new ResponseArticoli(
                     $articolo->idArticolo,
                     $articolo->nomeArticolo,

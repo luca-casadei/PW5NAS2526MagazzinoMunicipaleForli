@@ -16,6 +16,7 @@ export class FilterManager {
     inizializzazioneEvents() {
         if (this.inputAttrNome && this.containerAttrValore) {
             this.inputAttrNome.addEventListener('input', (e) => {
+                if (this.inputAttrValore) this.inputAttrValore.value = '';
                 if (e.target.value.trim() !== '') {
                     this.containerAttrValore.style.display = 'flex';
                 } else {

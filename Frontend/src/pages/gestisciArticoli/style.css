@@ -1,6 +1,4 @@
-/* ==========================================================================
-   FILTRO SOGLIA QUANTITA'
-   ========================================================================== */
+
 
 .soglia-container {
     background-color: var(--card-bg);
@@ -47,9 +45,6 @@
     cursor: not-allowed;
 }
 
-/* ==========================================================================
-   VISUALIZZAZIONE: GRIGLIA E CARD ARTICOLI
-   ========================================================================== */
 
 .articles-grid {
     display: grid;
@@ -122,10 +117,6 @@
     color: var(--text-main);
 }
 
-/* ==========================================================================
-   RISULTATO LOCALIZZAZIONE E ANIMAZIONI
-   ========================================================================== */
-
 .loc-result-container {
     margin-top: 1rem;
     min-height: 20px;
@@ -146,6 +137,64 @@
     border-left-color: var(--danger-color);
     background: #fee2e2;
     color: #991b1b;
+}
+/* Container per i bottoni Localizza e Aggiungi */
+.article-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 1rem;
+}
+
+.article-actions button {
+    flex: 1;
+}
+
+/* Form di aggiunta allo scaffale (compare sotto i bottoni) */
+.add-to-shelf-form {
+    background-color: var(--bg-color);
+    border: 1px solid var(--secondary-color);
+    border-radius: var(--radius);
+    padding: 1rem;
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    animation: filterFadeIn 0.3s ease;
+}
+
+.add-to-shelf-form strong {
+    font-size: 0.9rem;
+    color: var(--text-main);
+}
+
+/* Riga dedicata alla quantità nel form */
+.qt-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.qt-row label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.qt-input {
+    width: 80px !important;
+}
+
+/* Messaggio di successo compatto all'interno della card */
+.msg-success-inline {
+    background: #d1fae5;
+    color: #065f46;
+    border: 1px solid #34d399;
+    padding: 10px;
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
+    margin: 0;
 }
 
 @keyframes slideDown {

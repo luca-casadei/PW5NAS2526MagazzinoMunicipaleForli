@@ -95,6 +95,7 @@
     border: 1px solid #fecaca;
 }
 
+
 /* Animazione per i nuovi attributi */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-5px); }

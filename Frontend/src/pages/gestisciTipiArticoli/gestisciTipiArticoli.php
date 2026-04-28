@@ -30,7 +30,7 @@
                 </fieldset>
 
                 <fieldset>
-                    <legend>Attributi Aggiuntivi (Facoltativi)</legend>
+                    <legend>Caratteristiche </legend>
                     <div id="contenitore-attributi" class="dynamic-attributes">
                         <div>
                             <input type="text" placeholder="Nome (es. Peso)" required>

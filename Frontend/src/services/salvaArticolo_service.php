@@ -1,7 +1,7 @@
 <?php
-$dati_login = file_get_contents('php://input');
+$dati = file_get_contents('php://input');
 
-if (!$dati_login) {
+if (!$dati) {
     http_response_code(400);
     echo json_encode(["error" => "Nessun dato ricevuto"]);
     exit;
@@ -11,7 +11,7 @@ $ch = curl_init("http://backend/tipiArticoli");
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_POST, true);
 
-curl_setopt($ch, CURLOPT_POSTFIELDS, $dati_login);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $dati);
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
     'Content-Type: application/json'
 ]);
