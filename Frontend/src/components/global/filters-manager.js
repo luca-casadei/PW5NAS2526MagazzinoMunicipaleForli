@@ -74,7 +74,10 @@ export class FilterManager {
                 if (!attrTrovato) {
                     matchAttributi = false; 
                 } else if (valAttrValore !== '') {
-                    if (!attrTrovato.valore.toLowerCase() === valAttrValore) matchAttributi = false; 
+                    // FIX: Corretto l'operatore logico usando includes per una ricerca più flessibile
+                    if (!attrTrovato.valore.toLowerCase().includes(valAttrValore)) {
+                        matchAttributi = false; 
+                    }
                 }
             }
             return matchNome && matchTipologia && matchAttributi;

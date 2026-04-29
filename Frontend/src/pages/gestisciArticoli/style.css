@@ -123,6 +123,7 @@
 }
 
 .loc-result {
+    margin-top: 1rem;
     padding: 1rem;
     background: #f1f5f9;
     border-radius: var(--radius);
