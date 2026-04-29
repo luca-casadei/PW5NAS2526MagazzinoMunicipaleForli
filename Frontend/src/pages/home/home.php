@@ -66,4 +66,7 @@
             </li>
         </ul>
     </nav>
+    <a href="/pages/guida/index_guida.php" class="btn-guida-floating" aria-label="Apri la guida del programma" title="Come si usa?">
+        <span>❓</span>
+    </a>
 </main>

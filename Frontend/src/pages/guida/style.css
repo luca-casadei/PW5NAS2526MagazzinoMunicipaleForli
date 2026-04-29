@@ -1,0 +1,68 @@
+.guida-dashboard {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2.5rem;
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--secondary-color);
+}
+
+.guida-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    border-bottom: 2px solid var(--secondary-color);
+    padding-bottom: 1.5rem;
+}
+
+.guida-header h1 {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.guida-header p {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+}
+
+.guida-section {
+    margin-bottom: 2.5rem;
+}
+
+.guida-section h2 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.5rem;
+    color: var(--text-main);
+    margin-bottom: 1rem;
+}
+
+.guida-section p {
+    line-height: 1.6;
+    color: var(--text-muted);
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.guida-section ul {
+    list-style-type: disc;
+    padding-left: 1.5rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+.guida-section ul li {
+    margin-bottom: 0.5rem;
+}
+
+/* Stile per dare risalto a parole chiave nella guida */
+.guida-highlight {
+    background-color: #eff6ff;
+    color: var(--primary-color);
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    font-weight: 600;
+    font-family: monospace;
+}
