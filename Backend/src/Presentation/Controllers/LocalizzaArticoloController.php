@@ -6,6 +6,7 @@ use Backend\Application\commands\GetArticoloDTO;
 use Backend\Application\interfaces\serv\ILocalizzaArticolo;
 use Backend\Presentation\mapper\PresentationMapper;
 use Backend\Presentation\Response;
+use ErrorException;
 
 // Estendiamo la classe astratta invece di crearla da zero
 class LocalizzaArticoloController {
@@ -18,6 +19,8 @@ class LocalizzaArticoloController {
         
         try {
             $articolo = new GetArticoloDTO($input['articoloId']);
+            if($articolo->articoloId <= 0)
+                throw new ErrorException("Inserisci dati validi", 400);
             $articoliInScaffaliDaRepo = $this->localizzaService->localizzaById($articolo);
             $articoliInScaffali = [];
             foreach($articoliInScaffaliDaRepo as $art){

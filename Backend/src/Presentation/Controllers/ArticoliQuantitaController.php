@@ -6,6 +6,7 @@ use Backend\Application\commands\UpdateDimQuantitaDTO;
 use Backend\Application\interfaces\serv\IAggQtArticolo;
 use Backend\Application\interfaces\serv\IDimQtArticolo;
 use Backend\Presentation\Response;
+use ErrorException;
 
 
 class ArticoliQuantitaController {
@@ -25,6 +26,8 @@ class ArticoliQuantitaController {
                 $input['armadioId'],
                 $input['quantita']
             );
+            if($update->articoloId <= 0 || $update->numScaffale <= 0 || $update->armadioId <= 0 || $update->quantitaAgg <= 0)
+                throw new ErrorException("Inserisci dati validi", 400);
             $this->aggQtArticoloService->execute($update);
             $resp = new Response("success", "Quantità aggiunta correttamente", 200);
             $this->json_response($resp, $resp->get_code());
@@ -43,6 +46,8 @@ class ArticoliQuantitaController {
                 $input['numeroScaffale'],
                 $input['armadioId']
             );
+            if($update->articoloId <= 0 || $update->numScaffale <= 0 || $update->armadioId <= 0)
+                throw new ErrorException("Inserisci dati validi", 400);
             $this->dimQtArticoloService->execute($update);
             $resp = new Response("success", "Quantità diminuita correttamente", 200);
             $this->json_response($resp, $resp->get_code());

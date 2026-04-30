@@ -8,6 +8,7 @@ use Backend\Application\interfaces\serv\IGetAllScaffali;
 use Backend\Application\interfaces\serv\IGetScaffaliArmadioById;
 use Backend\Presentation\Response;
 use Backend\Presentation\mapper\PresentationMapper;
+use ErrorException;
 
 class ScaffaliController {
     private ICreaScaffale $creaScaffaleService;
@@ -23,6 +24,8 @@ class ScaffaliController {
         $input = json_decode(file_get_contents('php://input'), true);
         try{
             $armadioDTO = new ReadArmadioDTO($input['armadioId']);
+            if($armadioDTO->id <= 0)
+                throw new ErrorException("Inserisci dati validi", 400);
             $scaffaliEntities = $this->vediScaffaliOfArmadioService->execute($armadioDTO);
             $scaffali = [];
             foreach($scaffaliEntities as $scaffale){
@@ -62,6 +65,8 @@ class ScaffaliController {
         );
         
         try {
+            if($createScaffale->armadioId <= 0)
+                throw new ErrorException("Inserisci dati validi", 400);
             $this->creaScaffaleService->execute($createScaffale);
             $resp = new Response("success","Scaffale creato", 201);
             $this->json_response($resp, $resp->get_code());

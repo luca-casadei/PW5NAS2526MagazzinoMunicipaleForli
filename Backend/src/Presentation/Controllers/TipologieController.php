@@ -8,6 +8,7 @@ use Backend\Application\interfaces\serv\IEliminaTipologia;
 use Backend\Application\interfaces\serv\IVediTipologie;
 use Backend\Presentation\Response;
 use Backend\Presentation\mapper\PresentationMapper;
+use ErrorException;
 
 class TipologieController {
     private ICreaTipologia $creaTipoService;
@@ -23,6 +24,8 @@ class TipologieController {
         $input = json_decode(file_get_contents('php://input'), true);
         try{
             $eliminaTipo = new DeleteTipologiaDTO($input['nome']);
+            if(strlen(trim($eliminaTipo->tipologiaNome)) <= 0)
+                throw new ErrorException("Inserisci dati validi", 400);
             $this->eliminaTipoService->eliminaByNome($eliminaTipo);
             $resp = new Response("success", "Tipologia eliminata", 200);
             $this->json_response($resp, $resp->get_code());
@@ -58,6 +61,8 @@ class TipologieController {
         );
         
         try {
+            if(strlen(trim($createTipologia->nome)) <= 0)
+                throw new ErrorException("Inserisci dati validi", 400);
             $this->creaTipoService->execute($createTipologia);
             $resp = new Response("success","Tipologia creata", 201);
             $this->json_response($resp, $resp->get_code());

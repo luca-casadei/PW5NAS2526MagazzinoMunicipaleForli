@@ -65,7 +65,12 @@ document.addEventListener('DOMContentLoaded', () => {
         
         messageCreate.replaceChildren();
         messageCreate.className = 'msg-feedback'; // reset classi
-
+        if(inputNome == "")
+        {
+            messageCreate.textContent = `Inserire un valore valido.`;
+            messageCreate.classList.add('msg-error');
+            return;
+        }
         try {
             const $service = 'creaTipologia_service.php';
             const $responseJSON = await ApiRequest.request($service, 'POST', { nome: inputNome });

@@ -7,6 +7,7 @@ use Backend\Application\commands\DeleteTipoArticoloDTO;
 use Backend\Application\interfaces\serv\ICreaTipoArticolo;
 use Backend\Application\interfaces\serv\IEliminaTipoArticolo;
 use Backend\Presentation\Response;
+use ErrorException;
 
 class TipoArticoloController {
     private ICreaTipoArticolo $creaTipoArticoloService;
@@ -20,6 +21,8 @@ class TipoArticoloController {
         $input = json_decode(file_get_contents('php://input'), true);
         try{
             $eliminaTipo = new DeleteTipoArticoloDTO($input['articoloId']);
+            if($eliminaTipo->articoloId <= 0)
+                throw new ErrorException("Inserisci dati validi", 400);
             $this->eliminaTipoArticoloService->execute($eliminaTipo);
             $resp = new Response("success", "Articolo eliminato", 200);
             $this->json_response($resp, $resp->get_code());
@@ -40,7 +43,6 @@ class TipoArticoloController {
                 $this->json_response($resp, $resp->get_code());
                 return;
             }
-
             $attributiOggetti = [];
             foreach ($input['attributi'] as $attrArray) {
                 // Costruiamo l'oggetto DTO per ogni attributo
@@ -52,6 +54,10 @@ class TipoArticoloController {
                 $input['nome'],
                 $attributiOggetti
             );
+
+            if(strlen(trim($command->nome)) <= 0 || $command->tipologiaId <= 0)
+                throw new ErrorException("Inserisci dati validi", 400);
+
             $this->creaTipoArticoloService->execute($command);
             $resp = new Response("success","Articolo creato", 201);
             $this->json_response($resp, $resp->get_code());

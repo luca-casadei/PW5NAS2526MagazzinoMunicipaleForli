@@ -218,7 +218,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const testoOriginale = btnSubmit.textContent;
         btnSubmit.disabled = true;
         btnSubmit.textContent = 'Salvataggio in corso...';
-
+        if(nomeArticolo == "" || tipologiaId <= 0){
+            mostraFeedback('Inserisci dati validi: ', 'error');
+            return;
+        }
         try {
             const responseJSON = await ApiRequest.request('salvaArticolo_service.php', 'POST', payload);
             if(responseJSON.status !== 'success') {

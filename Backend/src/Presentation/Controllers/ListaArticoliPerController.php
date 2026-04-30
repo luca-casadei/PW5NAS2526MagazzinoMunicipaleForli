@@ -10,6 +10,7 @@ use Backend\Application\interfaces\serv\ITrovaArticoliByNome;
 use Backend\Application\interfaces\serv\IVediScaffali;
 use Backend\Presentation\dtos\ResponseArticoli;
 use Backend\Presentation\Response;
+use ErrorException;
 
 // Estendiamo la classe astratta invece di crearla da zero
 class ListaArticoliPerController {
@@ -26,6 +27,8 @@ class ListaArticoliPerController {
         
         try {
             $nomeArt = new GetArtNomeDTO($input['nomeArt']);
+            if(strlen(trim($nomeArt->nome))<= 0)
+                throw new ErrorException("Inserisci dati validi", 400);
             $articoliCompleti = $this->artNomeService->getArticoliByNome($nomeArt);
             $articoliResponse = [];
             foreach ($articoliCompleti as $articolo){
@@ -58,6 +61,8 @@ class ListaArticoliPerController {
         
         try {
             $scaffaleDTO = new ReadScaffaleDTO($input['idArmadio'], $input['numScaffale']);
+            if($scaffaleDTO->numeroScaffale<= 0 || $scaffaleDTO->armadioId <= 0)
+                throw new ErrorException("Inserisci dati validi", 400);
             $articoliCompleti = $this->artScaffaliService->getContenutoById($scaffaleDTO);
             $articoliResponse = [];
             foreach ($articoliCompleti as $articolo){

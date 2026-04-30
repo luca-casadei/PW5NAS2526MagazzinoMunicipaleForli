@@ -9,6 +9,7 @@ use Backend\Application\interfaces\serv\IVediArticoli;
 use Backend\Application\interfaces\serv\IVediArticoliQtBasse;
 use Backend\Presentation\dtos\ResponseArticoli;
 use Backend\Presentation\Response;
+use ErrorException;
 
 // Estendiamo la classe astratta invece di crearla da zero
 class ListaArticoliController {
@@ -52,6 +53,8 @@ class ListaArticoliController {
         
         try {
             $quantitaMinima = new ReadQuantitaDTO((int)$input['qtMinima']);
+            if($quantitaMinima->quantita <= 0)
+                throw new ErrorException("Inserisci dati validi", 400);
             $articoliCompleti = $this->articoliQtBasseService->execute($quantitaMinima);
             $articoliResponse = [];
             foreach ($articoliCompleti as $articolo){

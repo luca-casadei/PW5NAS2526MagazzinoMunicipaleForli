@@ -16,7 +16,7 @@ final readonly class ArticoloNome
      */
     public function __construct(public string $valore)
     {
-        if (empty($valore)) {
+        if (strlen(trim($valore)) <= 0) {
             throw new InvalidArgumentException('Il nome dell\'articolo non può essere vuoto.');
         }
     }
