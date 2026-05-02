@@ -18,8 +18,7 @@ class EsportaStoricoRepo implements IEsportaStoricoRepo
     {
         $db = $this->connector->get_db();
 
-        // 1. Query aggiornata: rimossi gli ID, aggiunti i nomi
-        $query = "SELECT Log_Id, Data_Ora_Modifica, Nome_Articolo, Nome_Tipologia, Numero_Scaffale, Armadio_Id, QtaPrecedente, QtaAggiornata, Attributi
+        $query = "SELECT Log_Id, Data_Ora_Modifica, Nome_Articolo, Nome_Tipologia, Numero_Scaffale, Armadio_Id, QtaPrecedente, QtaAggiornata, QtaUsataPrecedente, QtaUsataAggiornata, Attributi
                   FROM Log_Modifiche_Quantita
                   WHERE Data_Ora_Modifica BETWEEN ? AND ?
                   ORDER BY Data_Ora_Modifica DESC;";
@@ -32,16 +31,17 @@ class EsportaStoricoRepo implements IEsportaStoricoRepo
         $logs = [];
         
         foreach ($result as $res) {
-            // 2. Costruttore del DTO aggiornato con i campi testuali
             $logs[] = new ResponseMovimentiDTO(
                 (int)$res["Log_Id"],
                 $res["Data_Ora_Modifica"],
-                $res["Nome_Articolo"],     // Passato come stringa
-                $res["Nome_Tipologia"],    // Passato come stringa
+                $res["Nome_Articolo"],
+                $res["Nome_Tipologia"],
                 (int)$res["Numero_Scaffale"],
                 (int)$res["Armadio_Id"],
                 (int)$res["QtaPrecedente"],
                 (int)$res["QtaAggiornata"],
+                (int)$res["QtaUsataPrecedente"], 
+                (int)$res["QtaUsataAggiornata"], 
                 $res["Attributi"]
             );
         }

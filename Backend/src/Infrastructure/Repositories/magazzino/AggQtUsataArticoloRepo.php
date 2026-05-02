@@ -2,12 +2,12 @@
 declare(strict_types=1);
 namespace Backend\Infrastructure\Repositories\magazzino;
 
-use Backend\Application\interfaces\repo\IAggiornaQtArticoloRepo;
+use Backend\Application\interfaces\repo\IAggiornaQtUsataArticoloRepo;
 use Backend\Domain\Entities\ArticoliInScaffali;
 use Backend\Infrastructure\DatabaseConnector;
 use Backend\Infrastructure\mapper\Mapper;
 
-class AggQtArticoloRepo implements IAggiornaQtArticoloRepo {
+class AggQtUsataArticoloRepo implements IAggiornaQtUsataArticoloRepo {
     private DatabaseConnector $connector;
 
     public function __construct(DatabaseConnector $connector) {
@@ -18,14 +18,14 @@ class AggQtArticoloRepo implements IAggiornaQtArticoloRepo {
     {
         $dto = Mapper::ArticoliInScaffali_To_DTO($articoliInScaffali);
         
-        $quantita = $dto->quantita;
+        $quantita = $dto->qtUsata;
         $articoloId = $dto->articoloId;
         $numScaffale = $dto->numeroScaffale;
         $armadioId = $dto->armadioId;
 
         $db = $this->connector->get_db();
         $query = "UPDATE Articoli_Scaffali
-                  SET Quantita = ? 
+                  SET Qt_Usata = ? 
                   WHERE Articolo_Id = ? 
                     AND Numero = ? 
                     AND Armadio_Id = ?;";

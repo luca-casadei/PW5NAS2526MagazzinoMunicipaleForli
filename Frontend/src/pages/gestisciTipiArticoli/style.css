@@ -1,25 +1,155 @@
-/* Layout specifico per la pagina di configurazione */
+/* ==========================================================================
+   MIGLIORAMENTO FORM CON FIELDSET
+   ========================================================================== */
 
+form.styled-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; 
+    max-width: 500px; /* Limita la larghezza per non farlo sbordare nelle card a destra */
+    width: 100%;
+}
+
+form.styled-form fieldset {
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box; /* Previene sbavature fuori dal layout */
+}
+
+form.styled-form fieldset:hover {
+    border-color: #94a3b8;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+form.styled-form legend {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--primary-color, #1e40af);
+    padding: 0 0.5rem;
+    background-color: transparent;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #334155;
+    margin-bottom: 0.4rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.6rem 0.7rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    background-color: #f8fafc;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    margin-bottom: 1rem;
+}
+
+.form-input:focus {
+    outline: none;
+    background-color: #ffffff;
+    border-color: var(--primary-color, #2563eb);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* Rimuove l'eccesso di spazio sull'ultimo campo */
+.form-input:last-child {
+    margin-bottom: 0;
+}
+
+/* ==========================================================================
+   ATTRIBUTI DINAMICI (Sulla stessa riga)
+   ========================================================================== */
 .dynamic-attributes {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.8rem;
 }
-.btn-primary, .btn-secondary {
-    margin-top: 1rem;
-}
+
 .attribute-row {
     display: flex;
     gap: 0.5rem;
+    align-items: center;
+    width: 100%; /* Assicura che riempia il form */
     animation: fadeIn 0.2s ease-out;
 }
 
-.attribute-row input {
-    flex: 1;
-    min-width: 0; /* Previene lo sformamento del flex */
+.attribute-row .form-input {
+    flex: 1; /* Permette ai campi di adattarsi fluidamente allo spazio */
+    min-width: 0; /* Previene overflow su schermi piccoli */
+    margin-bottom: 0; /* Annulla il margine di default per tenerli allineati */
 }
 
-/* Griglia Articoli */
+/* Bottone Cestino */
+.btn-remove {
+    background-color: #ef4444; /* Rosso acceso */
+    border: none;
+    border-radius: 50%; /* Lo rende un cerchio perfetto */
+    width: 36px; /* Larghezza e altezza identiche */
+    height: 36px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0; 
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2); /* Leggera ombra rossa */
+}
+
+.btn-remove:hover {
+    background-color: #dc2626; /* Diventa un rosso più scuro al passaggio del mouse */
+    transform: scale(1.1);
+}
+
+/* La classe per rendere bianca l'emoji */
+.icon-cestino {
+    filter: brightness(0) invert(1); /* Azzera i colori e inverte in bianco */
+    font-size: 1.1rem;
+    line-height: 1; /* Aiuta a centrare perfettamente l'emoji nel cerchio */
+}
+
+.btn-remove:hover {
+    transform: scale(1.1);
+}
+
+/* ==========================================================================
+   ALTRI BOTTONI
+   ========================================================================== */
+.btn-primary {
+    margin-top: 1rem;
+}
+
+.btn-secondary {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: transparent;
+    border: 2px dashed #cbd5e1;
+    border-radius: 6px;
+    color: #475569;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+    border-color: var(--primary-color, #2563eb);
+    color: var(--primary-color, #2563eb);
+    background-color: rgba(37, 99, 235, 0.05);
+}
+
+/* ==========================================================================
+   GRIGLIA ARTICOLI E CARD
+   ========================================================================== */
 .articles-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -27,20 +157,23 @@
 }
 
 .article-card {
-    background: var(--card-bg);
-    border: 1px solid var(--secondary-color);
-    border-radius: var(--radius);
+    background: var(--card-bg, #ffffff);
+    border: 1px solid var(--secondary-color, #e2e8f0);
+    border-radius: var(--radius, 8px);
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
 }
 
-.article-card h3 { margin-bottom: 0.25rem; font-size: 1.2rem; }
+.article-card h3 { 
+    margin-bottom: 0.25rem; 
+    font-size: 1.2rem; 
+}
 
 .tag-tipologia {
     background: #eff6ff;
-    color: var(--primary-color);
+    color: var(--primary-color, #2563eb);
     padding: 0.2rem 0.6rem;
     border-radius: 12px;
     font-size: 0.75rem;
@@ -60,43 +193,42 @@
     font-size: 0.9rem;
     padding: 0.3rem 0;
     border-bottom: 1px solid #f8fafc;
-    color: var(--text-muted);
+    color: var(--text-muted, #64748b);
 }
 
 .attr-label {
-    font-weight: bold; /* o 'bold' */
-    color: var(--text-main);
+    font-weight: bold; 
+    color: var(--text-main, #0f172a);
 }
+
+/* ==========================================================================
+   FEEDBACK MESSAGGI E ANIMAZIONI
+   ========================================================================== */
 .msg-feedback {
     margin-top: 1.5rem;
     padding: 1rem;
-    border-radius: var(--radius);
+    border-radius: var(--radius, 8px);
     font-weight: 600;
     font-size: 0.95rem;
-    display: none; /* Nascosto di default */
+    display: none; 
 }
 
-/* Quando questa classe viene aggiunta da JS, il div appare */
 .msg-feedback.show {
     display: block;
 }
 
-/* Stile per i successi */
 .msg-success {
-    color: #15803d; /* Verde scuro testuale */
-    background-color: #f0fdf4; /* Sfondo verdino chiaro */
+    color: #15803d; 
+    background-color: #f0fdf4; 
     border: 1px solid #bbf7d0;
 }
 
-/* Stile per gli errori */
 .msg-error {
-    color: #b91c1c; /* Rosso scuro testuale */
-    background-color: #fef2f2; /* Sfondo rosino chiaro */
+    color: #b91c1c; 
+    background-color: #fef2f2; 
     border: 1px solid #fecaca;
 }
 
-
-/* Animazione per i nuovi attributi */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-5px); }
     to { opacity: 1; transform: translateY(0); }

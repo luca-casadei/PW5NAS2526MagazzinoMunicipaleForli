@@ -19,7 +19,7 @@
                     
                     <div class="form-group">
                         <label for="nome-tipologia">Nome Tipologia *</label>
-                        <input type="text" id="nome-tipologia" name="nome" required aria-required="true" placeholder="es. Pantaloni, T-Shirt...">
+                        <input type="text" id="nome-tipologia" name="nome" required aria-required="true" placeholder="es. Vestiario, Dispositivi...">
                     </div>
                 </fieldset>
 

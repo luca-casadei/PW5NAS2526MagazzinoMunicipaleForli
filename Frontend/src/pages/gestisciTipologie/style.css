@@ -1,11 +1,72 @@
 /* ==========================================================================
-   FORM: DISTANZIATURA BOTTONE SALVA
+   FORM CREA TIPOLOGIA (Stile Moderno)
    ========================================================================== */
 
-/* Aggiungiamo spazio sotto il riquadro Dati Tipologia per staccare il bottone */
-.form-section fieldset {
-    margin-bottom: 1rem;
+form.styled-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; 
+    max-width: 400px; /* Più stretto rispetto a quello degli articoli perché è più semplice */
+    width: 100%;
 }
+
+form.styled-form fieldset {
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box; 
+}
+
+form.styled-form fieldset:hover {
+    border-color: #94a3b8;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+form.styled-form legend {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--primary-color, #1e40af);
+    padding: 0 0.5rem;
+    background-color: transparent;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #334155;
+    margin-bottom: 0.4rem;
+}
+
+/* Stile per l'input */
+form.styled-form input[type="text"] {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    background-color: #f8fafc;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    margin-bottom: 0; /* Essendo l'unico campo, togliamo il margine inferiore */
+}
+
+form.styled-form input[type="text"]:focus {
+    outline: none;
+    background-color: #ffffff;
+    border-color: var(--primary-color, #2563eb);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* Stile per il bottone di salvataggio */
+form.styled-form .btn-primary {
+    align-self: flex-start; /* Evita che il bottone diventi largo quanto tutto il form */
+}
+
 
 /* ==========================================================================
    VISUALIZZAZIONE: GRIGLIA E CARD TIPOLOGIE
@@ -13,44 +74,41 @@
 
 .tipologie-grid {
     display: grid;
-    /* Riduciamo leggermente la larghezza minima a 200px dato che ora il contenuto è in colonna */
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 1.5rem;
 }
 
 .tipologia-card {
     display: flex;
-    flex-direction: column; /* MODIFICA: Sposta il bottone SOTTO al titolo */
-    align-items: flex-start; /* Allinea il testo a sinistra */
-    padding: 1.5rem; /* Leggermente aumentato per dare più respiro */
+    flex-direction: column; 
+    align-items: flex-start; 
+    padding: 1.5rem; 
     background: var(--card-bg);
     border: 1px solid var(--secondary-color);
     border-radius: var(--radius);
     box-shadow: var(--shadow-sm);
     transition: box-shadow 0.2s ease, transform 0.2s ease;
-    height: 100%; /* Fa in modo che tutte le card sulla stessa riga siano alte uguali */
+    height: 100%; 
 }
 
-/* Effetto al passaggio del mouse */
 .tipologia-card:hover {
     box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
     transform: translateY(-2px);
 }
 
 .tipologia-card h3 {
-    margin: 0 0 1.5rem 0; /* Aggiunto margine sotto il titolo per separarlo dal bottone */
+    margin: 0 0 1.5rem 0; 
     font-size: 1.15rem;
     color: var(--text-main);
     font-weight: 600;
     line-height: 1.4;
 }
 
-/* Il bottone elimina dentro la card */
 .tipologia-card .btn-danger {
     width: auto;
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
-    margin-top: auto; /* MAGIA CSS: Spinge il bottone sempre in fondo, allineandolo con le altre card! */
+    margin-top: auto; 
 }
 
 /* ==========================================================================

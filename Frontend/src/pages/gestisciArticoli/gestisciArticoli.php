@@ -4,9 +4,18 @@
 ?>
 
 <main class="dashboard-container">
-    <header class="page-header">
-        <h1>Articoli in Magazzino</h1>
-        <p>Consulta l'elenco degli articoli presenti, verifica le quantità e localizza la loro posizione.</p>
+    <!-- MODIFICA: Header diviso in due colonne (Testo a sx, Bottone a dx) -->
+    <header class="page-header header-with-action">
+        <div class="header-texts">
+            <h1>Articoli in Magazzino</h1>
+            <p>Consulta l'elenco degli articoli presenti, verifica le quantità e localizza la loro posizione.</p>
+        </div>
+        <div class="header-actions">
+            <!-- Il bottone sfrutta la classe btn-primary per mantenere lo stile uniforme -->
+            <a href="/pages/gestisciTipiArticoli/index_gestisciTipiArticoli.php" class="btn-primary btn-nuovo-tipo">
+                <span class="emoji-bianca">➕</span>Crea Nuovo Modello
+            </a>
+        </div>
     </header>
 
     <div class="soglia-container" role="group" aria-label="Filtro scorte in esaurimento">

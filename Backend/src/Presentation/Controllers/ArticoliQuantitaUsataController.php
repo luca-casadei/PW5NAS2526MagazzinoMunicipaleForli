@@ -1,26 +1,27 @@
 <?php
 declare(strict_types=1);
 namespace Backend\Presentation\Controllers;
-use Backend\Application\commands\UpdateAggQuantitaDTO;
-use Backend\Application\commands\UpdateDimQuantitaDTO;
-use Backend\Application\interfaces\serv\IAggQtArticolo;
-use Backend\Application\interfaces\serv\IDimQtArticolo;
+
+use Backend\Application\commands\UpdateAggQuantitaUsataDTO;
+use Backend\Application\commands\UpdateDimQuantitaUsataDTO;
+use Backend\Application\interfaces\serv\IAggQtUsataArticolo;
+use Backend\Application\interfaces\serv\IDimQtUsataArticolo;
 use Backend\Presentation\Response;
 use ErrorException;
 
 
-class ArticoliQuantitaController {
-    private IAggQtArticolo $aggQtArticoloService;
-    private IDimQtArticolo $dimQtArticoloService;
+class ArticoliQuantitaUsataController {
+    private IAggQtUsataArticolo $aggQtArticoloService;
+    private IDimQtUsataArticolo $dimQtArticoloService;
 
-    public function __construct(IAggQtArticolo $aggQtArticoloService, IDimQtArticolo $dimQtArticoloService) {
+    public function __construct(IAggQtUsataArticolo $aggQtArticoloService, IDimQtUsataArticolo $dimQtArticoloService) {
         $this->aggQtArticoloService = $aggQtArticoloService;
         $this->dimQtArticoloService = $dimQtArticoloService;
     }
     public function aggiungi(){
         $input = json_decode(file_get_contents('php://input'), true);
         try{
-            $update = new UpdateAggQuantitaDTO(
+            $update = new UpdateAggQuantitaUsataDTO(
                 $input['articoloId'],
                 $input['numeroScaffale'],
                 $input['armadioId'],
@@ -41,7 +42,7 @@ class ArticoliQuantitaController {
     public function diminuisci(){
         $input = json_decode(file_get_contents('php://input'), true);
         try{
-            $update = new UpdateDimQuantitaDTO(
+            $update = new UpdateDimQuantitaUsataDTO(
                 $input['articoloId'],
                 $input['numeroScaffale'],
                 $input['armadioId'],

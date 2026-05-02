@@ -7,9 +7,11 @@ use Backend\Application\Services\anagrafiche\CreaTipologia;
 use Backend\Application\Services\anagrafiche\EliminaTipoArticolo;
 use Backend\Application\Services\anagrafiche\EliminaTipologia;
 use Backend\Application\Services\magazzino\AggQtArticolo;
+use Backend\Application\Services\magazzino\AggQtUsataArticolo;
 use Backend\Application\Services\magazzino\CreaArmadio;
 use Backend\Application\Services\magazzino\CreaScaffale;
 use Backend\Application\Services\magazzino\DimQtArticolo;
+use Backend\Application\Services\magazzino\DimQtUsataArticolo;
 use Backend\Application\Services\magazzino\MostraTuttiArticoli;
 use Backend\Application\Services\magazzino\MostraTuttiArticoliQtBasse;
 use Backend\Application\Services\magazzino\VediTipologie;
@@ -30,14 +32,19 @@ use Backend\Infrastructure\Repositories\anagrafiche\gestioneTipoArticolo\Elimina
 use Backend\Infrastructure\Repositories\anagrafiche\gestioneTipoArticolo\GetArticoloPerFirmaRepo;
 use Backend\Infrastructure\Repositories\anagrafiche\gestioneTipoArticolo\GetAttributoByIdRepo;
 use Backend\Infrastructure\Repositories\magazzino\AggQtArticoloRepo;
+use Backend\Infrastructure\Repositories\magazzino\AggQtUsataArticoloRepo;
 use Backend\Infrastructure\Repositories\magazzino\CreaArmadioRepo;
+use Backend\Infrastructure\Repositories\magazzino\CreaPresenzaRepo;
 use Backend\Infrastructure\Repositories\magazzino\CreaScaffaleRepo;
+use Backend\Infrastructure\Repositories\magazzino\EliminaPresenzaRepo;
 use Backend\Infrastructure\Repositories\magazzino\GetAttributiByArtId;
 use Backend\Infrastructure\Repositories\magazzino\GetQtArticoloRepo;
 use Backend\Infrastructure\Repositories\magazzino\GetQtTotArtRepo;
+use Backend\Infrastructure\Repositories\magazzino\GetQtUsataArticoloRepo;
 use Backend\Infrastructure\Repositories\magazzino\GetValoriAttributi;
 use Backend\Infrastructure\Repositories\magazzino\TrovaArticoloConIdRepo;
 use Backend\Infrastructure\Repositories\magazzino\VediArticoliByNomeRepo;
+use Backend\Infrastructure\Repositories\magazzino\VerificaPresenzaRepo;
 use Backend\Infrastructure\Repositories\ricerca\VediArticoliPerScaffaleRepo;
 use Backend\Infrastructure\Repositories\magazzino\VediArticoliRepo;
 use Backend\Infrastructure\Repositories\magazzino\VediTipologieRepo;
@@ -49,6 +56,7 @@ use Backend\Infrastructure\Repositories\ricerca\VediArmadiRepo;
 use Backend\Infrastructure\Repositories\ricerca\VediScaffaliRepo;
 use Backend\Presentation\Controllers\ArmadiController;
 use Backend\Presentation\Controllers\ArticoliQuantitaController;
+use Backend\Presentation\Controllers\ArticoliQuantitaUsataController;
 use Backend\Presentation\Controllers\EsportaStoricoCsvController;
 use Backend\Presentation\Controllers\ListaArticoliController;
 use Backend\Presentation\Controllers\ListaArticoliPerController;
@@ -92,10 +100,12 @@ try{
     $getArtPerFirmaRepo = new GetArticoloPerFirmaRepo($connection);
     $getAttrByIdRepo = new GetAttributoByIdRepo($connection);
     $aggiornaQtArtRepo = new AggQtArticoloRepo($connection);
+    $aggiornaQtUsataRepo = new AggQtUsataArticoloRepo($connection);
     $creaArmadioRepo = new CreaArmadioRepo($connection);
     $creaScaffaleRepo = new CreaScaffaleRepo($connection);
     $getAttrByArtIdRepo = new GetAttributiByArtId($connection);
     $getQtArtRepo = new GetQtArticoloRepo($connection);
+    $getQtUsataArtRepo = new GetQtUsataArticoloRepo($connection);
     $getQtTotRepo = new GetQtTotArtRepo($connection);
     $getValoriAttrRepo = new GetValoriAttributi($connection);
     //$trovaArtConIdRepo = new TrovaArticoloConIdRepo($connection);
@@ -109,6 +119,9 @@ try{
     $vediArmadiRepo = new VediArmadiRepo($connection);
     $vediScaffaliRepo = new VediScaffaliRepo($connection);
     $vediArtPerScaffaleRepo = new VediArticoliPerScaffaleRepo($connection);
+    $verificaPresenzaRepo = new VerificaPresenzaRepo($connection);
+    $creaPresenzaRepo = new CreaPresenzaRepo($connection);
+    $eliminaPresenzaRepo = new EliminaPresenzaRepo($connection);
     
     //services
     $creaTipoArtService = new CreaTipoArticolo(
@@ -121,8 +134,10 @@ try{
     $creaTipologiaService = new CreaTipologia($creaTipologiaRepo);
     $eliminaTipoArtService = new EliminaTipoArticolo($eliminaArtRepo);
     $eliminaTipologiaService = new EliminaTipologia($eliminaTipologiaRepo);
-    $aggQtArtService = new AggQtArticolo($aggiornaQtArtRepo,$getQtArtRepo);
-    $dimQtArtService = new DimQtArticolo($aggiornaQtArtRepo,$getQtArtRepo);
+    $aggQtArtService = new AggQtArticolo($aggiornaQtArtRepo,$getQtArtRepo, $verificaPresenzaRepo, $creaPresenzaRepo);
+    $dimQtArtService = new DimQtArticolo($aggiornaQtArtRepo,$getQtArtRepo, $getQtUsataArtRepo, $eliminaPresenzaRepo);
+    $aggQtUsataArtService = new AggQtUsataArticolo($aggiornaQtUsataRepo, $getQtUsataArtRepo, $verificaPresenzaRepo, $creaPresenzaRepo);
+    $dimQtUsataArtService = new DimQtUsataArticolo($aggiornaQtUsataRepo, $getQtUsataArtRepo, $getQtArtRepo, $eliminaPresenzaRepo);
     $creaArmadioService = new CreaArmadio($creaArmadioRepo);
     $creaScaffaleService = new CreaScaffale($creaScaffaleRepo);
     $vediArticoliService = new MostraTuttiArticoli(
@@ -158,7 +173,8 @@ try{
         $vediTipologieRepo,
         $getAttrByArtIdRepo,
         $getValoriAttrRepo,
-        $getQtArtRepo
+        $getQtArtRepo,
+        $getQtUsataArtRepo
     );
     
     //controllers
@@ -169,6 +185,7 @@ try{
         $getTipologiaByIdService
     );
     $articoliQuantitaController = new ArticoliQuantitaController($aggQtArtService, $dimQtArtService);
+    $articoliQuantitaUsataController = new ArticoliQuantitaUsataController($aggQtUsataArtService, $dimQtUsataArtService);
     $esportaStoricoCSVController = new EsportaStoricoCsvController($esportaStoricoService);
     $listaArticoliController = new ListaArticoliController(
         $vediArticoliService,
@@ -316,6 +333,22 @@ try{
             }
             else{
                 $articoliQuantitaController->method_not_allowed();
+            }
+            break;
+        case '/articolo/quantita/aggiungi/usati':
+            if ($method === 'PUT') {
+                $articoliQuantitaUsataController->aggiungi();
+            }
+            else{
+                $articoliQuantitaUsataController->method_not_allowed();
+            }
+            break;
+        case '/articolo/quantita/diminuisci/usati':
+            if ($method === 'PUT') {
+                $articoliQuantitaUsataController->diminuisci();
+            }
+            else{
+                $articoliQuantitaUsataController->method_not_allowed();
             }
             break;
         case '/esportaStorico':

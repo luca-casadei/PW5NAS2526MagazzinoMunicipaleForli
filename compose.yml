@@ -1,8 +1,8 @@
 services:
   frontend:
     build: ./Frontend
-    volumes:
-      - ./Frontend/src:/var/www/html:ro
+    #volumes:
+      #- ./Frontend/src:/var/www/html:ro
     networks:
       - frontend
     ports:
@@ -10,11 +10,11 @@ services:
 
   backend:
     build: ./Backend
-    volumes:
-      - ./Backend/src:/var/www/html:ro
+    #volumes:
+      #- ./Backend/src:/var/www/html:ro
     #per tests
-    ports:
-      - 5050:80
+    #ports:
+      #- 5050:80
     # Se il container crasha o si ferma, riavvialo sempre, 
     #a meno che non lo fermi io manualmente (docker stop).
     restart: unless-stopped

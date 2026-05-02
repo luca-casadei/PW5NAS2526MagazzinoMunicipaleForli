@@ -8,51 +8,63 @@
         <p>Scopri come utilizzare al meglio tutte le funzionalità del sistema.</p>
     </header>
 
-    <section class="guida-section">
-        <h2>📦 Gestisci Articoli</h2>
-        <p>Questa è la sezione principale per monitorare le giacenze del magazzino. Qui puoi:</p>
+    <section aria-labelledby="titolo-tipologie" class="guida-section">
+        <h2 id="titolo-tipologie"><span aria-hidden="true">🏷️</span> Gestisci Tipologie</h2>
+        <p>Le Tipologie sono le macro-categorie degli articoli (es. <em>Vestiario, Dispositivi</em>), a cui verranno associati gli articoli. In questa pagina puoi:</p>
         <ul>
-            <li>Vedere la <strong>quantità totale</strong> di ogni articolo presente.</li>
-            <li>Usare il filtro in alto per cercare per Nome, Tipologia o caratteristiche specifiche (es. <span class="guida-highlight">Colore: Rosso</span>).</li>
-            <li>Abilitare il filtro "Mostra articoli sotto soglia" per individuare velocemente le scorte in esaurimento.</li>
-            <li>Cliccare su <strong>📍 Localizza</strong> per scoprire l'esatta posizione dell'articolo (Armadio e Scaffale).</li>
-            <li>Cliccare su <strong>➕ Aggiungi</strong> per posizionare nuove unità dell'articolo in uno scaffale.</li>
+            <li>Vedere tutte le tipologie già esistenti.</li>
+            <li>Creare una nuova tipologia inserendo il nome.</li>
+            <li>Eliminare una tipologia esistente. <br> <strong>ATTENZIONE!:</strong> se elimini una tipologia verranno eliminati definitivamente anche tutti gli articoli di quella tipologia.</li>
         </ul>
     </section>
 
-    <section class="guida-section">
-        <h2>🏷️ Gestisci Tipologie</h2>
-        <p>Le Tipologie sono le macro-categorie degli articoli (es. <em>Maglie, Pantaloni, Utensili</em>).</p>
+    <section aria-labelledby="titolo-configurazione" class="guida-section">
+        <h2 id="titolo-configurazione"><span aria-hidden="true">⚙️</span> Tipi Articoli (Configurazione)</h2>
+        <p>Questa pagina serve per creare i modelli base degli articoli. In questa pagina puoi:</p>
         <ul>
-            <li>Da questa pagina puoi creare nuove categorie scrivendo il nome e cliccando "Crea Nuova".</li>
-            <li>Puoi eliminare le tipologie esistenti tramite l'apposito tasto rosso.</li>
+            <li>Creare un nuovo modello di articolo:
+                <ul>
+                    <li>Inserisci il nome dell'articolo e seleziona la tipologia a cui appartiene.</li>
+                    <li>Inserisci tutte le caratteristiche che ha: almeno una (obbligatoria) e con la possibilità di aggiungere tutti quelli necessari, inserendo il nome della caratteristica e il valore correlato.</li>
+                    <li>I modelli non possono essere identici per nome, tipologia e lista di caratteristiche con valore. Perciò bisogna creare un modello diverso ogni qualvolta ci sia un articolo con caratteristiche o valori diversi. Per esempio bisogna creare due modelli diversi se due articoli hanno come caratteristica Colore ma uno è Verde mentre l'altro Rosso.</li>
+                </ul>
+            </li>
+            <li>Vedere tutti i modelli già esistenti.</li>
+            <li>Filtrare sui modelli esistenti per trovarli più facilmente.</li>
+            <li>Eliminare un modello esistente. <br><strong>ATTENZIONE!:</strong> verranno eliminati tutti gli articoli e le quantità correlate dal magazzino.</li>
         </ul>
     </section>
 
-    <section class="guida-section">
-        <h2>⚙️ Tipi Articoli (Configurazione)</h2>
-        <p>Prima di poter mettere un articolo su uno scaffale, devi creare il suo "Modello Base" in questa sezione.</p>
+    <section aria-labelledby="titolo-articoli" class="guida-section">
+        <h2 id="titolo-articoli"><span aria-hidden="true">📦</span> Gestisci Articoli</h2>
+        <p>Questa è la sezione principale per monitorare le giacenze del magazzino. In questa pagina puoi:</p>
         <ul>
-            <li>Compila i <strong>Dati Obbligatori</strong> (Nome e Tipologia).</li>
-            <li>Aggiungi tutte le caratteristiche che distinguono questo modello (es. Peso, Taglia, Materiale). <em>Attenzione:</em> almeno una caratteristica è sempre obbligatoria.</li>
-            <li>Una volta salvato, il modello apparirà nel catalogo di destra e sarà pronto per essere inserito fisicamente negli armadi.</li>
+            <li>Vedere tutti gli articoli e la quantità totale in cui sono presenti fisicamente nel magazzino. <em>Nota a margine:</em> Se la quantità è 0 significa che esiste il modello ma non è presente in magazzino.</li>
+            <li>Filtrare sugli articoli presenti per trovarli più facilmente.</li>
+            <li>Vedere solo gli articoli la cui quantità è sotto una certa soglia che si può modificare tramite casella se si ha cliccato l'opzione.</li>
+            <li>Trovare in quale armadi e scaffali si trova un articolo cliccando su Localizza. Se la quantità è 0, come detto, verrà indicato che non è presente in nessun armadio.</li>
+            <li>Aggiungere un articolo in un armadio e uno scaffale scegliendo la quantità, cliccando su Aggiungi.</li>
+            <li>Creare un nuovo modello di articolo cliccando sul pulsante Crea Modello che ti porta alla pagina Tipi Articoli.</li>
         </ul>
     </section>
 
-    <section class="guida-section">
-        <h2>🗄️ Vedi Armadi</h2>
-        <p>Questa è la mappa fisica del tuo magazzino.</p>
+    <section aria-labelledby="titolo-armadi" class="guida-section">
+        <h2 id="titolo-armadi"><span aria-hidden="true">🗄️</span> Vedi Armadi</h2>
+        <p>Questa è la mappa fisica del tuo magazzino. In questa pagina puoi:</p>
         <ul>
-            <li>Il magazzino è suddiviso gerarchicamente in <strong>Armadi</strong>. Ogni armadio contiene più <strong>Scaffali</strong>.</li>
-            <li>Puoi creare nuovi Armadi e aggiungere Scaffali al loro interno cliccando sugli appositi pulsanti in alto o a fine riga.</li>
-            <li>All'interno di ogni Scaffale vedrai la lista degli articoli presenti.</li>
-            <li>Puoi modificare rapidamente le giacenze premendo i pulsanti <strong>-1</strong> oppure inserendo un numero e premendo <strong>Aggiungi</strong> per aumentare le scorte fisiche in quello specifico punto.</li>
+            <li>Vedere il magazzino suddiviso per armadi i quali sono suddivisi in scaffali.</li>
+            <li>Creare un nuovo armadio tramite pulsante. <br><strong>ATTENZIONE!:</strong> la creazione è irreversibile e non si potrà più cancellare l'armadio per evitare di rimuovere tutti gli articoli all'interno per errore.</li>
+            <li>Creare un nuovo scaffale in un armadio tramite pulsante.<br> <strong>ATTENZIONE!:</strong> la creazione è irreversibile e non si potrà più cancellare lo scaffale per evitare di rimuovere tutti gli articoli all'interno per errore.</li>
+            <li>Aprire e chiudere la sezione di armadi o scaffali cliccandoci sopra, per facilitare la visione.</li>
+            <li>Vedere gli articoli presenti in ogni scaffale e la quantità in cui sono presenti.</li>
+            <li>Aggiungere o rimuovere una quantità inserita in una stessa cella da un articolo. Se clicchi Rimuovi allora la quantità verrà tolta, altrimenti verrà aggiunta.</li>
+            <li>Aggiungere un nuovo articolo allo scaffale tramite pulsante, che ti porta alla pagina di Gestisci Articoli.</li>
         </ul>
     </section>
 
-    <section class="guida-section">
-        <h2>📊 Esporta Storico</h2>
-        <p>Cliccando su questa opzione, il sistema genererà automaticamente un file <strong>.csv</strong> scaricabile sul tuo computer.</p>
+    <section aria-labelledby="titolo-esporta" class="guida-section">
+        <h2 id="titolo-esporta"><span aria-hidden="true">📊</span> Esporta Storico</h2>
+        <p>Cliccando su questa opzione, il sistema genererà automaticamente un file .csv e lo scaricherà sul tuo computer.</p>
         <ul>
             <li>Il file conterrà tutto lo storico dei movimenti di magazzino dell'ultimo anno.</li>
             <li>Può essere aperto comodamente con Microsoft Excel, Google Sheets o Apple Numbers per effettuare conteggi, statistiche o inventari.</li>

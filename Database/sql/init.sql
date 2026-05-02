@@ -69,14 +69,16 @@ CREATE TABLE Articoli_Scaffali (
     Articolo_Id INT NOT NULL,
     Numero INT NOT NULL,
     Armadio_Id INT NOT NULL,
-    Quantita INT NOT NULL,
+    Quantita INT NOT NULL DEFAULT 0,
+    Qt_Usata INT NOT NULL DEFAULT 0,
     PRIMARY KEY (Articolo_Id, Numero, Armadio_Id),
     FOREIGN KEY (Articolo_Id) REFERENCES Articoli(Articolo_Id) ON DELETE CASCADE,
     FOREIGN KEY (Numero, Armadio_Id) REFERENCES Scaffali(Numero, Armadio_Id) ON DELETE CASCADE,
-    CHECK (Quantita >= 0)
+    CHECK (Quantita >= 0),
+    CHECK (Qt_Usata >= 0)
 );
 
--- Tabella Log modificata: tolti gli ID, inseriti i nomi
+-- Tabella Log modificata: aggiunti i campi per la Qt_Usata
 CREATE TABLE Log_Modifiche_Quantita (
     Log_Id INT NOT NULL AUTO_INCREMENT,
     Data_Ora_Modifica DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -86,6 +88,8 @@ CREATE TABLE Log_Modifiche_Quantita (
     Armadio_Id INT NOT NULL,
     QtaPrecedente INT NOT NULL,
     QtaAggiornata INT NOT NULL,
+    QtaUsataPrecedente INT NOT NULL DEFAULT 0,
+    QtaUsataAggiornata INT NOT NULL DEFAULT 0,
     Attributi TEXT NOT NULL,
     PRIMARY KEY (Log_Id)
 );
@@ -100,8 +104,8 @@ BEGIN
     DECLARE v_nome_articolo VARCHAR(255);
     DECLARE v_nome_tipologia VARCHAR(100);
 
-    -- Eseguiamo il log SOLO se c'è stata una reale variazione nelle quantità
-    IF (OLD.Quantita <> NEW.Quantita) THEN
+    -- Eseguiamo il log se c'è stata una variazione nella quantità a scaffale OPPURE nella quantità usata
+    IF (OLD.Quantita <> NEW.Quantita OR OLD.Qt_Usata <> NEW.Qt_Usata) THEN
         
         SELECT a.Nome, t.Nome 
         INTO v_nome_articolo, v_nome_tipologia
@@ -126,6 +130,8 @@ BEGIN
             Armadio_Id,
             QtaPrecedente,
             QtaAggiornata,
+            QtaUsataPrecedente,
+            QtaUsataAggiornata,
             Attributi
         ) VALUES (
             v_nome_articolo,
@@ -134,6 +140,8 @@ BEGIN
             NEW.Armadio_Id,
             OLD.Quantita,
             NEW.Quantita,
+            OLD.Qt_Usata,
+            NEW.Qt_Usata,
             v_attributi
         );
         
@@ -176,6 +184,8 @@ BEGIN
         Armadio_Id,
         QtaPrecedente,
         QtaAggiornata,
+        QtaUsataPrecedente,
+        QtaUsataAggiornata,
         Attributi
     ) VALUES (
         v_nome_articolo,
@@ -184,6 +194,8 @@ BEGIN
         NEW.Armadio_Id,
         0,
         NEW.Quantita,
+        0,
+        NEW.Qt_Usata,
         v_attributi
     );
 END;

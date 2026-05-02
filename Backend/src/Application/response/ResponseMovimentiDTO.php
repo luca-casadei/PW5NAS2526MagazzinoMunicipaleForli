@@ -11,6 +11,8 @@ final readonly class ResponseMovimentiDTO {
         public int $armadioId,
         public int $qtaPrecedente,
         public int $qtaAggiornata,
+        public int $qtaUsataPrecedente, // NUOVO CAMPO
+        public int $qtaUsataAggiornata, // NUOVO CAMPO
         public string $attributiSnapshot // Snapshot aggregata dal trigger DB
     ) {}
 }

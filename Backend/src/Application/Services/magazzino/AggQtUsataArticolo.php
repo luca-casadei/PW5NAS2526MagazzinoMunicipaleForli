@@ -2,12 +2,12 @@
 declare(strict_types=1);
 namespace Backend\Application\Services\magazzino;
 
-use Backend\Application\commands\UpdateAggQuantitaDTO;
-use Backend\Application\interfaces\repo\IAggiornaQtArticoloRepo;
+use Backend\Application\commands\UpdateAggQuantitaUsataDTO;
+use Backend\Application\interfaces\repo\IAggiornaQtUsataArticoloRepo;
 use Backend\Application\interfaces\repo\ICreaPresenzaRepo;
-use Backend\Application\interfaces\repo\IGetQtArticoloRepo;
+use Backend\Application\interfaces\repo\IGetQtUsataArticoloRepo;
 use Backend\Application\interfaces\repo\IVerificaPresenzaRepo;
-use Backend\Application\interfaces\serv\IAggQtArticolo;
+use Backend\Application\interfaces\serv\IAggQtUsataArticolo;
 use Backend\Domain\Entities\ArticoliInScaffali;
 use Backend\Domain\ValueObjects\Armadio\ArmadioId;
 use Backend\Domain\ValueObjects\ArticoliInScaffali\ArticoliInScaffaliId;
@@ -18,19 +18,19 @@ use Backend\Domain\ValueObjects\Scaffale\NumeroScaffale;
 use Backend\Domain\ValueObjects\Scaffale\ScaffaleId;
 use Exception;
 
-class AggQtArticolo implements IAggQtArticolo{
-    private IAggiornaQtArticoloRepo $repoAgg;
-    private IGetQtArticoloRepo $repoQt;
+class AggQtUsataArticolo implements IAggQtUsataArticolo{
+    private IAggiornaQtUsataArticoloRepo $repoAgg;
+    private IGetQtUsataArticoloRepo $repoQt;
     private IVerificaPresenzaRepo $repoVerifica;
     private ICreaPresenzaRepo $repoCrea;
-    public function __construct(IAggiornaQtArticoloRepo $repository, IGetQtArticoloRepo $repoQt,
+    public function __construct(IAggiornaQtUsataArticoloRepo $repository, IGetQtUsataArticoloRepo $repoQt,
     IVerificaPresenzaRepo $repoVerifica, ICreaPresenzaRepo $repoCrea){
         $this->repoAgg = $repository;
         $this->repoQt = $repoQt;
         $this->repoVerifica = $repoVerifica;
         $this->repoCrea = $repoCrea;
     }
-    public function execute(UpdateAggQuantitaDTO $update): void {
+    public function execute(UpdateAggQuantitaUsataDTO $update): void {
         if ($update->quantitaAgg <= 0) {
             throw new Exception("La quantità da aggiungere deve essere positiva.");
         }
@@ -53,8 +53,8 @@ class AggQtArticolo implements IAggQtArticolo{
                     new NumeroScaffale($update->numScaffale)
                 )
             ),
-            new QuantitaScorta($nuovaQuantitaTotale),
-            new QuantitaUsata(0)
+            new QuantitaScorta(0),
+            new QuantitaUsata($nuovaQuantitaTotale)
         );
         $this->repoAgg->updateQuantita($quantitaAggiornataDto);
     }

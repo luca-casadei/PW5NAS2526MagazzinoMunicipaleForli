@@ -6,7 +6,8 @@ class UpdateAggQuantitaDTO{
         public int $articoloId,
         public int $numScaffale,
         public int $armadioId,
-        public int $quantitaAgg)
+        public int $quantitaAgg,
+        )
     {}
 }
 ?>

@@ -31,8 +31,10 @@ class EsportaStoricoCsvController extends AbstractEsportaStoricoController {
                 'Articolo', 
                 'Tipologia', 
                 'Posizione', 
-                'Qta_Precedente', 
-                'Qta_Aggiornata', 
+                'Qta_Precedente',
+                'Qta_Aggiornata',
+                'Qta_Usata_Prec',
+                'Qta_Usata_Agg',
                 'Dettagli_Snapshot'
             ]);
 
@@ -45,6 +47,8 @@ class EsportaStoricoCsvController extends AbstractEsportaStoricoController {
                     "Armadio $logDto->armadioId / Scaffale $logDto->numeroScaffale", 
                     $logDto->qtaPrecedente,
                     $logDto->qtaAggiornata,
+                    $logDto->qtaUsataPrecedente, 
+                    $logDto->qtaUsataAggiornata, 
                     $logDto->attributiSnapshot
                 ]);
             }
@@ -59,6 +63,8 @@ class EsportaStoricoCsvController extends AbstractEsportaStoricoController {
                 'Posizione', 
                 'Qta_Precedente', 
                 'Qta_Aggiornata', 
+                'Qta_Usata_Prec',    
+                'Qta_Usata_Agg',     
                 'Dettagli_Snapshot'
             ]);
 
@@ -71,6 +77,8 @@ class EsportaStoricoCsvController extends AbstractEsportaStoricoController {
                     "Armadio $logDto->armadioId / Scaffale $logDto->numeroScaffale", 
                     $logDto->qtaPrecedente,
                     $logDto->qtaAggiornata,
+                    $logDto->qtaUsataPrecedente, 
+                    $logDto->qtaUsataAggiornata, 
                     $logDto->attributiSnapshot
                 ]);
             }

@@ -8,7 +8,7 @@ use Backend\Application\dtos\ReadScaffaleDTO;
 use Backend\Application\interfaces\serv\IGetTipologiaById;
 use Backend\Application\interfaces\serv\ITrovaArticoliByNome;
 use Backend\Application\interfaces\serv\IVediScaffali;
-use Backend\Presentation\dtos\ResponseArticoli;
+use Backend\Presentation\dtos\ResponseArtCompletiScaffali;
 use Backend\Presentation\Response;
 use ErrorException;
 
@@ -33,12 +33,13 @@ class ListaArticoliPerController {
             $articoliResponse = [];
             foreach ($articoliCompleti as $articolo){
                 $tipologia = $this->getTipologiaService->execute($articolo->idTipologia);
-                $articoliResponse[] = new ResponseArticoli(
+                $articoliResponse[] = new ResponseArtCompletiScaffali(
                     $articolo->idArticolo,
                     $articolo->nomeArticolo,
                     $tipologia->nome->nome,
                     $articolo->attributi,
-                    $articolo->quantitaTotale
+                    $articolo->quantita,
+                    $articolo->qtUsata
                 );
             }
             if (empty($articoliResponse)) {
@@ -68,12 +69,13 @@ class ListaArticoliPerController {
             foreach ($articoliCompleti as $articolo){
                 $tipoDTO = new GetTipologiaDTO($articolo->idTipologia);
                 $tipologia = $this->getTipologiaService->execute($tipoDTO);
-                $articoliResponse[] = new ResponseArticoli(
+                $articoliResponse[] = new ResponseArtCompletiScaffali(
                     $articolo->idArticolo,
                     $articolo->nomeArticolo,
                     $tipologia->nome->nome,
                     $articolo->attributi,
-                    $articolo->quantitaTotale
+                    $articolo->quantita,
+                    $articolo->qtUsata
                 );
             }
             if (empty($articoliResponse)) {

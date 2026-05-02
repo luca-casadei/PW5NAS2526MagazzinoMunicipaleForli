@@ -19,22 +19,23 @@
                     <legend>Dati Obbligatori</legend>
                     <div class="form-group">
                         <label for="nome-articolo">Nome Articolo *</label>
-                        <input type="text" id="nome-articolo" name="nome" required aria-required="true">
+                        <input type="text" id="nome-articolo" name="nome" required aria-required="true" class="form-input">
                     </div>
                     <div class="form-group">
                         <label for="tipologia-selezionata">Tipologia *</label>
-                        <select id="tipologia-selezionata" name="tipologiaId" required aria-required="true">
+                        <select id="tipologia-selezionata" name="tipologiaId" required aria-required="true" class="form-input">
                             <option value="">Caricamento...</option>
                         </select>
                     </div>
                 </fieldset>
 
                 <fieldset>
-                    <legend>Caratteristiche </legend>
+                    <legend>Caratteristiche</legend>
                     <div id="contenitore-attributi" class="dynamic-attributes">
-                        <div>
-                            <input type="text" placeholder="Nome (es. Peso)" required>
-                            <input type="text" placeholder="Valore (es. 5kg)" required>
+                        <!-- Riga obbligatoria allineata con Flexbox -->
+                        <div class="attribute-row">
+                            <input type="text" placeholder="Nome (es. Peso)" required class="form-input" aria-label="Nome della caratteristica obbligatoria">
+                            <input type="text" placeholder="Valore (es. 5kg)" required class="form-input" aria-label="Valore della caratteristica obbligatoria">
                         </div>
                     </div>
                     <button type="button" id="btn-aggiungi-attributo" class="btn-secondary">

@@ -15,7 +15,7 @@ class LocalizzaArticoloRepo implements ILocalizzaArticoloRepo{
     public function localizzaById(int $id): array{
         $db = $this->connector->get_db();
         
-        $query = "SELECT Numero, Armadio_Id, Quantita FROM Articoli_Scaffali WHERE Articolo_Id = ?;";
+        $query = "SELECT Numero, Armadio_Id, Quantita, Qt_Usata FROM Articoli_Scaffali WHERE Articolo_Id = ?;";
         
         $stmt = $db->prepare($query);
         $stmt->bind_param("i", $id);
@@ -25,7 +25,7 @@ class LocalizzaArticoloRepo implements ILocalizzaArticoloRepo{
         
         $articoliInScaffali = [];
         foreach ($result as $elem) {
-            $dto = new ArticoliInScaffaliDTO($elem['Armadio_Id'], $elem['Numero'], $id, $elem['Quantita']);
+            $dto = new ArticoliInScaffaliDTO($elem['Armadio_Id'], $elem['Numero'], $id, $elem['Quantita'], $elem['Qt_Usata']);
             array_push($articoliInScaffali, Mapper::DTO_To_ArticoliInScaffali($dto));
         }
         return $articoliInScaffali;

@@ -4,55 +4,70 @@ namespace Backend\Infrastructure\Repositories\anagrafiche\gestioneTipoArticolo;
 
 use Backend\Application\interfaces\repo\gestioneTipoArticolo\IGetArticoloPerFirmaRepo;
 use Backend\Infrastructure\DatabaseConnector;
-
+use Backend\Application\dtos\ReadValoreAttributoDTO;
 
 class GetArticoloPerFirmaRepo implements IGetArticoloPerFirmaRepo{
     private DatabaseConnector $connector;
+    
     public function __construct(DatabaseConnector $connector){
         $this->connector = $connector;
     }
-    public function trovaArticolo(string $nome, int $tipologiaId, array $attributiIds): int|null{
-        $numeroAttributi = count($attributiIds);
+    
+    /**
+     * @param string $nome
+     * @param int $tipologiaId
+     * @param ReadValoreAttributoDTO[] $attributiConValori
+     * @return int|null
+     */
+    public function trovaArticolo(string $nome, int $tipologiaId, array $attributiConValori): int|null{
+        $numeroAttributi = count($attributiConValori);
 
-        // Se l'array è vuoto, restituiamo null (il service blocca questo caso a monte, ma è buona pratica proteggere il repo)
         if ($numeroAttributi === 0) {
             return null; 
         }
 
         $db = $this->connector->get_db();
-        // Se ho 3 attributi, genera "?,?,?". Se ne ho 5, genera "?,?,?,?,?".
-        $placeholders = implode(',', array_fill(0, $numeroAttributi, '?'));
+        
+        // (Attributo_Id = ? AND Valore = ?) OR (Attributo_Id = ? AND Valore = ?) et
+        $condizioniOR = [];
+        foreach ($attributiConValori as $attr) {
+            $condizioniOR[] = "(AA.Attributo_Id = ? AND AA.Valore = ?)";
+        }
+        $stringaCondizioni = implode(' OR ', $condizioniOR);
 
+        // trova art con stesso num di attr
+        // + controlla id valore
         $query = "SELECT A.Articolo_Id
                   FROM Articoli A
                   JOIN Attributi_Associati AA ON A.Articolo_Id = AA.Articolo_Id
                   WHERE A.Tipologia_Id = ? AND A.Nome = ?
                   GROUP BY A.Articolo_Id
                   HAVING COUNT(AA.Attributo_Id) = ? 
-                     AND SUM(AA.Attributo_Id IN ($placeholders)) = ?;";
+                     AND SUM($stringaCondizioni) = ?;";
 
         $stmt = $db->prepare($query);
 
-        // 3. GENERIAMO I TIPI E I PARAMETRI DINAMICAMENTE PER IL BIND_PARAM
-        // I tipi: 'i' (TipologiaId) + 's' (Nome) + 'i' (Count) + 'i'*N (gli ID dell'array) + 'i' (Count finale)
-        $tipiParametri = "isi" . str_repeat("i", $numeroAttributi) . "i";
-        // Costruiamo l'array sequenziale dei valori da passare
+        // tipi dinamiciper il bind_param
+        // 'i' (TipologiaId) + 's' (Nome) + 'i' (Count) + ('is' * N: id e valore) + 'i' (Count finale)
+        $tipiParametri = "isi" . str_repeat("is", $numeroAttributi) . "i";
         $valoriDaBindare = [$tipologiaId, $nome, $numeroAttributi];
-        foreach ($attributiIds as $id) {
-            $valoriDaBindare[] = $id;
-        }
-        $valoriDaBindare[] = $numeroAttributi; // L'ultimo '?' dell'HAVING
-
-        // Usiamo lo "Splat Operator" (...) per passare dinamicamente l'array al bind_param
-        $stmt->bind_param($tipiParametri, ...$valoriDaBindare);
         
+        foreach ($attributiConValori as $attVal) {
+            $valoriDaBindare[] = $attVal->id;
+            $valoriDaBindare[] = $attVal->valore;
+        }
+        //questo serve per fare in modo che la somma delle condizioni verificate sia per tutti glia ttributi
+        $valoriDaBindare[] = $numeroAttributi; 
+
+        // bind dinamico
+        $stmt->bind_param($tipiParametri, ...$valoriDaBindare);
         $stmt->execute();
         $result = $stmt->get_result();
-
         if ($result->num_rows === 0) {
             $stmt->close();
             return null; // La firma non esiste
         }
+        
         $row = $result->fetch_assoc();
         $stmt->close();
         return (int)$row['Articolo_Id'];

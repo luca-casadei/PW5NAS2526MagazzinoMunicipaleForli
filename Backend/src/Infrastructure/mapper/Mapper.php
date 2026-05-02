@@ -15,6 +15,7 @@ use Backend\Domain\Entities\Tipologia;
 use Backend\Domain\ValueObjects\Armadio\ArmadioId;
 use Backend\Domain\ValueObjects\ArticoliInScaffali\ArticoliInScaffaliId;
 use Backend\Domain\ValueObjects\ArticoliInScaffali\QuantitaScorta;
+use Backend\Domain\ValueObjects\ArticoliInScaffali\QuantitaUsata;
 use Backend\Domain\ValueObjects\Articolo\ArticoloId;
 use Backend\Domain\ValueObjects\Articolo\ArticoloNome;
 use Backend\Domain\ValueObjects\ArtOpEconomico\ArtOpEcoDescrizione;
@@ -96,7 +97,8 @@ class Mapper{
             $articoliInScaffali->id->idScaffale->idArmadio->valore,
             $articoliInScaffali->id->idScaffale->numScaffale->numero,
             $articoliInScaffali->id->idArticolo->valore,
-            $articoliInScaffali->quantita->valore
+            $articoliInScaffali->quantita->valore,
+            $articoliInScaffali->qtUsata->valore
         );
     }
 
@@ -109,7 +111,8 @@ class Mapper{
                     new NumeroScaffale($articoliInScaffaliDTO->numeroScaffale)
                 )
                 ),
-            new QuantitaScorta($articoliInScaffaliDTO->quantita)
+            new QuantitaScorta($articoliInScaffaliDTO->quantita),
+            new QuantitaUsata($articoliInScaffaliDTO->qtUsata)
         );
     }
     public static function ArtOpEconomico_To_DTO(ArtOpEconomico $artOpEconomico):ArtOpEconomicoDTO

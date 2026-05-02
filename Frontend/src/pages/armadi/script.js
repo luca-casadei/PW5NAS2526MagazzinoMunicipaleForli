@@ -10,17 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnAnnullaCrea = document.getElementById('btn-annulla-crea');
     const btnConfermaCrea = document.getElementById('btn-conferma-crea');
 
-    let statoCreazione = {
-        tipo: null, 
-        armadioId: null 
-    };
-
+    let statoCreazione = { tipo: null, armadioId: null };
     let strutturaMagazzino = []; 
     let tuttiGliArticoli = []; 
 
-    const gestoreFiltri = new FilterManager(() => {
-        renderMagazzino();
-    });
+    const gestoreFiltri = new FilterManager(() => renderMagazzino());
 
     async function caricaTuttoIlMagazzino() {
         try {
@@ -42,7 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 for (const scaffale of scaffali) {
                     const articoli = await getArticoliScaffale(armadio.id, scaffale.numeroScaffale);
                     armadioData.scaffali.push({ ...scaffale, articoli: articoli });
-                    
                     articoli.forEach(art => tuttiGliArticoli.push(art));
                 }
                 strutturaMagazzino.push(armadioData);
@@ -62,7 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderMagazzino() {
         contenitoreArmadi.replaceChildren();
-
         const articoliVisibili = gestoreFiltri.filtraArray(tuttiGliArticoli);
         const idVisibili = new Set(articoliVisibili.map(a => a.idArticolo));
 
@@ -71,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const containerScaffali = armadioElement.querySelector('.scaffale-container');
 
             armadio.scaffali.forEach(scaffale => {
-                const scaffaleElement = creaElementoScaffale(scaffale);
+                const scaffaleElement = creaElementoScaffale(scaffale, armadio.id);
                 const gridArticoli = scaffaleElement.querySelector('.articoli-scaffale-grid');
 
                 scaffale.articoli.forEach(art => {
@@ -79,10 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         gridArticoli.appendChild(creaCardArticolo(art, armadio.id, scaffale.numeroScaffale));
                     }
                 });
-
                 containerScaffali.appendChild(scaffaleElement);
             });
-
             contenitoreArmadi.appendChild(armadioElement);
         });
     }
@@ -91,40 +81,41 @@ document.addEventListener('DOMContentLoaded', () => {
         const details = document.createElement('details');
         details.className = 'armadio-section';
         details.open = true; 
-        
         const summary = document.createElement('summary');
         summary.className = 'armadio-summary';
         summary.textContent = `Armadio Numero ${armadio.id}`; 
-        
         const content = document.createElement('div');
         content.className = 'scaffale-container';
-        
         const btnAddScaffale = document.createElement('button');
         btnAddScaffale.className = 'btn-add-scaffale';
         btnAddScaffale.textContent = '+ Aggiungi Nuovo Scaffale';
         btnAddScaffale.onclick = () => apriDialogCreate('Scaffale', armadio.id);
-        
         details.append(summary, content, btnAddScaffale);
         return details;
     }
 
-    function creaElementoScaffale(scaffale) {
+    function creaElementoScaffale(scaffale, armadioId) {
         const details = document.createElement('details');
         details.className = 'scaffale-section';
         details.open = true; 
-        
         const summary = document.createElement('summary');
         summary.className = 'scaffale-summary';
         summary.textContent = `Scaffale ${scaffale.numeroScaffale}`;
         
+        const actionBar = document.createElement('div');
+        actionBar.className = 'scaffale-action-bar';
+        const btnVaiAdArticoli = document.createElement('button');
+        btnVaiAdArticoli.className = 'btn-secondary btn-add-to-shelf'; 
+        btnVaiAdArticoli.innerHTML = '📦 + Aggiungi Articolo a questo scaffale';
+        btnVaiAdArticoli.onclick = () => { window.location.href = '/pages/gestisciArticoli/index_gestisciArticoli.php'; };
+        
+        actionBar.appendChild(btnVaiAdArticoli);
         const grid = document.createElement('div');
         grid.className = 'articoli-scaffale-grid';
-        
-        details.append(summary, grid);
+        details.append(summary, actionBar, grid);
         return details;
     }
 
-    // Riceve anche armadioId e numeroScaffale per poterli usare nei bottoni!
     function creaCardArticolo(art, armadioId, numeroScaffale) {
         const card = document.createElement('article');
         card.className = 'articolo-mini-card';
@@ -132,18 +123,30 @@ document.addEventListener('DOMContentLoaded', () => {
         const h4 = document.createElement('h4');
         h4.textContent = art.nomeArticolo; 
         
+        // --- SEZIONE INFO (BADGE QUANTITA) ---
+        const badgeContainer = document.createElement('div');
+        badgeContainer.className = 'qt-badges-container';
+
         const infoQt = document.createElement('p');
-        infoQt.textContent = 'Qt: ';
+        infoQt.textContent = 'Nuovi: ';
         const spanQt = document.createElement('span');
         spanQt.className = 'badge-qt';
-        // Aggiungo anche lo scaffale all'ID per evitare conflitti se lo stesso articolo è su due scaffali diversi!
         spanQt.id = `qt-val-${art.idArticolo}-${numeroScaffale}`; 
-        spanQt.textContent = art.quantitaTotale; 
+        spanQt.textContent = art.quantita; 
         infoQt.appendChild(spanQt);
+
+        const infoQtUsata = document.createElement('p');
+        infoQtUsata.textContent = 'Usati: ';
+        const spanQtUsata = document.createElement('span');
+        spanQtUsata.className = 'badge-qt badge-usata';
+        spanQtUsata.id = `qt-usata-val-${art.idArticolo}-${numeroScaffale}`; 
+        spanQtUsata.textContent = art.qtUsata; // ESEMPIO: art.qtUsata 
+        
+        infoQtUsata.appendChild(spanQtUsata);
+        badgeContainer.append(infoQt, infoQtUsata);
         
         const ul = document.createElement('ul');
         ul.className = 'attr-list';
-        
         if (art.attributi && Array.isArray(art.attributi)) {
             art.attributi.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(attr => {
                 const li = document.createElement('li');
@@ -156,32 +159,97 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
         
-        const controlli = document.createElement('div');
-        controlli.className = 'controlli-qt';
+        const divider = document.createElement('div');
+        divider.className = 'card-divider';
+
+        const lblStock = document.createElement('div');
+        lblStock.className = 'section-label';
+        lblStock.textContent = 'Modifica Nuovi:';
         
-        const btnMinus = document.createElement('button');
-        btnMinus.className = 'btn-qt-minus';
-        btnMinus.textContent = '-1';
-        // Richiama la funzione specifica per diminuire
-        btnMinus.onclick = (e) => diminuisciQuantita(art.idArticolo, armadioId, numeroScaffale, e.target);
+        const ctrlStock = document.createElement('div');
+        ctrlStock.className = 'controlli-qt';
+        const inStock = document.createElement('input');
+        inStock.type = 'number'; inStock.className = 'input-add-qt'; inStock.value = 1; inStock.min = 1;
         
-        const inputAdd = document.createElement('input');
-        inputAdd.type = 'number';
-        inputAdd.className = 'input-add-qt';
-        inputAdd.value = 1;
-        inputAdd.min = 1;
-        
-        const btnAdd = document.createElement('button');
-        btnAdd.className = 'btn-primary btn-qt-add';
-        btnAdd.textContent = 'Aggiungi';
-        btnAdd.onclick = (e) => {
-            const val = parseInt(inputAdd.value, 10);
+        const btnMinusStock = document.createElement('button');
+        btnMinusStock.className = 'btn-danger btn-qt-action'; btnMinusStock.textContent = 'Rimuovi';
+        btnMinusStock.onclick = (e) => {
+            const val = parseInt(inStock.value, 10);
+            if(val > 0) diminuisciQuantita(art.idArticolo, armadioId, numeroScaffale, val, e.target);
+        }
+        const btnAddStock = document.createElement('button');
+        btnAddStock.className = 'btn-primary btn-qt-action'; btnAddStock.textContent = 'Aggiungi';
+        btnAddStock.onclick = (e) => {
+            const val = parseInt(inStock.value, 10);
             if(val > 0) aggiungiQuantita(art.idArticolo, armadioId, numeroScaffale, val, e.target);
         };
+        ctrlStock.append(btnMinusStock, inStock, btnAddStock);
+
+        const lblUsata = document.createElement('div');
+        lblUsata.className = 'section-label section-usata';
+        lblUsata.textContent = 'Modifica Usato';
         
-        controlli.append(btnMinus, inputAdd, btnAdd);
-        card.append(h4, infoQt, ul, controlli);
+        const ctrlUsata = document.createElement('div');
+        ctrlUsata.className = 'controlli-qt';
+        const inUsata = document.createElement('input');
+        inUsata.type = 'number'; inUsata.className = 'input-add-qt'; inUsata.value = 1; inUsata.min = 1;
+        
+        const btnMinusUsata = document.createElement('button');
+        btnMinusUsata.className = 'btn-danger btn-qt-action'; btnMinusUsata.textContent = 'Rimuovi'; // Togliamo dall'usato
+        btnMinusUsata.onclick = (e) => {
+            const val = parseInt(inUsata.value, 10);
+            if(val > 0) diminuisciQuantitaUsata(art.idArticolo, armadioId, numeroScaffale, val, e.target);
+        }
+        const btnAddUsata = document.createElement('button');
+        btnAddUsata.className = 'btn-primary btn-qt-action btn-add-usata'; btnAddUsata.textContent = 'Aggiungi'; // Segnamo come usato
+        btnAddUsata.onclick = (e) => {
+            const val = parseInt(inUsata.value, 10);
+            if(val > 0) aggiungiQuantitaUsata(art.idArticolo, armadioId, numeroScaffale, val, e.target);
+        };
+        ctrlUsata.append(btnMinusUsata, inUsata, btnAddUsata);
+        
+        card.append(h4, badgeContainer, ul, divider, lblStock, ctrlStock, lblUsata, ctrlUsata);
         return card;
+    }
+
+    async function aggiungiQuantita(articoloId, armadioId, numeroScaffale, quantita, bottoneCliccato) {
+        if(bottoneCliccato) bottoneCliccato.disabled = true;
+        try {
+            const payload = { articoloId: parseInt(articoloId, 10), armadioId: parseInt(armadioId, 10), numeroScaffale: parseInt(numeroScaffale, 10), quantita: parseInt(quantita, 10) };
+            const responseJSON = await ApiRequest.request('aumentaQuantita_service.php', 'POST', payload);
+            if(responseJSON.status !== 'success') throw new Error(responseJSON.message || "Errore.");
+            aggiornaFeedbackVisivo(articoloId, numeroScaffale, quantita, 'qt-val-');
+        } catch (error) { alert("Errore: " + error.message); } finally { if(bottoneCliccato) bottoneCliccato.disabled = false; }
+    }
+
+    async function diminuisciQuantita(articoloId, armadioId, numeroScaffale, quantita , bottoneCliccato) {
+        if(bottoneCliccato) bottoneCliccato.disabled = true;
+        try {
+            const payload = { articoloId: parseInt(articoloId, 10), armadioId: parseInt(armadioId, 10), numeroScaffale: parseInt(numeroScaffale, 10), quantita: parseInt(quantita, 10) };
+            const responseJSON = await ApiRequest.request('dimiuisciQuantita_service.php', 'POST', payload);
+            if(responseJSON.status !== 'success') throw new Error(responseJSON.message || "Errore.");
+            aggiornaFeedbackVisivo(articoloId, numeroScaffale, quantita * -1, 'qt-val-');
+        } catch (error) { alert("Errore: " + error.message); } finally { if(bottoneCliccato) bottoneCliccato.disabled = false; }
+    }
+
+    async function aggiungiQuantitaUsata(articoloId, armadioId, numeroScaffale, quantita, bottoneCliccato) {
+        if(bottoneCliccato) bottoneCliccato.disabled = true;
+        try {
+            const payload = { articoloId: parseInt(articoloId, 10), armadioId: parseInt(armadioId, 10), numeroScaffale: parseInt(numeroScaffale, 10), quantita: parseInt(quantita, 10) };
+            const responseJSON = await ApiRequest.request('aggiungi_qt_usato_service.php', 'POST', payload);
+            if(responseJSON.status !== 'success') throw new Error(responseJSON.message || "Errore.");
+            aggiornaFeedbackVisivo(articoloId, numeroScaffale, quantita, 'qt-usata-val-');
+        } catch (error) { alert("Errore: " + error.message); } finally { if(bottoneCliccato) bottoneCliccato.disabled = false; }
+    }
+
+    async function diminuisciQuantitaUsata(articoloId, armadioId, numeroScaffale, quantita , bottoneCliccato) {
+        if(bottoneCliccato) bottoneCliccato.disabled = true;
+        try {
+            const payload = { articoloId: parseInt(articoloId, 10), armadioId: parseInt(armadioId, 10), numeroScaffale: parseInt(numeroScaffale, 10), quantita: parseInt(quantita, 10) };
+            const responseJSON = await ApiRequest.request('diminuisci_qt_usato_service.php', 'POST', payload);
+            if(responseJSON.status !== 'success') throw new Error(responseJSON.message || "Errore.");
+            aggiornaFeedbackVisivo(articoloId, numeroScaffale, quantita * -1, 'qt-usata-val-');
+        } catch (error) { alert("Errore: " + error.message); } finally { if(bottoneCliccato) bottoneCliccato.disabled = false; }
     }
 
     btnNuovoArmadio.addEventListener('click', () => {
@@ -213,7 +281,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 service = 'creaArmadio_service.php';
             } else if (statoCreazione.tipo === 'Scaffale') {
                 service = 'creaScaffale_service.php';
-                // FIX: Trasformo in intero l'ID dell'armadio per creare lo scaffale
                 payload = { armadioId: parseInt(statoCreazione.armadioId, 10) };
             }
 
@@ -231,64 +298,23 @@ document.addEventListener('DOMContentLoaded', () => {
             btnConfermaCrea.textContent = testoOriginale;
         }
     });
-
-    async function aggiungiQuantita(articoloId, armadioId, numeroScaffale, quantita, bottoneCliccato) {
-        if(bottoneCliccato) bottoneCliccato.disabled = true;
-
-        try {
-            // FIX: Tutto convertito in interi
-            const payload = { 
-                articoloId: parseInt(articoloId, 10), 
-                armadioId: parseInt(armadioId, 10),
-                numeroScaffale: parseInt(numeroScaffale, 10),
-                quantita: parseInt(quantita, 10)
-            };
-            
-            const responseJSON = await ApiRequest.request('aumentaQuantita_service.php', 'POST', payload);
-            if(responseJSON.status !== 'success') throw new Error(responseJSON.message || "Impossibile aggiungere la quantità.");
-
-            aggiornaFeedbackVisivo(articoloId, numeroScaffale, quantita);
-        } catch (error) {
-            alert("Errore: " + error.message);
-        } finally {
-            if(bottoneCliccato) bottoneCliccato.disabled = false;
-        }
-    }
-
-    async function diminuisciQuantita(articoloId, armadioId, numeroScaffale, bottoneCliccato) {
-        if(bottoneCliccato) bottoneCliccato.disabled = true;
-
-        try {
-            // FIX: Tutto convertito in interi
-            const payload = { 
-                articoloId: parseInt(articoloId, 10), 
-                armadioId: parseInt(armadioId, 10),
-                numeroScaffale: parseInt(numeroScaffale, 10)
-            };
-            
-            const responseJSON = await ApiRequest.request('dimiuisciQuantita_service.php', 'POST', payload);
-            if(responseJSON.status !== 'success') throw new Error(responseJSON.message || "Impossibile diminuire la quantità.");
-
-            aggiornaFeedbackVisivo(articoloId, numeroScaffale, -1);
-
-        } catch (error) {
-            alert("Errore: " + error.message);
-        } finally {
-            if(bottoneCliccato) bottoneCliccato.disabled = false;
-        }
-    }
-
-    function aggiornaFeedbackVisivo(articoloId, numeroScaffale, delta) {
-        const span = document.getElementById(`qt-val-${articoloId}-${numeroScaffale}`);
+    function aggiornaFeedbackVisivo(articoloId, numeroScaffale, delta, prefix = 'qt-val-') {
+        // Usa il prefisso per trovare l'ID corretto (usato o nuovo)
+        const span = document.getElementById(`${prefix}${articoloId}-${numeroScaffale}`);
         if (!span) return;
 
         let attuale = parseInt(span.textContent, 10);
         let nuovo = attuale + delta;
-        if (nuovo < 0) nuovo = 0;
         
         span.textContent = nuovo;
-        span.style.color = delta > 0 ? 'var(--success-color)' : 'var(--danger-color)';
-        setTimeout(() => span.style.color = 'var(--primary-color)', 500);
+        
+        const colorSuccess = prefix.includes('usata') ? '#d97706' : 'var(--success-color)';
+        const altroSpanValore = prefix.includes('usata') ? document.getElementById(`qt-val-${articoloId}-${numeroScaffale}`).textContent : document.getElementById(`qt-usata-val-${articoloId}-${numeroScaffale}`).textContent;
+        span.style.color = delta > 0 ? colorSuccess : 'var(--danger-color)';
+        
+        setTimeout(() => span.style.color = '', 1500);
+        if(altroSpanValore == 0 && nuovo == 0)
+            caricaTuttoIlMagazzino();
     }
 
     async function getArmadi() {
@@ -298,7 +324,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function getScaffali(armadioId) {
-        // FIX: Trasformo in intero l'ID dell'armadio per prendere gli scaffali
         const idIntero = parseInt(armadioId, 10);
         const responseJSON = await ApiRequest.request('getScaffali_service.php', 'POST', { armadioId: idIntero });
         if(!responseJSON || !Array.isArray(responseJSON.body)) return []; 

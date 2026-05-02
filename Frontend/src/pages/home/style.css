@@ -149,3 +149,7 @@
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
     color: white;
 }
+.emoji-bianca {
+    filter: brightness(0) invert(1);
+    margin-right: 0.3rem; 
+}

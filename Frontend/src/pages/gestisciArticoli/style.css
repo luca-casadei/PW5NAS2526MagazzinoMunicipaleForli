@@ -1,4 +1,45 @@
+.header-with-action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; /* Permette di andare a capo sugli schermi stretti */
+    gap: 1.5rem;
+}
 
+.header-texts {
+    flex: 1;
+    min-width: 250px;
+}
+
+/* Rimuove i margini di default per un allineamento perfetto col bottone */
+.header-texts h1 {
+    margin-top: 0;
+}
+
+.header-actions {
+    display: flex;
+    flex-shrink: 0;
+}
+.emoji-bianca {
+    /* Azzera i colori originali e lo inverte in bianco puro */
+    filter: brightness(0) invert(1);
+    margin-right: 0.3rem; /* Dà un po' di respiro dal testo */
+}
+/* Adattamento stilistico per far comportare il link <a> come un bottone perfetto */
+.btn-nuovo-tipo {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    font-size: 1rem;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Effetto di sollevamento al passaggio del mouse */
+.btn-nuovo-tipo:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.15);
+}
 
 .soglia-container {
     background-color: var(--card-bg);
@@ -196,6 +237,16 @@
     font-weight: 600;
     text-align: center;
     margin: 0;
+}
+.scaffale-action-bar {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0.5rem 0 1rem 0;
+}
+
+.btn-add-to-shelf {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
 }
 
 @keyframes slideDown {

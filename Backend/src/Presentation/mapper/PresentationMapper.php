@@ -32,7 +32,8 @@ class PresentationMapper {
         return new ResponseArtInScaffali(
             $art->id->idScaffale->idArmadio->valore,
             $art->id->idScaffale->numScaffale->numero,
-            $art->quantita->valore
+            $art->quantita->valore,
+            $art->qtUsata->valore
         );
     }
 }

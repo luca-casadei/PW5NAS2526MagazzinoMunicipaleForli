@@ -20,14 +20,12 @@ document.addEventListener('DOMContentLoaded', () => {
         mostraArticoli(articoliFiltrati);
     });
 
-    // tipologie per sleect
     async function caricaTipologie() {
         try {
             const $servizio = 'tipologie_service.php';
             const responseJSON = await ApiRequest.request($servizio, 'GET');
             if(!responseJSON || !Array.isArray(responseJSON.body)) throw new Error("Dati tipologie non validi");
             const tipologie = responseJSON.body;
-            // ordina alfabetico
             tipologie.sort((a, b) => a.nome.localeCompare(b.nome));
 
             selectTipologia.replaceChildren();
@@ -35,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const option = document.createElement('option');
             option.value = ""; 
             option.textContent = "Seleziona tipologia...";
-            selectTipologia.appendChild(option); //guarda se meglio rimetterlo o no
+            selectTipologia.appendChild(option); 
 
             tipologie.forEach(t => {
                 const opt = document.createElement('option');
@@ -45,24 +43,30 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) { console.error("Errore tipologie:" + e.message); }
     }
 
-    // attr dinamici da aggiungere
+    // Aggiunta dinamica campi con stile corretto ed emoji
     btnAggiungiAttr.addEventListener('click', () => {
         attrCounter++;
         const row = document.createElement('div');
         row.className = 'attribute-row';
 
         const inNome = document.createElement('input');
-        inNome.placeholder = "Nome (es. Peso)"; 
+        inNome.className = 'form-input';
+        inNome.placeholder = "Nome (es. Colore)"; 
         inNome.required = true;
         
         const inVal = document.createElement('input');
-        inVal.placeholder = "Valore (es. 5kg)"; 
+        inVal.className = 'form-input';
+        inVal.placeholder = "Valore (es. Rosso)"; 
         inVal.required = true;
 
         const btnRem = document.createElement('button');
         btnRem.type = "button"; 
         btnRem.className = "btn-remove"; 
-        btnRem.textContent = "X";
+        const iconSpan = document.createElement('span');
+        iconSpan.className = 'icon-cestino';
+        iconSpan.textContent = '🗑️';
+        btnRem.appendChild(iconSpan);
+        btnRem.title = "Rimuovi caratteristica";
         btnRem.onclick = () => row.remove();
 
         row.appendChild(inNome);
@@ -71,7 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
         containerAttributi.appendChild(row);
     });
 
-    // carica e mostra articoli
     async function caricaArticoli() {
         try {
             grigliaArticoli.innerHTML = '<p class="loading-text">Caricamento modelli...</p>';
@@ -80,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const responseJSON = await ApiRequest.request($service, 'GET');
             if(!responseJSON || !Array.isArray(responseJSON.body)) throw new Error("Dati articoli non validi");
 
-            // prende dati in variabile
             tuttiGliArticoli = responseJSON.body;
             tuttiGliArticoli.sort((a, b) => a.nomeArticolo.localeCompare(b.nomeArticolo));
 
@@ -113,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
             h3.textContent = art.nomeArticolo;
             const tag = document.createElement('span'); 
             tag.className = 'tag-tipologia'; 
-            tag.textContent = art.nomeTipologia || "Sconosciuta";
+            tag.textContent = art.nomeTipologia;
             
             const ul = document.createElement('ul');
             ul.className = 'attr-list';
@@ -141,7 +143,6 @@ document.addEventListener('DOMContentLoaded', () => {
             btnDel.style.marginTop = "auto";
             btnDel.onclick = () => {
                 idDaEliminare = art.idArticolo;
-                //btnDel.disabled = true;
                 document.getElementById('nome-art-delete').textContent = art.nomeArticolo;
                 modal.showModal();
             };
@@ -151,7 +152,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // dialog
     document.getElementById('btn-cancel').onclick = () => {
         modal.close();
         idDaEliminare = null;
@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const tipologiaId = document.getElementById('tipologia-selezionata').value;
 
         const attributi = [];
-        const righeAttributi = containerAttributi.querySelectorAll('div');
+        const righeAttributi = containerAttributi.querySelectorAll('.attribute-row');
         
         righeAttributi.forEach(riga => {
             const inputs = riga.querySelectorAll('input');
@@ -197,7 +197,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const nomeAttr = inputs[0].value.trim();
                 const valAttr = inputs[1].value.trim();
                 
-                // aggiungo solo se valorizzati
                 if (nomeAttr !== '' && valAttr !== '') {
                     attributi.push({
                         nome: nomeAttr,
@@ -213,13 +212,15 @@ document.addEventListener('DOMContentLoaded', () => {
             attributi: attributi
         };
 
-        // gestione bottone di invio (disabilita e indica a utrnte)
         const btnSubmit = formCreaArticolo.querySelector('button[type="submit"]');
         const testoOriginale = btnSubmit.textContent;
         btnSubmit.disabled = true;
         btnSubmit.textContent = 'Salvataggio in corso...';
+        
         if(nomeArticolo == "" || tipologiaId <= 0){
             mostraFeedback('Inserisci dati validi: ', 'error');
+            btnSubmit.disabled = false;
+            btnSubmit.textContent = testoOriginale;
             return;
         }
         try {
@@ -228,10 +229,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(responseJSON.message || "Errore dal server.");
             }
             mostraFeedback('Modello creato con successo!', 'success');
-            formCreaArticolo.reset(); 
             
-            // rimuovo attributi aggiunti
-            const righeAggiuntive = containerAttributi.querySelectorAll('.attribute-row');
+            // Ripulisce i campi di testo preservando la riga obbligatoria
+            formCreaArticolo.reset(); 
+            const righeAggiuntive = containerAttributi.querySelectorAll('.attribute-row:not(:first-child)');
             righeAggiuntive.forEach(riga => riga.remove());
             attrCounter = 1; 
 
@@ -261,5 +262,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     caricaTipologie();
     caricaArticoli();
-    //btnAggiungiAttr.click(); //meglio emtterlo obbligatorio se no può toglierlo
 });
