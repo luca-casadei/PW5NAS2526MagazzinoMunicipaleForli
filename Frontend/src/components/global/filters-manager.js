@@ -8,6 +8,8 @@ export class FilterManager {
 
         if(this.inputAttrNome) this.inputAttrNome.setAttribute('autocomplete', 'off');
         if(this.inputAttrValore) this.inputAttrValore.setAttribute('autocomplete', 'off');
+        if(this.inputNome) this.inputNome.setAttribute('autocomplete', 'off');
+        if(this.inputTipologia) this.inputTipologia.setAttribute('autocomplete', 'off');
 
         this.onFilterChange = onFilterChange;
         this.inizializzazioneEvents();
