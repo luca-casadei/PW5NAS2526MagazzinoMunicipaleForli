@@ -22,14 +22,26 @@
     </div>
 </main>
 
-<dialog id="modal-creazione" class="modal-dialog" aria-labelledby="modal-titolo-crea">
+<!-- Modale di Conferma Eliminazione -->
+<dialog id="modal-eliminazione" class="modal-dialog" aria-labelledby="modal-titolo-elimina">
     <div class="modal-content">
-        <h2 id="modal-titolo-crea" class="text-primary">Conferma Creazione</h2>
-        <p>Stai per creare un nuovo <strong><span id="tipo-creazione-text"></span></strong> nel magazzino.</p>
-        <p>L'azione è irreversibile e modificherà la struttura fisica a sistema. Vuoi procedere?</p>
+        <h2 id="modal-titolo-elimina" class="text-danger">⚠️ Conferma Eliminazione</h2>
+        <p>Stai per eliminare definitivamente questo <strong><span id="tipo-eliminazione-text"></span></strong>.</p>
+        <p>Selezionando "Elimina", i dati verranno rimossi. Vuoi procedere?</p>
         <div class="modal-actions">
-            <button type="button" id="btn-annulla-crea" class="btn-secondary">Annulla</button>
-            <button type="button" id="btn-conferma-crea" class="btn-primary">Sì, Crea Subito</button>
+            <button type="button" id="btn-annulla-elimina" class="btn-secondary">Annulla</button>
+            <button type="button" id="btn-conferma-elimina" class="btn-danger">Sì, Elimina</button>
+        </div>
+    </div>
+</dialog>
+
+<!-- Modale per gli Errori (Sostituisce gli Alert) -->
+<dialog id="modal-errore" class="modal-dialog" aria-labelledby="modal-titolo-errore">
+    <div class="modal-content border-top-danger">
+        <h2 id="modal-titolo-errore" class="text-danger">Azione negata</h2>
+        <p id="testo-errore" class="error-message-text"></p>
+        <div class="modal-actions justify-center">
+            <button type="button" id="btn-chiudi-errore" class="btn-secondary">Ho capito</button>
         </div>
     </div>
 </dialog>

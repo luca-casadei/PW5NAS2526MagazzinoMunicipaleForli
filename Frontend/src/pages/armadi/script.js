@@ -5,16 +5,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const contenitoreArmadi = document.getElementById('contenitore-armadi');
     const btnNuovoArmadio = document.getElementById('btn-nuovo-armadio');
     
-    const modalCrea = document.getElementById('modal-creazione');
-    const tipoCreaText = document.getElementById('tipo-creazione-text');
-    const btnAnnullaCrea = document.getElementById('btn-annulla-crea');
-    const btnConfermaCrea = document.getElementById('btn-conferma-crea');
+    const modalElimina = document.getElementById('modal-eliminazione');
+    const tipoEliminaText = document.getElementById('tipo-eliminazione-text');
+    const btnAnnullaElimina = document.getElementById('btn-annulla-elimina');
+    const btnConfermaElimina = document.getElementById('btn-conferma-elimina');
 
-    let statoCreazione = { tipo: null, armadioId: null };
+    const modalErrore = document.getElementById('modal-errore');
+    const testoErrore = document.getElementById('testo-errore');
+    const btnChiudiErrore = document.getElementById('btn-chiudi-errore');
+
+    let statoEliminazione = { tipo: null, armadioId: null, numeroScaffale: null };
     let strutturaMagazzino = []; 
     let tuttiGliArticoli = []; 
 
     const gestoreFiltri = new FilterManager(() => renderMagazzino());
+
+    function showError(message) {
+        testoErrore.textContent = message;
+        modalErrore.showModal();
+    }
+    btnChiudiErrore.addEventListener('click', () => modalErrore.close());
 
     async function caricaTuttoIlMagazzino() {
         try {
@@ -25,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
             contenitoreArmadi.appendChild(pLoading);
             
             const armadi = await getArmadi();
-            
             strutturaMagazzino = [];
             tuttiGliArticoli = [];
 
@@ -47,8 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             contenitoreArmadi.replaceChildren();
             const pError = document.createElement('p');
-            pError.className = 'error-text text-danger';
-            pError.textContent = 'Errore nel caricamento della struttura magazzino: ' + error.message;
+            pError.className = 'text-danger';
+            pError.textContent = 'Errore nel caricamento della struttura: ' + error.message;
             contenitoreArmadi.appendChild(pError);
         }
     }
@@ -81,15 +90,42 @@ document.addEventListener('DOMContentLoaded', () => {
         const details = document.createElement('details');
         details.className = 'armadio-section';
         details.open = true; 
+        
         const summary = document.createElement('summary');
         summary.className = 'armadio-summary';
-        summary.textContent = `Armadio Numero ${armadio.id}`; 
+        
+        const titleSpan = document.createElement('span');
+        titleSpan.textContent = `Armadio Numero ${armadio.id}`;
+        
+        const actionsGroup = document.createElement('div');
+        actionsGroup.className = 'summary-actions';
+        
+        const btnDelete = document.createElement('button');
+        btnDelete.className = 'btn-delete';
+        btnDelete.innerHTML = '🗑️';
+        btnDelete.setAttribute('aria-label', `Elimina Armadio ${armadio.id}`);
+        btnDelete.onclick = (e) => {
+            e.preventDefault(); // Evita che il details si apra/chiuda
+            e.stopPropagation();
+            apriDialogElimina('Armadio', armadio.id);
+        };
+        actionsGroup.appendChild(btnDelete);
+        summary.append(titleSpan, actionsGroup);
+        
         const content = document.createElement('div');
         content.className = 'scaffale-container';
+        
         const btnAddScaffale = document.createElement('button');
         btnAddScaffale.className = 'btn-add-scaffale';
         btnAddScaffale.textContent = '+ Aggiungi Nuovo Scaffale';
-        btnAddScaffale.onclick = () => apriDialogCreate('Scaffale', armadio.id);
+        btnAddScaffale.onclick = async () => {
+            try {
+                const res = await ApiRequest.request('creaScaffale_service.php', 'POST', { armadioId: armadio.id });
+                if(res.status !== 'success') throw new Error(res.message);
+                caricaTuttoIlMagazzino();
+            } catch (err) { showError(err.message); }
+        };
+        
         details.append(summary, content, btnAddScaffale);
         return details;
     }
@@ -98,9 +134,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const details = document.createElement('details');
         details.className = 'scaffale-section';
         details.open = true; 
+        
         const summary = document.createElement('summary');
         summary.className = 'scaffale-summary';
-        summary.textContent = `Scaffale ${scaffale.numeroScaffale}`;
+        
+        const titleSpan = document.createElement('span');
+        titleSpan.textContent = `Scaffale ${scaffale.numeroScaffale}`;
+
+        const actionsGroup = document.createElement('div');
+        actionsGroup.className = 'summary-actions';
+        
+        const btnDelete = document.createElement('button');
+        btnDelete.className = 'btn-delete';
+        btnDelete.innerHTML = '🗑️';
+        btnDelete.setAttribute('aria-label', `Elimina Scaffale ${scaffale.numeroScaffale}`);
+        btnDelete.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            apriDialogElimina('Scaffale', armadioId, scaffale.numeroScaffale);
+        };
+        actionsGroup.appendChild(btnDelete);
+        summary.append(titleSpan, actionsGroup);
         
         const actionBar = document.createElement('div');
         actionBar.className = 'scaffale-action-bar';
@@ -123,12 +177,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const h4 = document.createElement('h4');
         h4.textContent = art.nomeArticolo; 
         
-        // --- SEZIONE INFO (BADGE QUANTITA) ---
         const badgeContainer = document.createElement('div');
         badgeContainer.className = 'qt-badges-container';
 
         const infoQt = document.createElement('p');
-        infoQt.textContent = 'Nuovi: ';
+        infoQt.textContent = 'Giacenza: ';
         const spanQt = document.createElement('span');
         spanQt.className = 'badge-qt';
         spanQt.id = `qt-val-${art.idArticolo}-${numeroScaffale}`; 
@@ -136,11 +189,11 @@ document.addEventListener('DOMContentLoaded', () => {
         infoQt.appendChild(spanQt);
 
         const infoQtUsata = document.createElement('p');
-        infoQtUsata.textContent = 'Usati: ';
+        infoQtUsata.textContent = 'Consumati: ';
         const spanQtUsata = document.createElement('span');
         spanQtUsata.className = 'badge-qt badge-usata';
         spanQtUsata.id = `qt-usata-val-${art.idArticolo}-${numeroScaffale}`; 
-        spanQtUsata.textContent = art.qtUsata; // ESEMPIO: art.qtUsata 
+        spanQtUsata.textContent = art.qtUsata; 
         
         infoQtUsata.appendChild(spanQtUsata);
         badgeContainer.append(infoQt, infoQtUsata);
@@ -164,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const lblStock = document.createElement('div');
         lblStock.className = 'section-label';
-        lblStock.textContent = 'Modifica Nuovi:';
+        lblStock.textContent = 'Modifica quantità nuovo:';
         
         const ctrlStock = document.createElement('div');
         ctrlStock.className = 'controlli-qt';
@@ -187,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const lblUsata = document.createElement('div');
         lblUsata.className = 'section-label section-usata';
-        lblUsata.textContent = 'Modifica Usato';
+        lblUsata.textContent = 'Modifica quantità usato';
         
         const ctrlUsata = document.createElement('div');
         ctrlUsata.className = 'controlli-qt';
@@ -195,13 +248,13 @@ document.addEventListener('DOMContentLoaded', () => {
         inUsata.type = 'number'; inUsata.className = 'input-add-qt'; inUsata.value = 1; inUsata.min = 1;
         
         const btnMinusUsata = document.createElement('button');
-        btnMinusUsata.className = 'btn-danger btn-qt-action'; btnMinusUsata.textContent = 'Rimuovi'; // Togliamo dall'usato
+        btnMinusUsata.className = 'btn-danger btn-qt-action'; btnMinusUsata.textContent = 'Rimuovi'; 
         btnMinusUsata.onclick = (e) => {
             const val = parseInt(inUsata.value, 10);
             if(val > 0) diminuisciQuantitaUsata(art.idArticolo, armadioId, numeroScaffale, val, e.target);
         }
         const btnAddUsata = document.createElement('button');
-        btnAddUsata.className = 'btn-primary btn-qt-action btn-add-usata'; btnAddUsata.textContent = 'Aggiungi'; // Segnamo come usato
+        btnAddUsata.className = 'btn-primary btn-qt-action btn-add-usata'; btnAddUsata.textContent = 'Aggiungi'; 
         btnAddUsata.onclick = (e) => {
             const val = parseInt(inUsata.value, 10);
             if(val > 0) aggiungiQuantitaUsata(art.idArticolo, armadioId, numeroScaffale, val, e.target);
@@ -212,109 +265,130 @@ document.addEventListener('DOMContentLoaded', () => {
         return card;
     }
 
+    btnNuovoArmadio.addEventListener('click', async () => {
+        try {
+            const res = await ApiRequest.request('creaArmadio_service.php', 'POST', {});
+            if(res.status !== 'success') throw new Error(res.message);
+            caricaTuttoIlMagazzino();
+        } catch (err) { showError("Impossibile creare armadio: " + err.message); }
+    });
+
+    function apriDialogElimina(tipo, armadioId, numeroScaffale = null) {
+        statoEliminazione = { tipo, armadioId, numeroScaffale };
+        tipoEliminaText.textContent = tipo === 'Armadio' ? `Armadio N. ${armadioId}` : `Scaffale N. ${numeroScaffale} (Armadio ${armadioId})`; 
+        modalElimina.showModal();
+    }
+
+    btnAnnullaElimina.addEventListener('click', () => {
+        modalElimina.close();
+        statoEliminazione = { tipo: null, armadioId: null, numeroScaffale: null };
+    });
+
+    btnConfermaElimina.addEventListener('click', async () => {
+        btnConfermaElimina.disabled = true;
+        const testoOriginale = btnConfermaElimina.textContent;
+        btnConfermaElimina.textContent = 'Eliminazione...';
+
+        try {
+            let service = '';
+            let payload = {};
+
+            if (statoEliminazione.tipo === 'Armadio') {
+                service = 'elimina_armadio_service.php'; 
+                payload = { armadioId: parseInt(statoEliminazione.armadioId, 10) };
+            } else if (statoEliminazione.tipo === 'Scaffale') {
+                service = 'elimina_scaffale_service.php'; 
+                payload = { 
+                    armadioId: parseInt(statoEliminazione.armadioId, 10),
+                    numScaffale: parseInt(statoEliminazione.numeroScaffale, 10) 
+                };
+            }
+
+            const res = await ApiRequest.request(service, 'DELETE', payload);
+            if(res.status !== 'success') throw new Error(res.message);
+
+            modalElimina.close();
+            caricaTuttoIlMagazzino();
+        } catch (error) {
+            modalElimina.close(); // Chiudiamo prima la modale di elimina
+            showError("Azione negata: " + error.message); // E mostriamo la modale di errore pulita!
+        } finally {
+            btnConfermaElimina.disabled = false;
+            btnConfermaElimina.textContent = testoOriginale;
+            statoEliminazione = { tipo: null, armadioId: null, numeroScaffale: null };
+        }
+    });
+
     async function aggiungiQuantita(articoloId, armadioId, numeroScaffale, quantita, bottoneCliccato) {
         if(bottoneCliccato) bottoneCliccato.disabled = true;
         try {
             const payload = { articoloId: parseInt(articoloId, 10), armadioId: parseInt(armadioId, 10), numeroScaffale: parseInt(numeroScaffale, 10), quantita: parseInt(quantita, 10) };
-            const responseJSON = await ApiRequest.request('aumentaQuantita_service.php', 'POST', payload);
-            if(responseJSON.status !== 'success') throw new Error(responseJSON.message || "Errore.");
+            const res = await ApiRequest.request('aumentaQuantita_service.php', 'POST', payload);
+            if(res.status !== 'success') throw new Error(res.message);
             aggiornaFeedbackVisivo(articoloId, numeroScaffale, quantita, 'qt-val-');
-        } catch (error) { alert("Errore: " + error.message); } finally { if(bottoneCliccato) bottoneCliccato.disabled = false; }
+        } catch (error) { showError(error.message); } finally { if(bottoneCliccato) bottoneCliccato.disabled = false; }
     }
 
     async function diminuisciQuantita(articoloId, armadioId, numeroScaffale, quantita , bottoneCliccato) {
         if(bottoneCliccato) bottoneCliccato.disabled = true;
         try {
             const payload = { articoloId: parseInt(articoloId, 10), armadioId: parseInt(armadioId, 10), numeroScaffale: parseInt(numeroScaffale, 10), quantita: parseInt(quantita, 10) };
-            const responseJSON = await ApiRequest.request('dimiuisciQuantita_service.php', 'POST', payload);
-            if(responseJSON.status !== 'success') throw new Error(responseJSON.message || "Errore.");
+            const res = await ApiRequest.request('dimiuisciQuantita_service.php', 'POST', payload);
+            if(res.status !== 'success') throw new Error(res.message);
             aggiornaFeedbackVisivo(articoloId, numeroScaffale, quantita * -1, 'qt-val-');
-        } catch (error) { alert("Errore: " + error.message); } finally { if(bottoneCliccato) bottoneCliccato.disabled = false; }
+        } catch (error) { showError(error.message); } finally { if(bottoneCliccato) bottoneCliccato.disabled = false; }
     }
 
     async function aggiungiQuantitaUsata(articoloId, armadioId, numeroScaffale, quantita, bottoneCliccato) {
         if(bottoneCliccato) bottoneCliccato.disabled = true;
         try {
             const payload = { articoloId: parseInt(articoloId, 10), armadioId: parseInt(armadioId, 10), numeroScaffale: parseInt(numeroScaffale, 10), quantita: parseInt(quantita, 10) };
-            const responseJSON = await ApiRequest.request('aggiungi_qt_usato_service.php', 'POST', payload);
-            if(responseJSON.status !== 'success') throw new Error(responseJSON.message || "Errore.");
+            const res = await ApiRequest.request('aggiungi_qt_usato_service.php', 'POST', payload);
+            if(res.status !== 'success') throw new Error(res.message);
             aggiornaFeedbackVisivo(articoloId, numeroScaffale, quantita, 'qt-usata-val-');
-        } catch (error) { alert("Errore: " + error.message); } finally { if(bottoneCliccato) bottoneCliccato.disabled = false; }
+        } catch (error) { showError(error.message); } finally { if(bottoneCliccato) bottoneCliccato.disabled = false; }
     }
 
     async function diminuisciQuantitaUsata(articoloId, armadioId, numeroScaffale, quantita , bottoneCliccato) {
         if(bottoneCliccato) bottoneCliccato.disabled = true;
         try {
             const payload = { articoloId: parseInt(articoloId, 10), armadioId: parseInt(armadioId, 10), numeroScaffale: parseInt(numeroScaffale, 10), quantita: parseInt(quantita, 10) };
-            const responseJSON = await ApiRequest.request('diminuisci_qt_usato_service.php', 'POST', payload);
-            if(responseJSON.status !== 'success') throw new Error(responseJSON.message || "Errore.");
+            const res = await ApiRequest.request('diminuisci_qt_usato_service.php', 'POST', payload);
+            if(res.status !== 'success') throw new Error(res.message);
             aggiornaFeedbackVisivo(articoloId, numeroScaffale, quantita * -1, 'qt-usata-val-');
-        } catch (error) { alert("Errore: " + error.message); } finally { if(bottoneCliccato) bottoneCliccato.disabled = false; }
+        } catch (error) { showError(error.message); } finally { if(bottoneCliccato) bottoneCliccato.disabled = false; }
     }
 
-    btnNuovoArmadio.addEventListener('click', () => {
-        apriDialogCreate('Armadio');
-    });
-
-    function apriDialogCreate(tipo, armadioId = null) {
-        statoCreazione.tipo = tipo;
-        statoCreazione.armadioId = armadioId;
-        tipoCreaText.textContent = tipo; 
-        modalCrea.showModal();
-    }
-
-    btnAnnullaCrea.addEventListener('click', () => {
-        modalCrea.close();
-        statoCreazione = { tipo: null, armadioId: null };
-    });
-
-    btnConfermaCrea.addEventListener('click', async () => {
-        btnConfermaCrea.disabled = true;
-        const testoOriginale = btnConfermaCrea.textContent;
-        btnConfermaCrea.textContent = 'Creazione in corso...';
-
-        try {
-            let service = '';
-            let payload = {};
-
-            if (statoCreazione.tipo === 'Armadio') {
-                service = 'creaArmadio_service.php';
-            } else if (statoCreazione.tipo === 'Scaffale') {
-                service = 'creaScaffale_service.php';
-                payload = { armadioId: parseInt(statoCreazione.armadioId, 10) };
-            }
-
-            const responseJSON = await ApiRequest.request(service, 'POST', payload);
-            if(responseJSON.status !== 'success') throw new Error(responseJSON.message || "Errore imprevisto dal server.");
-
-            modalCrea.close();
-            statoCreazione = { tipo: null, armadioId: null };
-            caricaTuttoIlMagazzino();
-
-        } catch (error) {
-            alert("Errore durante la creazione: " + error.message);
-        } finally {
-            btnConfermaCrea.disabled = false;
-            btnConfermaCrea.textContent = testoOriginale;
-        }
-    });
     function aggiornaFeedbackVisivo(articoloId, numeroScaffale, delta, prefix = 'qt-val-') {
-        // Usa il prefisso per trovare l'ID corretto (usato o nuovo)
         const span = document.getElementById(`${prefix}${articoloId}-${numeroScaffale}`);
         if (!span) return;
-
-        let attuale = parseInt(span.textContent, 10);
+        
+        let attuale = parseInt(span.textContent, 10) || 0;
         let nuovo = attuale + delta;
         
         span.textContent = nuovo;
         
         const colorSuccess = prefix.includes('usata') ? '#d97706' : 'var(--success-color)';
-        const altroSpanValore = prefix.includes('usata') ? document.getElementById(`qt-val-${articoloId}-${numeroScaffale}`).textContent : document.getElementById(`qt-usata-val-${articoloId}-${numeroScaffale}`).textContent;
         span.style.color = delta > 0 ? colorSuccess : 'var(--danger-color)';
         
-        setTimeout(() => span.style.color = '', 1500);
-        if(altroSpanValore == 0 && nuovo == 0)
-            caricaTuttoIlMagazzino();
+        setTimeout(() => {
+            span.style.color = '';
+            let valNuovi = 0;
+            let valUsati = 0;
+            if (prefix === 'qt-val-') {
+                valNuovi = nuovo; 
+                const spanUsati = document.getElementById(`qt-usata-val-${articoloId}-${numeroScaffale}`);
+                valUsati = spanUsati ? parseInt(spanUsati.textContent, 10) : 0;
+            } else {
+                valUsati = nuovo; 
+                const spanNuovi = document.getElementById(`qt-val-${articoloId}-${numeroScaffale}`);
+                valNuovi = spanNuovi ? parseInt(spanNuovi.textContent, 10) : 0;
+            }
+            
+            if (valNuovi === 0 && valUsati === 0) {
+                caricaTuttoIlMagazzino();
+            }
+        }, 1500);
     }
 
     async function getArmadi() {

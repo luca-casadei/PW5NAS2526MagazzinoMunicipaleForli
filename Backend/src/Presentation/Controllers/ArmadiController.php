@@ -2,18 +2,23 @@
 declare(strict_types=1);
 namespace Backend\Presentation\Controllers;
 
+use Backend\Application\commands\DeleteArmadioDTO;
 use Backend\Application\interfaces\serv\ICreaArmadio;
+use Backend\Application\interfaces\serv\IEliminaArmadio;
 use Backend\Application\interfaces\serv\IVediArmadi;
 use Backend\Presentation\mapper\PresentationMapper;
 use Backend\Presentation\Response;
+use ErrorException;
 
 class ArmadiController {
     private ICreaArmadio $creaArmadioService;
     private IVediArmadi $vediArmadiService;
+    private IEliminaArmadio $eliminaArmadioService;
 
-    public function __construct(ICreaArmadio $creaArmadioService, IVediArmadi $vediArmadiService) {
+    public function __construct(ICreaArmadio $creaArmadioService, IVediArmadi $vediArmadiService, IEliminaArmadio $eliminaArmadioService) {
         $this->creaArmadioService = $creaArmadioService;
         $this->vediArmadiService = $vediArmadiService;
+        $this->eliminaArmadioService = $eliminaArmadioService;
     }
     public function get_armadi(){
         try{
@@ -40,6 +45,26 @@ class ArmadiController {
 
         } catch (\Exception $e) {
             // Se il Service fallisce, catturiamo l'errore qui
+            $resp = new Response("error", $e->getMessage(), 500);
+            $this->json_response($resp, $resp->get_code());
+            return;
+        }
+    }
+    public function elimina_armadio(){
+        $input = json_decode(file_get_contents('php://input'), true);
+        // Creiamo il DTO senza descrizione
+        $deleteArmadio = new DeleteArmadioDTO(
+            $input['armadioId'],
+        );
+        
+        try {
+            if($deleteArmadio->id <= 0)
+                throw new ErrorException("Inserisci dati validi", 400);
+            $this->eliminaArmadioService->eliminaById($deleteArmadio);
+            $resp = new Response("success","Armadio eliminato", 200);
+            $this->json_response($resp, $resp->get_code());
+
+        } catch (\Exception $e) {
             $resp = new Response("error", $e->getMessage(), 500);
             $this->json_response($resp, $resp->get_code());
             return;

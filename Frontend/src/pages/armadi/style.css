@@ -25,8 +25,7 @@
     cursor: pointer;
     list-style: none; 
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    align-items: center; /* Allinea verticalmente al centro */
     border-bottom: 1px solid transparent;
 }
 
@@ -61,7 +60,18 @@
     cursor: pointer;
     list-style: none;
     display: flex;
-    gap: 1rem;
+    align-items: center;
+}
+
+/* LA MAGIA DEL POSIZIONAMENTO: Spinge i bottoni a destra */
+.armadio-summary > span:first-child,
+.scaffale-summary > span:first-child {
+    margin-right: auto;
+}
+
+.summary-actions {
+    display: flex;
+    align-items: center;
 }
 
 .scaffale-action-bar {
@@ -76,17 +86,18 @@
 }
 
 /* ==========================================================================
-   AZIONI PRINCIPALI E AGGIUNTA
+   AZIONI E BOTTONI ELIMINAZIONE
    ========================================================================== */
 
+/* Bottone per aggiungere nuovi armadi in fondo alla pagina */
 .actions-bottom {
     display: flex;
-    justify-content: center; /* Centra il bottone */
-    margin-top: 2rem;        /* Lo stacca dagli armadi sopra */
+    justify-content: center;
+    margin-top: 2rem;
     margin-bottom: 2rem;
 }
 
-/* Bottone per aggiungere scaffali (Stile tratteggiato "dropzone") */
+/* Bottone per aggiungere scaffali */
 .btn-add-scaffale {
     display: block;
     width: 100%;
@@ -107,8 +118,33 @@
     background-color: #eff6ff; 
 }
 
+/* Cestino Rotondo e Rosso */
+.btn-delete {
+    background-color: var(--danger-color, #dc2626);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-right: 0.75rem; 
+    font-size: 1rem;    
+    box-shadow: 0 2px 4px rgba(220, 38, 38, 0.3);
+}
+
+.btn-delete:hover, 
+.btn-delete:focus {
+    background-color: #b91c1c; 
+    transform: scale(1.15);    
+    outline: none;
+    box-shadow: 0 4px 6px rgba(220, 38, 38, 0.5); 
+}
+
 /* ==========================================================================
-   GRIGLIA ARTICOLI E CONTROLLI QUANTITÀ (Aggiornato con Qt Usata)
+   GRIGLIA ARTICOLI E CONTROLLI QUANTITÀ
    ========================================================================== */
 
 .articoli-scaffale-grid {
@@ -132,7 +168,7 @@
     font-size: 1.15rem; 
 }
 
-/* --- BADGE INFORMAZIONI IN ALTO --- */
+/* Badge in alto (Giacenza e Usati) */
 .qt-badges-container {
     display: flex;
     gap: 1.5rem;
@@ -155,13 +191,12 @@
     transition: color 0.3s ease;
 }
 
-/* Colore distinto per la quantità consumata/usata (Arancione) */
 .badge-usata {
     color: #b45309; 
     background: #fef3c7; 
 }
 
-/* --- LISTA ATTRIBUTI --- */
+/* Lista Attributi */
 .attr-list {
     list-style: none;
     padding: 0;
@@ -179,14 +214,13 @@
     color: var(--text-main, #0f172a);
 }
 
-/* Divisore tra le info e i bottoni */
 .card-divider {
     height: 1px;
     background: var(--secondary-color, #e2e8f0);
     margin: 1rem 0;
 }
 
-/* --- SEZIONE BOTTONI (Titoli e Controlli) --- */
+/* Sezione Bottoni e Modifica */
 .section-label {
     font-size: 0.75rem;
     text-transform: uppercase;
@@ -200,6 +234,14 @@
     margin-top: 0.8rem; 
 }
 
+/* Mantiene input e bottoni rigorosamente sulla stessa riga */
+.controlli-qt {
+    display: flex;
+    align-items: stretch; 
+    gap: 0.5rem;
+    width: 100%;
+}
+
 .input-add-qt {
     width: 60px; 
     padding: 0.4rem;
@@ -210,29 +252,53 @@
     flex-shrink: 0; 
 }
 
-.controlli-qt {
-    display: flex;
-    align-items: stretch; 
-    gap: 0.5rem;
-    /* RIMOSSO flex-wrap: wrap; in modo che stiano sempre sulla stessa riga */
-    width: 100%; /* Si assicura che il contenitore prenda tutto lo spazio disponibile */
-}
-
 .btn-qt-action {
-    flex: 1; /* I due bottoni si divideranno equamente lo spazio rimanente */
+    flex: 1; 
     font-size: 0.85rem;
     padding: 0.5rem 0.2rem;
     white-space: nowrap; 
-    min-width: 0; /* TRUCCO FLEXBOX: Permette al bottone di rimpicciolirsi sotto la sua dimensione minima invece di forzare il wrap */
+    min-width: 0; 
 }
 
-/* Stile specifico per il bottone di aggiunta "Usato" per distinguerlo visivamente */
 .btn-add-usata {
-    background-color: #f59e0b; /* Arancione */
+    background-color: #f59e0b;
     border-color: #f59e0b;
     color: white;
 }
 
 .btn-add-usata:hover {
     background-color: #d97706; 
+}
+
+/* ==========================================================================
+   MODALI E MESSAGGI DI ERRORE
+   ========================================================================== */
+
+.text-danger {
+    color: var(--danger-color, #dc2626) !important;
+}
+
+.btn-danger {
+    background-color: var(--danger-color, #dc2626);
+    color: white;
+    border: none;
+}
+
+.btn-danger:hover {
+    background-color: #b91c1c;
+}
+
+.border-top-danger {
+    border-top: 5px solid var(--danger-color, #dc2626);
+}
+
+.error-message-text {
+    font-size: 1.05rem;
+    color: #333;
+    padding: 1rem 0;
+    text-align: center;
+}
+
+.justify-center {
+    justify-content: center !important;
 }

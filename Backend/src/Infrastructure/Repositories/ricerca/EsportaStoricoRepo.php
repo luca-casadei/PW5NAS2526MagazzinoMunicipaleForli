@@ -21,7 +21,7 @@ class EsportaStoricoRepo implements IEsportaStoricoRepo
         $query = "SELECT Log_Id, Data_Ora_Modifica, Nome_Articolo, Nome_Tipologia, Numero_Scaffale, Armadio_Id, QtaPrecedente, QtaAggiornata, QtaUsataPrecedente, QtaUsataAggiornata, Attributi
                   FROM Log_Modifiche_Quantita
                   WHERE Data_Ora_Modifica BETWEEN ? AND ?
-                  ORDER BY Data_Ora_Modifica DESC;";
+                  ORDER BY Log_Id DESC;";
 
         $stmt = $db->prepare($query);
         $stmt->bind_param("ss", $dataInizio, $dataFine);

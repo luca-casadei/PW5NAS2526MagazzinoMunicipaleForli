@@ -21,10 +21,7 @@ class GetQtArticoloRepo implements IGetQtArticoloRepo{
         $stmt->bind_param("iii", $articoloId, $numeroScaffale, $armadioId);
         $stmt->execute();
 
-        // Recuperiamo il risultato
         $result = $stmt->get_result();
-        
-        // Se l'articolo non è nello scaffale, restituiamo null
         if ($result->num_rows === 0) {
             return null;
         }

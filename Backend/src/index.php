@@ -4,6 +4,8 @@ namespace Backend;
 
 use Backend\Application\Services\anagrafiche\CreaTipoArticolo;
 use Backend\Application\Services\anagrafiche\CreaTipologia;
+use Backend\Application\Services\anagrafiche\EliminaArmadio;
+use Backend\Application\Services\anagrafiche\EliminaScaffale;
 use Backend\Application\Services\anagrafiche\EliminaTipoArticolo;
 use Backend\Application\Services\anagrafiche\EliminaTipologia;
 use Backend\Application\Services\magazzino\AggQtArticolo;
@@ -25,6 +27,8 @@ use Backend\Application\Services\ricerca\VediArmadi;
 use Backend\Application\Services\ricerca\VediContenutoScaffali;
 use Backend\Infrastructure\Repositories\anagrafiche\CreaTipologiaRepo;
 use Backend\Infrastructure\Repositories\anagrafiche\EliminaTipologiaRepo;
+use Backend\Infrastructure\Repositories\anagrafiche\EliminaArmadioRepo;
+use Backend\Infrastructure\Repositories\anagrafiche\EliminaScaffaleRepo;
 use Backend\Infrastructure\Repositories\anagrafiche\gestioneTipoArticolo\AssociaAttributoRepo;
 use Backend\Infrastructure\Repositories\anagrafiche\gestioneTipoArticolo\CreaArticoloRepo;
 use Backend\Infrastructure\Repositories\anagrafiche\gestioneTipoArticolo\CreaAttributoRepo;
@@ -42,7 +46,6 @@ use Backend\Infrastructure\Repositories\magazzino\GetQtArticoloRepo;
 use Backend\Infrastructure\Repositories\magazzino\GetQtTotArtRepo;
 use Backend\Infrastructure\Repositories\magazzino\GetQtUsataArticoloRepo;
 use Backend\Infrastructure\Repositories\magazzino\GetValoriAttributi;
-use Backend\Infrastructure\Repositories\magazzino\TrovaArticoloConIdRepo;
 use Backend\Infrastructure\Repositories\magazzino\VediArticoliByNomeRepo;
 use Backend\Infrastructure\Repositories\magazzino\VerificaPresenzaRepo;
 use Backend\Infrastructure\Repositories\ricerca\VediArticoliPerScaffaleRepo;
@@ -122,6 +125,8 @@ try{
     $verificaPresenzaRepo = new VerificaPresenzaRepo($connection);
     $creaPresenzaRepo = new CreaPresenzaRepo($connection);
     $eliminaPresenzaRepo = new EliminaPresenzaRepo($connection);
+    $eliminaScaffaleRepo = new EliminaScaffaleRepo($connection);
+    $eliminaArmadioRepo = new EliminaArmadioRepo($connection);
     
     //services
     $creaTipoArtService = new CreaTipoArticolo(
@@ -176,9 +181,11 @@ try{
         $getQtArtRepo,
         $getQtUsataArtRepo
     );
+    $eliminaArmadioService = new EliminaArmadio($eliminaArmadioRepo, $vediScaffaliRepo);
+    $eliminaScaffaleService = new EliminaScaffale($eliminaScaffaleRepo, $vediArtPerScaffaleRepo);
     
     //controllers
-    $armadiController = new ArmadiController($creaArmadioService, $vediArmadiService);
+    $armadiController = new ArmadiController($creaArmadioService, $vediArmadiService, $eliminaArmadioService);
     $articoliPerController = new ListaArticoliPerController(
         $trovaArtByNomeService,
         $vediScaffaliService,
@@ -196,7 +203,8 @@ try{
     $scaffaliController = new ScaffaliController(
         $creaScaffaleService,
         $getAllScaffaliService,
-        $getScaffaliArmadioByIdService
+        $getScaffaliArmadioByIdService,
+        $eliminaScaffaleService
     );
     $tipoArticoloController = new TipoArticoloController($creaTipoArtService, $eliminaTipoArtService);
     $tipologieController = new TipologieController(
@@ -230,6 +238,9 @@ try{
             else if ($method === 'GET') {
                 $armadiController->get_armadi();
             }
+            else if ($method === 'DELETE') {
+                $armadiController->elimina_armadio();
+            }
             else{
                 $armadiController->method_not_allowed();
             }
@@ -241,6 +252,9 @@ try{
             }
             else if ($method === 'GET') {
                 $scaffaliController->get_all();
+            }
+            else if ($method === 'DELETE') {
+                $scaffaliController->elimina_scaffale();
             }
             else{
                 $scaffaliController->method_not_allowed();

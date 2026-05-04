@@ -21,16 +21,12 @@ class GetQtUsataArticoloRepo implements IGetQtUsataArticoloRepo{
         $stmt->bind_param("iii", $articoloId, $numeroScaffale, $armadioId);
         $stmt->execute();
 
-        // Recuperiamo il risultato
         $result = $stmt->get_result();
-        
-        // Se l'articolo non è nello scaffale, restituiamo null
         if ($result->num_rows === 0) {
             return null;
         }
 
         $row = $result->fetch_assoc();
-
         return $row['Qt_Usata'];
     }
 }

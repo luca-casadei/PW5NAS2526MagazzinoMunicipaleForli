@@ -34,9 +34,12 @@ class DimQtUsataArticolo implements IDimQtUsataArticolo{
         $quantitaUsato = $this->repoQtUsato->getQuantita($update->articoloId, $update->numScaffale, $update->armadioId);
         $quantita = $this->repoQt->getQuantita($update->articoloId, $update->numScaffale, $update->armadioId);
 
-        if (!$quantitaUsato) {
+        if ($quantitaUsato === null && $quantita === null) {
             throw new Exception("L'articolo con ID $update->articoloId non è presente nello scaffale $update->numScaffale dell'armadio $update->armadioId.");
         }
+
+        if ($quantitaUsato === null) $quantitaUsato = 0;
+        
         $nuovaQuantitaTotale = $quantitaUsato - $update->quantitaDim;
         if ($nuovaQuantitaTotale < 0) {
             throw new Exception("Non è possibile togliere questa quantità");

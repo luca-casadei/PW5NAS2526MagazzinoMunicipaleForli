@@ -2,8 +2,10 @@
 declare(strict_types=1);
 namespace Backend\Presentation\Controllers;
 use Backend\Application\commands\CreateScaffaleDTO;
+use Backend\Application\commands\DeleteScaffaleDTO;
 use Backend\Application\dtos\ReadArmadioDTO;
 use Backend\Application\interfaces\serv\ICreaScaffale;
+use Backend\Application\interfaces\serv\IEliminaScaffale;
 use Backend\Application\interfaces\serv\IGetAllScaffali;
 use Backend\Application\interfaces\serv\IGetScaffaliArmadioById;
 use Backend\Presentation\Response;
@@ -14,11 +16,13 @@ class ScaffaliController {
     private ICreaScaffale $creaScaffaleService;
     private IGetScaffaliArmadioById $vediScaffaliOfArmadioService;
     private IGetAllScaffali $getAllScaffaliService;
+    private IEliminaScaffale $eliminaScaffaleService;
 
-    public function __construct(ICreaScaffale $creaScaffaleService, IGetAllScaffali $getAllScaffaliService, IGetScaffaliArmadioById $vediScaffaliOfArmadioService) {
+    public function __construct(ICreaScaffale $creaScaffaleService, IGetAllScaffali $getAllScaffaliService, IGetScaffaliArmadioById $vediScaffaliOfArmadioService, IEliminaScaffale $eliminaScaffaleService) {
         $this->creaScaffaleService = $creaScaffaleService;
         $this->getAllScaffaliService = $getAllScaffaliService;
         $this->vediScaffaliOfArmadioService = $vediScaffaliOfArmadioService;
+        $this->eliminaScaffaleService = $eliminaScaffaleService;
     }
     public function get_scaffali_of_armadio(){
         $input = json_decode(file_get_contents('php://input'), true);
@@ -73,6 +77,27 @@ class ScaffaliController {
 
         } catch (\Exception $e) {
             // Se il Service fallisce, catturiamo l'errore qui
+            $resp = new Response("error", $e->getMessage(), 500);
+            $this->json_response($resp, $resp->get_code());
+            return;
+        }
+    }
+    public function elimina_scaffale(){
+        $input = json_decode(file_get_contents('php://input'), true);
+        // Creiamo il DTO senza descrizione
+        $deleteScaffale = new DeleteScaffaleDTO(
+            $input['armadioId'],
+            $input['numScaffale']
+        );
+        
+        try {
+            if($deleteScaffale->armadioId <= 0 || $deleteScaffale->numScaffale <= 0)
+                throw new ErrorException("Inserisci dati validi", 400);
+            $this->eliminaScaffaleService->eliminaById($deleteScaffale);
+            $resp = new Response("success","Scaffale eliminato", 200);
+            $this->json_response($resp, $resp->get_code());
+
+        } catch (\Exception $e) {
             $resp = new Response("error", $e->getMessage(), 500);
             $this->json_response($resp, $resp->get_code());
             return;
