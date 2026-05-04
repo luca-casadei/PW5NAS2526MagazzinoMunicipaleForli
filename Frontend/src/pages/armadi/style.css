@@ -200,13 +200,6 @@
     margin-top: 0.8rem; 
 }
 
-.controlli-qt {
-    display: flex;
-    align-items: stretch; 
-    gap: 0.5rem;
-    flex-wrap: wrap; 
-}
-
 .input-add-qt {
     width: 60px; 
     padding: 0.4rem;
@@ -217,11 +210,20 @@
     flex-shrink: 0; 
 }
 
+.controlli-qt {
+    display: flex;
+    align-items: stretch; 
+    gap: 0.5rem;
+    /* RIMOSSO flex-wrap: wrap; in modo che stiano sempre sulla stessa riga */
+    width: 100%; /* Si assicura che il contenitore prenda tutto lo spazio disponibile */
+}
+
 .btn-qt-action {
-    flex: 1; 
+    flex: 1; /* I due bottoni si divideranno equamente lo spazio rimanente */
     font-size: 0.85rem;
     padding: 0.5rem 0.2rem;
     white-space: nowrap; 
+    min-width: 0; /* TRUCCO FLEXBOX: Permette al bottone di rimpicciolirsi sotto la sua dimensione minima invece di forzare il wrap */
 }
 
 /* Stile specifico per il bottone di aggiunta "Usato" per distinguerlo visivamente */
