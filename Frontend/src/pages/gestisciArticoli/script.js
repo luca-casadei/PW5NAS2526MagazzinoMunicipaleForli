@@ -206,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
             armadi.forEach(a => {
                 const idVero = a.idArmadio || a.id; 
                 const num = a.numero || idVero || "Sconosciuto";
-                selArmadio.innerHTML += `<option value="${idVero}">Armadio Id:${num}</option>`;
+                selArmadio.innerHTML += `<option value="${idVero}">Armadio Id: ${num}</option>`;
             });
 
             const selScaffale = document.createElement('select');
@@ -254,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const disabled = isPresente ? 'disabled' : '';
                         const suffix = isPresente ? ' (Già presente)' : '';
                         
-                        selScaffale.innerHTML += `<option value="${numScaffale}" ${disabled}>Scaffale Id:${numScaffale}${suffix}</option>`;
+                        selScaffale.innerHTML += `<option value="${numScaffale}" ${disabled}>Scaffale Id: ${numScaffale}${suffix}</option>`;
                     });
                     
                     selScaffale.disabled = false;
