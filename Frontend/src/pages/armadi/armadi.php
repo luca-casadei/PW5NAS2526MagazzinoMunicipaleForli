@@ -22,7 +22,6 @@
     </div>
 </main>
 
-<!-- Modale di Conferma Eliminazione -->
 <dialog id="modal-eliminazione" class="modal-dialog" aria-labelledby="modal-titolo-elimina">
     <div class="modal-content">
         <h2 id="modal-titolo-elimina" class="text-danger">⚠️ Conferma Eliminazione</h2>
@@ -35,7 +34,6 @@
     </div>
 </dialog>
 
-<!-- Modale per gli Errori (Sostituisce gli Alert) -->
 <dialog id="modal-errore" class="modal-dialog" aria-labelledby="modal-titolo-errore">
     <div class="modal-content border-top-danger">
         <h2 id="modal-titolo-errore" class="text-danger">Azione negata</h2>

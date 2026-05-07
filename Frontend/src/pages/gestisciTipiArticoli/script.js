@@ -1,3 +1,4 @@
+"use strict";
 import { ApiRequest } from "../../components/global/ApiRequest.js";
 import { FilterManager } from "../../components/global/filters-manager.js";
 

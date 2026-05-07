@@ -1,3 +1,4 @@
+"use strict";
 import { ApiRequest } from "../../components/global/ApiRequest.js";
 import { FilterManager } from "../../components/global/filters-manager.js";
 
@@ -95,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
         summary.className = 'armadio-summary';
         
         const titleSpan = document.createElement('span');
-        titleSpan.textContent = `Armadio Numero ${armadio.id}`;
+        titleSpan.textContent = `Armadio (Identificativo: ${armadio.id})`;
         
         const actionsGroup = document.createElement('div');
         actionsGroup.className = 'summary-actions';
@@ -105,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnDelete.innerHTML = '🗑️';
         btnDelete.setAttribute('aria-label', `Elimina Armadio ${armadio.id}`);
         btnDelete.onclick = (e) => {
-            e.preventDefault(); // Evita che il details si apra/chiuda
+            e.preventDefault(); 
             e.stopPropagation();
             apriDialogElimina('Armadio', armadio.id);
         };
@@ -139,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
         summary.className = 'scaffale-summary';
         
         const titleSpan = document.createElement('span');
-        titleSpan.textContent = `Scaffale ${scaffale.numeroScaffale}`;
+        titleSpan.textContent = `Scaffale (Identificativo: ${scaffale.numeroScaffale})`;
 
         const actionsGroup = document.createElement('div');
         actionsGroup.className = 'summary-actions';

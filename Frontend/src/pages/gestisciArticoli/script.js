@@ -1,3 +1,4 @@
+"use strict";
 import { ApiRequest } from "../../components/global/ApiRequest.js";
 import { FilterManager } from "../../components/global/filters-manager.js";
 
@@ -164,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const ul = document.createElement('ul');
             posizioni.forEach(pos => {
                 const li = document.createElement('li');
-                li.textContent = `Armadio ${pos.armadioId}, Scaffale ${pos.numeroScaffale}`;
+                li.textContent = `Armadio Id:${pos.armadioId}, Scaffale Id:${pos.numeroScaffale}`;
                 ul.appendChild(li);
             });
 
@@ -185,7 +186,6 @@ document.addEventListener('DOMContentLoaded', () => {
         addContainer.innerHTML = '<div class="loc-result">Caricamento magazzino...</div>';
 
         try {
-            // FIX: Assicuriamo che articoloId sia intero
             const idIntero = parseInt(articoloId, 10);
             const locResp = await ApiRequest.request('loc_art_service.php', 'POST', { articoloId: idIntero });
             const posizioniAttuali = locResp?.body || []; 
@@ -206,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
             armadi.forEach(a => {
                 const idVero = a.idArmadio || a.id; 
                 const num = a.numero || idVero || "Sconosciuto";
-                selArmadio.innerHTML += `<option value="${idVero}">Armadio ${num}</option>`;
+                selArmadio.innerHTML += `<option value="${idVero}">Armadio Id:${num}</option>`;
             });
 
             const selScaffale = document.createElement('select');
@@ -217,8 +217,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const qtRow = document.createElement('div');
             qtRow.className = 'qt-row';
             const inputQt = document.createElement('input');
-            inputQt.type = 'number'; inputQt.className = 'filter-bar-input qt-input';
-            inputQt.value = 1; inputQt.min = 1;
+            inputQt.type = 'number'; 
+            inputQt.className = 'filter-bar-input qt-input';
+            inputQt.value = 1; 
+            inputQt.min = 1;
             qtRow.innerHTML = '<label>Quantità:</label>';
             qtRow.appendChild(inputQt);
 
@@ -252,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const disabled = isPresente ? 'disabled' : '';
                         const suffix = isPresente ? ' (Già presente)' : '';
                         
-                        selScaffale.innerHTML += `<option value="${numScaffale}" ${disabled}>Scaffale ${numScaffale}${suffix}</option>`;
+                        selScaffale.innerHTML += `<option value="${numScaffale}" ${disabled}>Scaffale Id:${numScaffale}${suffix}</option>`;
                     });
                     
                     selScaffale.disabled = false;
@@ -280,14 +282,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Helper API
     async function getArmadi() {
         const res = await ApiRequest.request('getArmadi_service.php', 'GET');
         return res?.body || [];
     }
     
     async function getScaffali(id) {
-        // FIX: Cast dell'ID dell'armadio a intero
         const idIntero = parseInt(id, 10);
         const res = await ApiRequest.request('getScaffali_service.php', 'POST', { armadioId: idIntero });
         if (!res || !Array.isArray(res.body)) {
@@ -297,7 +297,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     async function salvaNuovaPosizione(artId, armId, scafNum, qt) {
-        // FIX: Cast di tutti i valori a interi
         const payload = { 
             articoloId: parseInt(artId, 10), 
             armadioId: parseInt(armId, 10), 

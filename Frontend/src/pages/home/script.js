@@ -1,7 +1,5 @@
-"use strict"
-import { ApiRequest } from '/components/global/ApiRequest.js';
+"use strict";
 
 document.addEventListener("DOMContentLoaded", ()=>{
-    /*gestione esporta storico*/
+    
 });
-//TODO
