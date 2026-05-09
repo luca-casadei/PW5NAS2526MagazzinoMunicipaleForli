@@ -53,8 +53,10 @@
         <p>Questa è la mappa fisica del tuo magazzino. In questa pagina puoi:</p>
         <ul>
             <li>Vedere il magazzino suddiviso per armadi i quali sono suddivisi in scaffali.</li>
-            <li>Creare un nuovo armadio tramite pulsante. <br><strong>ATTENZIONE!:</strong> la creazione è irreversibile e non si potrà più cancellare l'armadio per evitare di rimuovere tutti gli articoli all'interno per errore.</li>
-            <li>Creare un nuovo scaffale in un armadio tramite pulsante.<br> <strong>ATTENZIONE!:</strong> la creazione è irreversibile e non si potrà più cancellare lo scaffale per evitare di rimuovere tutti gli articoli all'interno per errore.</li>
+            <li>Creare un nuovo armadio tramite pulsante.</li>
+            <li>Creare un nuovo scaffale in un armadio tramite pulsante.</li>
+            <li>Eliminare un armadio tramite pulsante (cestino rosso). <br><strong>ATTENZIONE!:</strong> l'eliminazione è irreversibile, perciò prima bisognerà eliminare tutti gli scaffali al suo interno (se presenti).</li>
+            <li>Eliminare un scaffale tramite pulsante (cestino rosso).<br> <strong>ATTENZIONE!:</strong> l'eliminazione è irreversibile, perciò prima bisognerà eliminare tutti gli articoli al suo interno (se presenti), diminuendone la quantità nuova e usata fino a 0.</li>
             <li>Aprire e chiudere la sezione di armadi o scaffali cliccandoci sopra, per facilitare la visione.</li>
             <li>Vedere gli articoli presenti in ogni scaffale e la quantità in cui sono presenti.</li>
             <li>Aggiungere o rimuovere una quantità inserita in una stessa cella da un articolo. Se clicchi Rimuovi allora la quantità verrà tolta, altrimenti verrà aggiunta.</li>
