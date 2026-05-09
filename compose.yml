@@ -1,8 +1,8 @@
 services:
   frontend:
     build: ./Frontend
-    #volumes:
-      #- ./Frontend/src:/var/www/html:ro
+    volumes:
+      - ./Frontend/src:/var/www/html:ro
     networks:
       - frontend
     ports:
