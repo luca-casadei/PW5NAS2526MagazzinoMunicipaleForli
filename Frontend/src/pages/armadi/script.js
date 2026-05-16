@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
         badgeContainer.className = 'qt-badges-container';
 
         const infoQt = document.createElement('p');
-        infoQt.textContent = 'Giacenza: ';
+        infoQt.textContent = 'Nuovi: ';
         const spanQt = document.createElement('span');
         spanQt.className = 'badge-qt';
         spanQt.id = `qt-val-${art.idArticolo}-${numeroScaffale}`; 
@@ -190,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
         infoQt.appendChild(spanQt);
 
         const infoQtUsata = document.createElement('p');
-        infoQtUsata.textContent = 'Consumati: ';
+        infoQtUsata.textContent = 'Usati: ';
         const spanQtUsata = document.createElement('span');
         spanQtUsata.className = 'badge-qt badge-usata';
         spanQtUsata.id = `qt-usata-val-${art.idArticolo}-${numeroScaffale}`; 
